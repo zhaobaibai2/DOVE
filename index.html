@@ -16,6 +16,8 @@
     <nav class="links" aria-label="Project links">
       <a href="https://github.com/zhaobaibai2/DOVE">GitHub</a>
       <a href="assets/images/framework/framework_overview.pdf">Framework PDF</a>
+      <a href="data/main_results.csv">Data CSV</a>
+      <a href="data/main_results.json">Data JSON</a>
     </nav>
   </header>
 
@@ -25,7 +27,7 @@
       <video autoplay loop muted playsinline controls preload="metadata" poster="assets/images/posters/route_overview.jpg">
         <source src="assets/videos/demos/route_overview.mp4" type="video/mp4">
       </video>
-      <p class="caption">Physical-platform route footage from the supplied project materials.</p>
+      <p class="caption">DOVE is trained and repaired in closed-loop driving under human supervision.</p>
     </section>
 
     <section class="narrow" id="abstract">
@@ -37,79 +39,100 @@
     <section class="wide" id="motivation">
       <div class="section-head">
         <p class="eyebrow">Motivation</p>
-        <h2>From offline initialization to supervised repair</h2>
-        <p>Positive demonstrations initialize behavior, but shifted conditions expose failures. Human supervision supplies corrective evidence during online adaptation.</p>
+        <h2>Why offline training is not enough</h2>
+        <p>We first train an initial policy from expert demonstrations. The policy works under the original training setup, but moving the obstacle is enough to expose a failure that was not covered by the demonstration data.</p>
       </div>
-      <div class="video-grid four">
+      <div class="video-grid three">
         <figure>
           <video muted playsinline controls preload="metadata" poster="assets/images/posters/expert_demonstration.jpg"><source src="assets/videos/demos/expert_demonstration.mp4" type="video/mp4"></video>
-          <figcaption><strong>Expert demonstrations</strong><span>Offline data collection</span></figcaption>
+          <figcaption><strong>Expert demonstrations</strong><span>Collecting data for offline initialization</span></figcaption>
         </figure>
         <figure>
           <video muted playsinline controls preload="metadata" poster="assets/images/posters/offline_success.jpg"><source src="assets/videos/demos/offline_success.mp4" type="video/mp4"></video>
-          <figcaption><strong>Offline initialization</strong><span>Success on the training distribution</span></figcaption>
+          <figcaption><strong>Initial policy</strong><span>The policy succeeds under the training setup</span></figcaption>
         </figure>
         <figure>
           <video muted playsinline controls preload="metadata" poster="assets/images/posters/distribution_shift_failure.jpg"><source src="assets/videos/demos/distribution_shift_failure.mp4" type="video/mp4"></video>
-          <figcaption><strong>Shifted environment</strong><span>Failure after the obstacle is moved</span></figcaption>
-        </figure>
-        <figure>
-          <video muted playsinline controls preload="metadata" poster="assets/images/posters/online_hitl_adaptation.jpg"><source src="assets/videos/demos/online_hitl_adaptation.mp4" type="video/mp4"></video>
-          <figcaption><strong>Online HIL adaptation</strong><span>Supervised obstacle-avoidance repair</span></figcaption>
+          <figcaption><strong>Distribution shift</strong><span>The same policy fails after the obstacle is moved</span></figcaption>
         </figure>
       </div>
+    </section>
+
+    <section class="narrow takeaway" id="takeover-data">
+      <p class="eyebrow">Human takeover</p>
+      <h2>What we learn from a human takeover</h2>
+      <p>When the policy proposes an undesirable action, the supervisor takes control and executes a correction. DOVE keeps both actions at that same state: the accepted human action and the rejected autonomous action. The resulting pair tells the policy what to prefer and what to suppress during online repair.</p>
+      <p class="takeover-relation"><span>rejected autonomous action</span><b>+</b><span>accepted human action</span><b>→</b><span>same-state veto pair</span></p>
     </section>
 
     <section class="wide" id="method">
       <div class="section-head">
         <p class="eyebrow">Method overview</p>
-        <h2>Preserving observed vetoes end to end</h2>
-        <p>A takeover yields a same-state pair: the executed human action and the rejected autonomous action. EnergyRank transfers this ordering to the diffusion actor, CPCal transfers it to twin proxy-risk critics, and frozen critic guidance plus a conservative gate selects the executed action.</p>
+        <h2>DOVE training and deployment pipeline</h2>
+        <p>We use each takeover pair to teach the policy which action should be preferred and which action should be suppressed. During online repair, the actor and critics are updated from the same intervention stream; all parameters and thresholds are then frozen before deployment.</p>
+        <p>EnergyRank writes the accepted–rejected ordering into the diffusion actor, while CPCal preserves it in the twin proxy-risk critics. At deployment, local critic guidance proposes a lower-risk action and a selective gate decides whether to execute that refinement.</p>
       </div>
       <button class="figure-button" data-lightbox="assets/images/framework/framework_overview.png" aria-label="Open framework figure at full size">
         <img src="assets/images/framework/framework_overview.png" alt="DOVE framework showing same-state veto pairs, online repair, twin proxy-risk critics, and frozen guided execution">
       </button>
-      <p class="caption">DOVE veto-aware diffusion-control framework. Click to enlarge.</p>
+      <p class="caption">A takeover pair is used for actor-side and critic-side learning during online repair; the repaired actor, critics, and gate are frozen for closed-loop deployment. Click to enlarge.</p>
+      <figure class="platform-figure">
+        <button class="figure-button" data-lightbox="assets/images/motivation/physical_platform.png"><img loading="lazy" src="assets/images/motivation/physical_platform.png" alt="Physical UGV platform, driving architecture, and human intervention setup"></button>
+        <figcaption>The physical UGV logs synchronized autonomous, supervisor, and executed actions.</figcaption>
+      </figure>
     </section>
 
-    <section class="wide" id="qualitative">
+    <section class="wide" id="online-repair">
       <div class="section-head">
-        <p class="eyebrow">Qualitative demonstrations</p>
-        <h2>Short-range physical driving tasks</h2>
-        <p>These paired clips retain the labels documented in the supplied presentation: trained H-DSAC policy and baseline failure case. They are shown as supplementary platform demonstrations and are not relabeled as DOVE trials.</p>
+        <p class="eyebrow">Training stage</p>
+        <h2>Online repair with human supervision</h2>
+        <p>Online repair is performed on Route 1. The supervisor can take control whenever the current policy produces an undesirable action, and the resulting intervention pairs are used to update the actor and critics.</p>
       </div>
-      <div class="comparison-list">
-        <article>
-          <h3>Obstacle avoidance</h3>
-          <div class="video-grid two">
-            <figure><video muted loop playsinline controls preload="metadata" poster="assets/images/posters/obstacle_policy.jpg"><source src="assets/videos/comparisons/obstacle_policy.mp4" type="video/mp4"></video><figcaption>H-DSAC policy <span>(source label)</span></figcaption></figure>
-            <figure><video muted loop playsinline controls preload="metadata" poster="assets/images/posters/obstacle_baseline_failure.jpg"><source src="assets/videos/comparisons/obstacle_baseline_failure.mp4" type="video/mp4"></video><figcaption>Baseline <span>(failure case)</span></figcaption></figure>
-          </div>
-        </article>
-        <article>
-          <h3>Pedestrian crossing</h3>
-          <div class="video-grid two">
-            <figure><video muted loop playsinline controls preload="metadata" poster="assets/images/posters/pedestrian_policy.jpg"><source src="assets/videos/comparisons/pedestrian_policy.mp4" type="video/mp4"></video><figcaption>H-DSAC policy <span>(source label)</span></figcaption></figure>
-            <figure><video muted loop playsinline controls preload="metadata" poster="assets/images/posters/pedestrian_baseline_failure.jpg"><source src="assets/videos/comparisons/pedestrian_baseline_failure.mp4" type="video/mp4"></video><figcaption>Baseline <span>(failure case)</span></figcaption></figure>
-          </div>
-        </article>
-        <article>
-          <h3>Turning</h3>
-          <div class="video-grid two">
-            <figure><video muted loop playsinline controls preload="metadata" poster="assets/images/posters/turning_policy.jpg"><source src="assets/videos/comparisons/turning_policy.mp4" type="video/mp4"></video><figcaption>H-DSAC policy <span>(source label)</span></figcaption></figure>
-            <figure><video muted loop playsinline controls preload="metadata" poster="assets/images/posters/turning_baseline_failure.jpg"><source src="assets/videos/comparisons/turning_baseline_failure.mp4" type="video/mp4"></video><figcaption>Baseline <span>(failure case)</span></figcaption></figure>
-          </div>
-        </article>
+      <div class="repair-sequence">
+        <figure>
+          <button class="figure-button" data-lightbox="assets/images/results/route1_map.png"><img loading="lazy" src="assets/images/results/route1_map.png" alt="Route 1 used for human-supervised data collection and online repair"></button>
+          <figcaption>Route 1 is used for human-supervised data collection and policy repair.</figcaption>
+        </figure>
+        <figure>
+          <video muted loop playsinline controls preload="metadata" poster="assets/images/posters/online_hitl_adaptation.jpg"><source src="assets/videos/demos/online_hitl_adaptation.mp4" type="video/mp4"></video>
+          <figcaption>The supervisor intervenes while the policy is repaired online.</figcaption>
+        </figure>
+        <figure>
+          <button class="figure-button" data-lightbox="assets/images/results/intervention_burden.png"><img loading="lazy" src="assets/images/results/intervention_burden.png" alt="Takeover rate for DOVE and the positive-only diffusion policy over aligned training progress"></button>
+          <figcaption>Takeover rate during online repair on Route 1.</figcaption>
+        </figure>
+      </div>
+      <p class="section-note">At the beginning of online repair, the supervisor still intervenes frequently. As training continues, the takeover rate decreases, so the policy completes more of the route without human control. DOVE shows a faster reduction than the positive-only diffusion baseline.</p>
+    </section>
+
+    <section class="narrow takeaway" id="freeze">
+      <p class="eyebrow">Evaluation boundary</p>
+      <h2>Freezing the repaired policy</h2>
+      <p>Once online repair is complete, we freeze the actor, critics, gate thresholds, and all other learned parameters. Human supervision is no longer part of learning, and the frozen systems are evaluated independently in closed-loop driving tasks.</p>
+    </section>
+
+    <section class="wide" id="scenarios">
+      <div class="section-head">
+        <p class="eyebrow">Physical evaluation</p>
+        <h2>Closed-loop physical UGV evaluation</h2>
+        <p>After repair is finished, the frozen policies are evaluated from matched start states and scripts in four physical driving scenarios. Each scenario has 10 trials; a collision or emergency takeover counts as failure.</p>
+      </div>
+      <div class="image-grid">
+        <figure><button class="figure-button" data-lightbox="assets/images/gallery/curve_meeting.jpg"><img loading="lazy" src="assets/images/gallery/curve_meeting.jpg" alt="Curve meeting evaluation scenario"></button><figcaption>Curve meeting (C)</figcaption></figure>
+        <figure><button class="figure-button" data-lightbox="assets/images/gallery/pedestrian_yielding.jpg"><img loading="lazy" src="assets/images/gallery/pedestrian_yielding.jpg" alt="Pedestrian yielding evaluation scenario"></button><figcaption>Pedestrian yielding (P)</figcaption></figure>
+        <figure><button class="figure-button" data-lightbox="assets/images/gallery/obstacle_avoidance.jpg"><img loading="lazy" src="assets/images/gallery/obstacle_avoidance.jpg" alt="Obstacle avoidance evaluation scenario"></button><figcaption>Obstacle avoidance (O)</figcaption></figure>
+        <figure><button class="figure-button" data-lightbox="assets/images/gallery/straight_lane_keeping.jpg"><img loading="lazy" src="assets/images/gallery/straight_lane_keeping.jpg" alt="Straight lane keeping evaluation scenario"></button><figcaption>Straight lane keeping (S)</figcaption></figure>
       </div>
     </section>
 
     <section class="wide" id="results">
       <div class="section-head">
         <p class="eyebrow">Quantitative results</p>
-        <h2>Closed-loop physical UGV evaluation</h2>
-        <p>Frozen systems are evaluated from matched starts and scripts: 10 trials in each of four scenarios. A collision or emergency takeover counts as failure.</p>
+        <h2>Success across the four scenarios</h2>
+        <p>DOVE succeeds in 8/10, 8/10, 7/10, and 9/10 trials across curve meeting, pedestrian yielding, obstacle avoidance, and straight lane keeping, giving an overall success rate of 0.80. The positive-only diffusion policy reaches 0.40 overall success under the same evaluation protocol.</p>
       </div>
       <div class="chart" id="success-chart" role="img" aria-label="Success rate by method and physical evaluation scenario"></div>
+      <p class="table-intro">Besides success rate, we report speed, lateral tracking error, and jerk to check whether higher task completion comes at the cost of slower, less accurate, or less smooth driving.</p>
       <div class="table-scroll" tabindex="0" aria-label="Scrollable quantitative results table">
         <table>
           <caption>Closed-loop scenario results on the physical UGV</caption>
@@ -125,49 +148,51 @@
       <p class="caption">Speed: m s<sup>−1</sup>; lateral MAE: m; jerk: m s<sup>−3</sup>. C/P/O/S denotes successful trials (n/10) in curve meeting, pedestrian yielding, obstacle avoidance, and straight lane keeping.</p>
     </section>
 
-    <section class="wide" id="scenarios">
+    <section class="wide" id="physical-demos">
       <div class="section-head">
-        <p class="eyebrow">Four-scenario evaluation</p>
-        <h2>Physical closed-loop settings</h2>
+        <p class="eyebrow">Supplementary results</p>
+        <h2>Additional physical demonstrations</h2>
+        <p>These clips show an earlier H-DSAC setup and baseline failure cases on the same physical platform. They are additional platform examples and are not part of the DOVE closed-loop evaluation above.</p>
       </div>
-      <div class="image-grid">
-        <figure><button class="figure-button" data-lightbox="assets/images/gallery/curve_meeting.jpg"><img loading="lazy" src="assets/images/gallery/curve_meeting.jpg" alt="Curve meeting evaluation scenario"></button><figcaption>Curve meeting (C)</figcaption></figure>
-        <figure><button class="figure-button" data-lightbox="assets/images/gallery/pedestrian_yielding.jpg"><img loading="lazy" src="assets/images/gallery/pedestrian_yielding.jpg" alt="Pedestrian yielding evaluation scenario"></button><figcaption>Pedestrian yielding (P)</figcaption></figure>
-        <figure><button class="figure-button" data-lightbox="assets/images/gallery/obstacle_avoidance.jpg"><img loading="lazy" src="assets/images/gallery/obstacle_avoidance.jpg" alt="Obstacle avoidance evaluation scenario"></button><figcaption>Obstacle avoidance (O)</figcaption></figure>
-        <figure><button class="figure-button" data-lightbox="assets/images/gallery/straight_lane_keeping.jpg"><img loading="lazy" src="assets/images/gallery/straight_lane_keeping.jpg" alt="Straight lane keeping evaluation scenario"></button><figcaption>Straight lane keeping (S)</figcaption></figure>
+      <div class="comparison-list">
+        <article>
+          <h3>Obstacle avoidance</h3>
+          <div class="video-grid two">
+            <figure><video muted loop playsinline controls preload="metadata" poster="assets/images/posters/obstacle_policy.jpg"><source src="assets/videos/comparisons/obstacle_policy.mp4" type="video/mp4"></video><figcaption>H-DSAC policy</figcaption></figure>
+            <figure><video muted loop playsinline controls preload="metadata" poster="assets/images/posters/obstacle_baseline_failure.jpg"><source src="assets/videos/comparisons/obstacle_baseline_failure.mp4" type="video/mp4"></video><figcaption>Baseline failure case</figcaption></figure>
+          </div>
+        </article>
+        <article>
+          <h3>Pedestrian crossing</h3>
+          <div class="video-grid two">
+            <figure><video muted loop playsinline controls preload="metadata" poster="assets/images/posters/pedestrian_policy.jpg"><source src="assets/videos/comparisons/pedestrian_policy.mp4" type="video/mp4"></video><figcaption>H-DSAC policy</figcaption></figure>
+            <figure><video muted loop playsinline controls preload="metadata" poster="assets/images/posters/pedestrian_baseline_failure.jpg"><source src="assets/videos/comparisons/pedestrian_baseline_failure.mp4" type="video/mp4"></video><figcaption>Baseline failure case</figcaption></figure>
+          </div>
+        </article>
+        <article>
+          <h3>Turning</h3>
+          <div class="video-grid two">
+            <figure><video muted loop playsinline controls preload="metadata" poster="assets/images/posters/turning_policy.jpg"><source src="assets/videos/comparisons/turning_policy.mp4" type="video/mp4"></video><figcaption>H-DSAC policy</figcaption></figure>
+            <figure><video muted loop playsinline controls preload="metadata" poster="assets/images/posters/turning_baseline_failure.jpg"><source src="assets/videos/comparisons/turning_baseline_failure.mp4" type="video/mp4"></video><figcaption>Baseline failure case</figcaption></figure>
+          </div>
+        </article>
       </div>
     </section>
 
-    <section class="wide" id="intervention">
+    <section class="wide" id="simulation">
       <div class="section-head">
-        <p class="eyebrow">Human intervention analysis</p>
-        <h2>Intervention burden falls during online repair</h2>
-        <p>DOVE’s takeover rate declines faster than that of the positive-only diffusion policy as repair proceeds, consistent with progressive suppression of previously vetoed behavior.</p>
+        <p class="eyebrow">Supplementary results</p>
+        <h2>Additional simulation results</h2>
+        <p>We also evaluate training in MetaDrive. Reward and takeover-rate curves provide a second view of learning progress over each method’s logged training horizon.</p>
       </div>
       <div class="image-grid">
-        <figure>
-          <button class="figure-button" data-lightbox="assets/images/results/route1_map.png"><img loading="lazy" src="assets/images/results/route1_map.png" alt="Route 1 course used for data collection and online repair"></button>
-          <figcaption>Route 1 collection and online-repair course</figcaption>
-        </figure>
-        <figure>
-          <button class="figure-button" data-lightbox="assets/images/results/intervention_burden.png"><img loading="lazy" src="assets/images/results/intervention_burden.png" alt="Takeover rate for DOVE and the positive-only diffusion policy over aligned training progress"></button>
-          <figcaption>Intervention burden over aligned training progress</figcaption>
-        </figure>
-      </div>
-    </section>
-
-    <section class="wide" id="additional">
-      <div class="section-head"><p class="eyebrow">Additional visual results</p><h2>Training dynamics and physical platform</h2></div>
-      <div class="image-grid three">
-        <figure><button class="figure-button" data-lightbox="assets/images/results/simulation_reward.png"><img loading="lazy" src="assets/images/results/simulation_reward.png" alt="MetaDrive test episodic reward over environment steps"></button><figcaption>MetaDrive training reward</figcaption></figure>
-        <figure><button class="figure-button" data-lightbox="assets/images/results/simulation_takeover.png"><img loading="lazy" src="assets/images/results/simulation_takeover.png" alt="MetaDrive takeover rate for H-DSAC, PVP, and DOVE"></button><figcaption>MetaDrive takeover rate</figcaption></figure>
-        <figure><button class="figure-button" data-lightbox="assets/images/motivation/physical_platform.png"><img loading="lazy" src="assets/images/motivation/physical_platform.png" alt="Physical UGV platform, driving architecture, and human intervention setup"></button><figcaption>UGV platform and deployment architecture</figcaption></figure>
+        <figure><button class="figure-button" data-lightbox="assets/images/results/simulation_reward.png"><img loading="lazy" src="assets/images/results/simulation_reward.png" alt="MetaDrive test episodic reward over environment steps"></button><figcaption>Test episodic reward during MetaDrive training.</figcaption></figure>
+        <figure><button class="figure-button" data-lightbox="assets/images/results/simulation_takeover.png"><img loading="lazy" src="assets/images/results/simulation_takeover.png" alt="MetaDrive takeover rate for H-DSAC, PVP, and DOVE"></button><figcaption>Takeover rate during MetaDrive training.</figcaption></figure>
       </div>
     </section>
 
     <section class="narrow citation" id="citation">
       <h2>Citation</h2>
-      <p>The supplied anonymous manuscript does not contain publication metadata; the citation therefore includes only fields present in the source.</p>
       <div class="code-block">
         <button id="copy-bibtex">Copy BibTeX</button>
         <pre><code id="bibtex">@misc{dove,
@@ -179,7 +204,7 @@
     </section>
   </main>
 
-  <footer><p>DOVE project page · Source figures and results are traceable to the supplied manuscript materials.</p></footer>
+  <footer><p>DOVE · Human-in-the-loop autonomous driving</p></footer>
   <dialog id="lightbox"><button aria-label="Close enlarged figure">×</button><img alt="Enlarged figure"></dialog>
   <script src="assets/js/main.js"></script>
 </body>

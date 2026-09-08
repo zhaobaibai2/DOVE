@@ -40,6 +40,7 @@ p { margin: 0 0 18px; }
 .caption, figcaption { margin-top: 10px; color: var(--muted); font-size: .88rem; text-align: center; }
 .video-grid, .image-grid { display: grid; gap: 22px; }
 .video-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.video-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .video-grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .video-grid video { aspect-ratio: 1 / 1; background: #0e1215; object-fit: contain; }
 .video-grid figcaption { display: grid; line-height: 1.4; }
@@ -50,6 +51,14 @@ figure { margin: 0; }
 .figure-button { display: block; width: 100%; padding: 0; border: 0; background: transparent; cursor: zoom-in; }
 .figure-button:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
 #method > .figure-button img { aspect-ratio: 3467 / 1950; max-height: 680px; object-fit: contain; }
+.platform-figure { width: min(720px, 100%); margin: 46px auto 0; }
+.takeaway { text-align: center; }
+.takeover-relation { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 30px; color: var(--accent); font-weight: 650; }
+.takeover-relation b { color: var(--muted); }
+.repair-sequence { display: grid; gap: 46px; width: min(900px, 100%); margin-inline: auto; }
+.repair-sequence video { aspect-ratio: 16 / 9; background: #0e1215; object-fit: contain; }
+.repair-sequence img { aspect-ratio: 16 / 9; object-fit: contain; background: var(--soft); }
+.section-note, .table-intro { max-width: 850px; margin: 34px auto 0; color: var(--muted); text-align: center; }
 .chart { min-height: 300px; margin-bottom: 34px; padding: 24px; background: var(--soft); border: 1px solid var(--line); }
 .chart svg { width: 100%; height: auto; overflow: visible; }
 .table-scroll { overflow-x: auto; border-top: 2px solid var(--ink); border-bottom: 1px solid var(--ink); }
@@ -76,6 +85,7 @@ dialog button { position: absolute; top: 0; right: 8px; border: 0; background: n
 
 @media (max-width: 900px) {
   section { padding-block: 58px; }
+  .video-grid.three { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .video-grid.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .image-grid.three { grid-template-columns: 1fr; }
 }
@@ -85,7 +95,8 @@ dialog button { position: absolute; top: 0; right: 8px; border: 0; background: n
   .hero { padding-top: 62px; }
   .hero h1 { font-size: 2.22rem; }
   section { padding-block: 46px; }
-  .video-grid.two, .video-grid.four, .image-grid { grid-template-columns: 1fr; }
+  .video-grid.two, .video-grid.three, .video-grid.four, .image-grid { grid-template-columns: 1fr; }
+  .takeover-relation { align-items: stretch; flex-direction: column; gap: 6px; }
   .comparison-list { gap: 38px; }
   .chart { padding: 12px 8px; overflow-x: auto; }
   .chart svg { min-width: 660px; }
