@@ -1,0 +1,5 @@
+Method,Speed mean,Speed std,Lateral MAE mean,Lateral MAE std,Jerk mean,Jerk std,Success Rate,Curve meeting n/10,Pedestrian yielding n/10,Obstacle avoidance n/10,Straight lane keeping n/10
+Positive-only,1.25,0.52,1.31,1.03,2.53,0.39,0.40,3,3,3,7
+IWR,1.24,0.78,1.10,0.39,3.06,0.92,0.30,2,3,2,5
+PVP,0.62,0.26,0.47,0.29,1.90,1.37,0.20,1,2,2,3
+DOVE,1.39,0.75,0.51,0.36,1.16,0.20,0.80,8,8,7,9

@@ -1,0 +1,50 @@
+{
+  "source": "DOVE_rev25_layout10.tex, table tab:ugv_closedloop",
+  "caption": "Closed-loop scenario results on the physical UGV.",
+  "scenario_order": [
+    "Curve meeting",
+    "Pedestrian yielding",
+    "Obstacle avoidance",
+    "Straight lane keeping"
+  ],
+  "metrics": [
+    {"key": "speed", "label": "Speed", "unit": "m s^-1", "direction": "up"},
+    {"key": "lateral_mae", "label": "Lateral MAE", "unit": "m", "direction": "down"},
+    {"key": "jerk", "label": "Jerk", "unit": "m s^-3", "direction": "down"},
+    {"key": "success_rate", "label": "Success rate", "unit": "", "direction": "up"}
+  ],
+  "methods": [
+    {
+      "name": "Positive-only",
+      "speed": {"mean": 1.25, "std": 0.52},
+      "lateral_mae": {"mean": 1.31, "std": 1.03},
+      "jerk": {"mean": 2.53, "std": 0.39},
+      "success_rate": 0.40,
+      "scenario_successes": [3, 3, 3, 7]
+    },
+    {
+      "name": "IWR",
+      "speed": {"mean": 1.24, "std": 0.78},
+      "lateral_mae": {"mean": 1.10, "std": 0.39},
+      "jerk": {"mean": 3.06, "std": 0.92},
+      "success_rate": 0.30,
+      "scenario_successes": [2, 3, 2, 5]
+    },
+    {
+      "name": "PVP",
+      "speed": {"mean": 0.62, "std": 0.26},
+      "lateral_mae": {"mean": 0.47, "std": 0.29},
+      "jerk": {"mean": 1.90, "std": 1.37},
+      "success_rate": 0.20,
+      "scenario_successes": [1, 2, 2, 3]
+    },
+    {
+      "name": "DOVE",
+      "speed": {"mean": 1.39, "std": 0.75},
+      "lateral_mae": {"mean": 0.51, "std": 0.36},
+      "jerk": {"mean": 1.16, "std": 0.20},
+      "success_rate": 0.80,
+      "scenario_successes": [8, 8, 7, 9]
+    }
+  ]
+}
