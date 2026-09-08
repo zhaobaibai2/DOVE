@@ -62,8 +62,6 @@ thead th { color: var(--muted); font-size: .8rem; letter-spacing: .04em; text-tr
 .image-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .image-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
 .image-grid img { aspect-ratio: 16 / 9; object-fit: contain; background: var(--soft); }
-.split { display: grid; grid-template-columns: .75fr 1.25fr; gap: 70px; align-items: center; }
-.split img { max-height: 500px; object-fit: contain; }
 .citation { padding-bottom: 96px; }
 .code-block { position: relative; background: #111820; color: #e8eef2; }
 .code-block pre { overflow-x: auto; margin: 0; padding: 28px; font-size: .88rem; line-height: 1.55; }
@@ -80,7 +78,6 @@ dialog button { position: absolute; top: 0; right: 8px; border: 0; background: n
   section { padding-block: 58px; }
   .video-grid.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .image-grid.three { grid-template-columns: 1fr; }
-  .split { grid-template-columns: 1fr; gap: 28px; }
 }
 
 @media (max-width: 620px) {
