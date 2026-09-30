@@ -23,7 +23,9 @@ button, a { font: inherit; }
 .narrow { max-width: 860px; }
 section { padding-block: 76px; }
 .hero { max-width: 1050px; padding: 92px 0 48px; text-align: center; }
-.hero h1 { margin: 10px auto 18px; max-width: 1000px; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.25rem, 5vw, 4.55rem); line-height: 1.08; letter-spacing: -.035em; }
+.hero h1 { margin: 10px auto 18px; max-width: 1000px; font-family: Georgia, "Times New Roman", serif; line-height: 1.08; }
+.title-brand { display: block; color: var(--dove); font-size: clamp(3.5rem, 8vw, 6.5rem); font-weight: 750; line-height: .98; letter-spacing: -.065em; }
+.title-description { display: block; max-width: 850px; margin: 16px auto 0; font-size: clamp(1.45rem, 3vw, 2.45rem); letter-spacing: -.025em; }
 .eyebrow { margin: 0 0 8px; color: var(--accent); font-size: .78rem; font-weight: 750; letter-spacing: .15em; text-transform: uppercase; }
 .authors { margin: 0; font-size: 1.2rem; }
 .venue { margin: 2px 0 22px; color: var(--muted); }
@@ -93,7 +95,6 @@ dialog button { position: absolute; top: 0; right: 8px; border: 0; background: n
 @media (max-width: 620px) {
   .wrap, .wide, .narrow { width: min(100% - 24px, 1180px); }
   .hero { padding-top: 62px; }
-  .hero h1 { font-size: 2.22rem; }
   section { padding-block: 46px; }
   .video-grid.two, .video-grid.three, .video-grid.four, .image-grid { grid-template-columns: 1fr; }
   .takeover-relation { align-items: stretch; flex-direction: column; gap: 6px; }
