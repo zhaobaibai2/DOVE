@@ -1,0 +1,132 @@
+# Route 1 seen-route evaluation for full DOVE. This is for checking effect on Route1, not for Route2 generalization claims.
+framework: "torch"
+seed: 42
+
+env:
+  state_dim: 344
+  action_dim: 2
+  max_action: [1.0, 1.0]
+  min_action: [-1.0, -1.0]
+
+training:
+  phase1_episodes: 3000
+  phase2_updates: 10000
+  phase3_interval: 100
+  buffer_warm_size: 1000
+  update_interval: 2
+  phase2_bc_updates_per_iter: 200
+  replay_batch_size: 64
+  buffer_max_size: 100000
+  human_buffer_max_size: 50000
+  max_iteration: 1000000
+  log_save_interval: 500
+  apprfunc_save_interval: 500
+  policy_update_time: 1
+  demo_data_path: null
+  demo_data_dir: null
+  use_one_step_delay: true
+  phase1_collect_only_intervention: true
+  collect_only: false
+  phase3_human_mix_ratio: 0.5
+  phase3_online_train_enabled: false
+  phase3_train_in_background: false
+  phase3_train_period_s: 0.2
+  phase3_skip_train_on_deadline_miss: true
+  phase3_max_infer_time_ms: 80.0
+  actor_sync_interval: 10
+  runtime_tb_interval: 1
+  action_path: "fast"               # fast=实车低延迟路径；debug=每tick完整gate/guidance诊断
+  gate_diagnostics_interval: 20      # fast路径下每N tick记录一次完整gate诊断
+  console_status_interval: 20        # 终端状态行打印间隔
+  offline_mode: "full"
+  offline_bc_updates: 10000
+  offline_pvp_updates: 10000
+
+algorithm:
+  gamma: 0.99
+  lr: 0.0001
+  alpha_lr: 0.03
+  tau: 0.005
+  delay_update: 1
+  delay_alpha_update: 1000
+  reward_scale: 1.0
+  target_entropy: -2.0
+  critic_objective: "cost"
+  num_timesteps: 10
+  use_ddim: true
+  ddim_steps: 5
+  ddim_eta: 0.0
+  num_samples: 100
+  lambda_pv: 1.0
+  B: 1.0
+  lambda_energy: 0.5
+  energy_margin: 0.5
+  energy_min_action_gap: 0.03
+  rejected_action_radius: 0.20
+  lambda_bc: 5.0
+  reward_free: true
+  phase3_use_bc_boost: true
+  fix_alpha: true
+  init_alpha: 0.1
+  action_noise_scale: 0.00
+  use_guidance: true
+  guidance_scale: 0.04
+  guidance_uncertainty_kappa: 1.0
+  guidance_min_gate: 0.05
+  guidance_sigma_ref: 1.0
+  guidance_grad_clip: 1.0
+  final_gate_enabled: true
+  final_gate_max_shift: 0.45
+  final_gate_min_q_improve: 0.0
+  final_gate_max_uncertainty: 0.50
+  final_gate_use_uncertainty: true
+
+network:
+  hidden_dims: [256, 256, 256]
+  diffusion_hidden_dims: [256, 256, 256]
+  time_dim: 16
+  activation: "relu"
+  use_layer_norm: true
+
+safety:
+  takeover_threshold: 0.8
+  max_steering_angle: 200
+  emergency_brake_threshold: 5.0
+  min_safe_distance: 2.0
+  max_abs_lateral_error: 2.0
+  min_obstacle_distance_brake: 0.0
+  obstacle_brake_speed: 2.0
+
+hardware:
+  use_gpu: true
+  cuda_mem_fraction: 0.9
+  dry_run: false
+  enable_keyboard_pause: true
+  can_interface: "can1"
+  can_id: 0x210
+
+eval:
+  model_dir: "./outputs"
+  model_path: "auto"
+  deterministic: true
+  action_path: "fast"               # eval默认走低延迟gate；debug可恢复完整诊断
+  gate_diagnostics_interval: 20      # eval每N tick记录一次完整gate诊断
+  noise_std: 0
+  method_name: "DOVE_full"
+  route_id: "Route1"
+  trial_id: "R1_DOVE_001"
+  scenario_id: "route1_seen_check"
+  checkpoint_id: ""
+  weather: ""
+  traffic_density: ""
+  obstacle_setup: ""
+
+logging:
+  result_root: "./outputs"
+  experiment_name: "DOVEER_REAL07_R1_EVAL_FULL"
+  save_folder: "./outputs/DOVEER_REAL07_R1_EVAL_FULL"
+  tensorboard_flush_secs: 20
+  runtime_csv_interval: 1
+  runtime_csv_flush_interval: 20
+  eval_csv_flush_interval: 20
+  verbose: true
