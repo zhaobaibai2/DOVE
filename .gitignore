@@ -7,3 +7,11 @@ checkpoint*/
 wandb/
 runs/
 cache/
+
+# Author-withheld main simulation weights
+02_data/models/final/simulation/DOVE/*.pkl
+# Generated caches and downloaded release archives
+**/__pycache__/
+*.py[cod]
+01_code/environment/mplconfig/
+02_data/.downloads/

@@ -1,0 +1,26 @@
+\begin{table}[!t]
+\centering
+\caption{{\normalfont Inference-side execution-mode ablation with the
+Full-\DOVE{} training configuration held fixed.}}
+\label{tab:simulation_diagnostics}
+\footnotesize
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.00}
+\begin{tabularx}{\columnwidth}{@{}L{0.46\columnwidth}*{4}{>{\centering\arraybackslash}X}@{}}
+\toprule
+Inference mode & Succ.$\uparrow$ & Coll.$\downarrow$ &
+Route$\uparrow$ & Ep.\ Reward$\uparrow$ \\
+\midrule
+Actor only (no guidance) & 0.400 & 0.400 & 0.768 & 288.53 \\
+Top-8 rerank & 0.388 & 0.500 & 0.703 & 261.45 \\
+Guidance, always execute & 0.472 & 0.490 & 0.658 & 244.14 \\
+\midrule
+Guidance, compatibility-only gate & 0.492 & 0.470 & 0.647 & 240.55 \\
+Guidance, proxy-only gate & 0.770 & 0.230 & 0.854 & 322.30 \\
+Guidance, w/o disagreement & 0.838 & 0.162 & 0.874 &
+\textbf{330.81} \\
+Guidance, full gate & \textbf{0.842} & \textbf{0.158} &
+\textbf{0.883} & 330.76 \\
+\bottomrule
+\end{tabularx}
+\end{table}

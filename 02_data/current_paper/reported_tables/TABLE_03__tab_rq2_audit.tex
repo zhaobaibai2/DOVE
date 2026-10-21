@@ -1,0 +1,45 @@
+\begin{table}[!t]
+\centering
+\caption{{\normalfont
+Actor- and critic-side diagnostics with EnergyRank and \CPCal{}
+enabled ($\checkmark$) or disabled ($\times$).
+The last row corresponds to Full \DOVE{}.}}
+\label{tab:rq2_audit}
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\renewcommand{\arraystretch}{1.08}
+
+\begin{tabularx}{\columnwidth}{
+@{}cc*{3}{>{\centering\arraybackslash}X}c@{}
+}
+\toprule
+\multicolumn{2}{c}{Components} &
+\multicolumn{3}{c}{Actor diagnostics} &
+Critic \\
+\cmidrule(lr){1-2}
+\cmidrule(lr){3-5}
+\cmidrule(l){6-6}
+
+EnergyRank &
+\CPCal{} &
+$\rho_{\mathrm{VLB}}\uparrow$ &
+HSR$\uparrow$ &
+RMR$_{0.5}\downarrow$ &
+$\mathrm{PairAcc}_{\mathrm C}^{\mathrm{mean}}\uparrow$ \\
+\midrule
+
+$\times$ & $\times$
+& 0.619 & 0.615 & 0.295 & 0.789 \\
+
+$\checkmark$ & $\times$
+& \textbf{0.989} & \textbf{0.981} & \textbf{0.007} & 0.345 \\
+
+$\times$ & $\checkmark$
+& 0.772 & 0.722 & 0.189 & \textbf{0.987} \\
+
+$\checkmark$ & $\checkmark$
+& 0.821 & 0.772 & 0.151 & 0.891 \\
+
+\bottomrule
+\end{tabularx}
+\end{table}

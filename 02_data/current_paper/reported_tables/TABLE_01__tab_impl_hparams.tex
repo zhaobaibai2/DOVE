@@ -1,0 +1,39 @@
+\begin{table}[!t]
+\centering
+\caption{{\normalfont Implementation and training hyperparameters of \DOVE{}.}}
+\label{tab:impl_hparams}
+\footnotesize
+\renewcommand{\arraystretch}{1.08}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}p{0.56\columnwidth}p{0.37\columnwidth}@{}}
+\toprule
+\textbf{Setting} & \textbf{Value}\\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Architecture and replay}}\\
+Action dimension / diffusion steps & $2$ / $20$\\
+Denoiser / critic hidden width & $128$ / $256$\\
+Denoiser / critic Adam learning rate & $1.5\times10^{-4}$ / $3\times10^{-4}$\\
+Batch size & $256$\\
+Sampling mix $\DN:\DI:\Ddemo$ & $75:15:10$\\
+Pair-distance threshold $\tau_{\mathrm{pair}}$ & $0.03$\\
+Noise schedule & VP ($b_{\min}=0.1$, $b_{\max}=10$)\\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Actor learning}}\\
+$m_{\mathrm{rank}}$ & $0.05$\\
+Final $\lambda_{\mathrm{BC}},\lambda_{\mathrm{RL}},\lambda_{\mathrm{reg}}$
+& $12,\ 0.1,\ 2.0$\\
+$\zeta_{\mathrm E},\varepsilon_{\mathrm E},\eta_{\mathrm E}^{\mathrm{init}}$
+& $10^{-3},\ 0.01,\ 1.0$\\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Critic learning}}\\
+Discount factor / Polyak coefficient & $0.99$ / $5\times10^{-3}$\\
+$m_{\mathrm C},\lambda_{\mathrm{cal}},c_{\mathrm{clip}}$
+& $0.1,\ 1.0,\ 1$\\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Guidance and gate}}\\
+$\lambda_{\mathrm g},\phi_t,g_{\max}$ & $0.5,\ t/T,\ 1.0$\\
+$d_{\max},\kappa_{\mathrm C}$ & $0.2,\ 0.02$\\
+$\tau_{\mathrm{comp}},\tau_{\mathrm D}$ & $0.02,\ 1.0$\\
+\bottomrule
+\end{tabular}
+\end{table}

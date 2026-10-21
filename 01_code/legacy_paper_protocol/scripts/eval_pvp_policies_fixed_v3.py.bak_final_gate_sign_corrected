@@ -1,0 +1,2062 @@
+"""
+PVP-DACER 批量策略评估脚本 v4（严格对齐训练环境）
+
+修正重点：
+  - 严格对齐训练脚本的环境配置与 reset 行为
+  - horizon 默认 1000（与训练一致）
+  - num_scenarios 默认 1（与当前训练一致）
+  - vehicle_config 与训练一致
+  - 默认 use_render=False，便于 headless 离线评估
+  - 默认执行 no-takeover 评估，专门测自主闭环：
+      manual_control=False
+      enable_takeover=False
+      out_of_route_done=True
+      crash_done=True
+  - 移植训练里的严格固定 seed 控制：
+      allowed_scenarios
+      禁用 sequential_reset
+      reset 后同步 current_seed / last_reset_info
+  - 过滤 .meta.pkl
+  - 每个 episode 打印终止原因
+"""
+
+import os
+import sys
+import re
+import json
+import csv
+import time
+import pickle
+import argparse
+import traceback
+import warnings
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
+
+os.environ.setdefault("JAX_ENABLE_X64", "false")
+os.environ.setdefault("JAX_DEFAULT_MATMUL_PRECISION", "float32")
+os.environ["JAX_PLATFORMS"] = "cuda"
+os.environ.setdefault("XLA_PYTHON_CLIENT_MEM_FRACTION", "0.5")
+os.environ.setdefault("XLA_PYTHON_CLIENT_PREALLOCATE", "false")
+
+for _deprecated_env_attr in (
+    "config",
+    "allowed_scenarios",
+    "allowed_seeds",
+    "scenario_seeds",
+    "sequential_seed_list",
+    "sequential_reset_seeds",
+    "set_sequential_reset",
+    "last_reset_info",
+):
+    warnings.filterwarnings(
+        "ignore",
+        message=rf"WARN: env\.{_deprecated_env_attr}\b.*deprecated",
+        category=UserWarning,
+        module=r"gymnasium\.core",
+    )
+
+import numpy as np
+import jax
+import jax.numpy as jnp
+
+jax.config.update("jax_default_matmul_precision", "float32")
+jax.config.update("jax_enable_x64", False)
+
+_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+try:
+    from _local_bootstrap import ensure_test0508_imports
+except ModuleNotFoundError:
+    from scripts._local_bootstrap import ensure_test0508_imports
+_DACER_ROOT = str(ensure_test0508_imports(__file__))
+_PROJECT_ROOT = _DACER_ROOT
+
+from relax_env.human_in_the_loop_env import HumanInTheLoopEnv
+from relax.network.dacer import create_dacer_net
+from relax.utils.jax_utils import random_key_from_data
+
+EVAL_MAPS_DEFAULT = [104]
+ACT_DIM = 2
+GUIDANCE_MODE_IDS = {"proxy_value": 0, "random_grad": 1, "none": 2, "reverse_grad": 3}
+GUIDANCE_TARGET_IDS = {"x0": 0, "xt": 1}
+GUIDANCE_Q_AGG_IDS = {"min": 0, "mean": 1, "single_q1": 2, "lcb": 3}
+GUIDANCE_INJECTION_IDS = {"clean_x0": 0, "latent_mean": 1}
+GUIDANCE_SCHEDULE_IDS = {"noise_level": 0, "alpha_cumprod": 1}
+
+
+def require_jax_gpu_ready() -> Tuple[str, List[Any]]:
+    try:
+        backend = jax.default_backend()
+        devices = list(jax.devices())
+    except RuntimeError as e:
+        raise RuntimeError(
+            "JAX GPU backend is required for this project, but backend initialization failed. "
+            "Check CUDA_VISIBLE_DEVICES, driver/CUDA compatibility, and the installed jaxlib build."
+        ) from e
+    if backend != "gpu":
+        raise RuntimeError(
+            f"JAX GPU backend is required for this project, but active backend is {backend!r}. "
+            "Do not run this evaluation with CPU backend."
+        )
+    return backend, devices
+
+
+def sanitize_sigma_ref(raw_sigma_ref: Any) -> jax.Array:
+    raw_sigma_ref = jnp.asarray(raw_sigma_ref, dtype=jnp.float32)
+    finite_positive = jnp.logical_and(jnp.isfinite(raw_sigma_ref), raw_sigma_ref > 0.0)
+    return jnp.where(finite_positive, raw_sigma_ref, jnp.float32(1.0))
+
+
+# ============================================================================
+# Utility
+# ============================================================================
+
+def mish(x):
+    return x * jnp.tanh(jax.nn.softplus(x))
+
+
+def load_run_args(log_dir: Path) -> Dict[str, Any]:
+    candidates: List[Path] = []
+    root_args = log_dir / "args.json"
+    if root_args.exists():
+        candidates.append(root_args)
+
+    bundle_candidates = sorted(log_dir.glob("final_bundle_step_*/args.json"))
+    if bundle_candidates:
+        def _bundle_step(p: Path) -> int:
+            m = re.search(r"final_bundle_step_(\d+)", str(p))
+            return int(m.group(1)) if m else -1
+        candidates.extend(sorted(bundle_candidates, key=_bundle_step, reverse=True))
+
+    for path in candidates:
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            print(f"Loaded training args from: {path}")
+            return data
+        except Exception as e:
+            print(f"WARNING: failed to read {path}: {e}")
+
+    print("WARNING: args.json not found, fallback to default network/env config")
+    return {}
+
+
+def find_run_args_dir(preferred_dir: Path, policy_files: Optional[List[Path]] = None) -> Path:
+    """Pick the nearest directory that contains training args.json."""
+    candidates: List[Path] = []
+
+    def _add(path: Path):
+        try:
+            path = path.resolve()
+        except Exception:
+            pass
+        if path not in candidates:
+            candidates.append(path)
+
+    if preferred_dir.is_file():
+        _add(preferred_dir.parent)
+    else:
+        _add(preferred_dir)
+
+    for policy in policy_files or []:
+        _add(policy.parent)
+        _add(policy.parent.parent)
+
+    for path in candidates:
+        if (path / "args.json").exists():
+            return path
+        try:
+            if any(path.glob("final_bundle_step_*/args.json")):
+                return path
+        except Exception:
+            pass
+
+    return candidates[0] if candidates else preferred_dir
+
+
+def build_agent(obs_dim: int, run_args: Dict[str, Any]):
+    hidden_num = int(run_args.get("hidden_num", 2))
+    hidden_dim = int(run_args.get("hidden_dim", 256))
+    diffusion_hidden_dim = int(run_args.get("diffusion_hidden_dim", 128))
+    diffusion_steps = int(run_args.get("diffusion_steps", 20))
+    action_noise_coef = float(run_args.get("action_noise_coef", 0.0))
+
+    hidden_sizes = [hidden_dim] * hidden_num
+    diff_hidden_sizes = [diffusion_hidden_dim] * hidden_num
+
+    init_key = jax.random.key(0)
+    agent, _ = create_dacer_net(
+        init_key, obs_dim, ACT_DIM,
+        hidden_sizes, diff_hidden_sizes, mish,
+        num_timesteps=diffusion_steps,
+        action_noise_coef=action_noise_coef,
+    )
+    return agent
+
+
+# ============================================================================
+# Environment creation (strictly aligned with training Stage2)
+# ============================================================================
+
+def create_eval_env(
+    horizon: int = 1000,
+    run_args: Optional[Dict[str, Any]] = None,
+    use_render: bool = False,
+) -> HumanInTheLoopEnv:
+    """
+    Align with training script:
+      create_human_in_the_loop_pvp_env(...)
+      + Stage2 extra config updates.
+    """
+    run_args = run_args or {}
+
+    env_config = {
+        # training-aligned basic config
+        "start_seed": int(run_args.get("start_seed", 104)),
+        "num_scenarios": int(run_args.get("num_scenarios", 1)),
+        "traffic_density": float(run_args.get("traffic_density", 0.06)),
+        "horizon": int(horizon),
+        "controller": str(run_args.get("controller", "steering_wheel")),
+        "vehicle_config": {
+            "show_lidar": False,
+            "show_side_detector": False,
+            "show_lane_line_detector": False,
+        },
+        "show_logo": False,
+        "show_fps": True,
+
+        # Stage2-aligned runtime behavior
+        "manual_control": False,
+        "enable_takeover": False,
+        "out_of_route_done": True,
+        "crash_done": True,
+
+        # 外部评估默认禁用接管，专门测试自主闭环表现
+        "use_render": bool(use_render),
+    }
+
+    return HumanInTheLoopEnv(env_config)
+
+
+def infer_dt(env: HumanInTheLoopEnv, cli_dt: Optional[float]) -> float:
+    if cli_dt is not None:
+        return float(cli_dt)
+
+    candidates = []
+    try:
+        cfg = _safe_local_attr(env, "config", None)
+        if isinstance(cfg, dict):
+            for key in ("dt", "time_step", "physics_world_step_size"):
+                if key in cfg:
+                    candidates.append(cfg[key])
+    except Exception:
+        pass
+
+    try:
+        engine = getattr(env, "engine", None)
+        if engine is not None:
+            for key in ("dt", "time_step", "physics_world_step_size"):
+                if hasattr(engine, key):
+                    candidates.append(getattr(engine, key))
+    except Exception:
+        pass
+
+    for v in candidates:
+        try:
+            v = float(v)
+            if np.isfinite(v) and v > 0:
+                return v
+        except Exception:
+            pass
+
+    print("WARNING: unable to infer dt automatically, fallback to 0.02")
+    return 0.02
+
+
+_MISSING = object()
+
+
+def _safe_local_attr(obj, name: str, default=_MISSING):
+    try:
+        return object.__getattribute__(obj, name)
+    except AttributeError:
+        if default is _MISSING:
+            raise
+        return default
+
+
+def _safe_config_dict(obj) -> Optional[dict]:
+    cfg = _safe_local_attr(obj, "config", None)
+    return cfg if isinstance(cfg, dict) else None
+
+
+# ============================================================================
+# Strict fixed-seed controller (ported from training)
+# ============================================================================
+
+def _unwrap_env(env, max_depth: int = 10):
+    e = env
+    visited = set()
+    for _ in range(max_depth):
+        if id(e) in visited:
+            break
+        visited.add(id(e))
+        if hasattr(e, "env"):
+            e = e.env
+        else:
+            break
+    try:
+        if hasattr(e, "unwrapped"):
+            e = e.unwrapped
+    except Exception:
+        pass
+    return e
+
+
+def _find_hitl_env(env, max_depth: int = 10):
+    current = env
+    for _ in range(max_depth):
+        if isinstance(current, HumanInTheLoopEnv):
+            return current
+        if hasattr(current, "env"):
+            current = current.env
+        else:
+            break
+    return getattr(env, "unwrapped", env)
+
+
+def _iter_candidate_envs(env):
+    candidates = []
+    try:
+        candidates.append(env)
+    except Exception:
+        pass
+    try:
+        candidates.append(_find_hitl_env(env))
+    except Exception:
+        pass
+    try:
+        candidates.append(_unwrap_env(env))
+    except Exception:
+        pass
+
+    seen = set()
+    uniq = []
+    for obj in candidates:
+        if obj is None:
+            continue
+        if id(obj) in seen:
+            continue
+        seen.add(id(obj))
+        uniq.append(obj)
+    return uniq
+
+
+def _disable_env_sequential_reset(env) -> None:
+    for obj in _iter_candidate_envs(env):
+        try:
+            setter = _safe_local_attr(obj, "set_sequential_reset", None)
+            if callable(setter):
+                setter(False)
+        except Exception:
+            pass
+        try:
+            if _safe_local_attr(obj, "sequential_reset", _MISSING) is not _MISSING:
+                obj.sequential_reset = False
+        except Exception:
+            pass
+        try:
+            cfg = _safe_config_dict(obj)
+            if cfg is not None:
+                cfg["sequential_reset"] = False
+        except Exception:
+            pass
+
+
+def _apply_fixed_seed_config(env, allowed_seeds: List[int]) -> None:
+    allowed_seeds = [int(x) for x in allowed_seeds]
+    for obj in _iter_candidate_envs(env):
+        try:
+            cfg = _safe_config_dict(obj)
+            if cfg is not None:
+                cfg["allowed_scenarios"] = list(allowed_seeds)
+        except Exception:
+            pass
+
+        for attr in [
+            "allowed_scenarios",
+            "allowed_seeds",
+            "scenario_seeds",
+            "sequential_seed_list",
+            "sequential_reset_seeds",
+            "_sequential_reset_seeds",
+        ]:
+            try:
+                if _safe_local_attr(obj, attr, _MISSING) is not _MISSING:
+                    setattr(obj, attr, list(allowed_seeds))
+            except Exception:
+                pass
+
+
+def _sync_env_current_seed(env, seed: int) -> None:
+    for obj in _iter_candidate_envs(env):
+        try:
+            if _safe_local_attr(obj, "current_seed", _MISSING) is not _MISSING:
+                obj.current_seed = int(seed)
+        except Exception:
+            pass
+        try:
+            info = _safe_local_attr(obj, "last_reset_info", _MISSING)
+            if info is not _MISSING:
+                if not isinstance(info, dict):
+                    info = {}
+                    obj.last_reset_info = info
+                if isinstance(info, dict):
+                    info["current_seed"] = int(seed)
+                    info["seed"] = int(seed)
+                    info["scenario_seed"] = int(seed)
+                    info["map_seed"] = int(seed)
+        except Exception:
+            pass
+
+
+def install_strict_eval_seed_controller(env, allowed_seeds: List[int]) -> None:
+    allowed_seeds = [int(x) for x in allowed_seeds]
+    if not allowed_seeds:
+        raise ValueError("allowed_seeds cannot be empty")
+    _apply_fixed_seed_config(env, allowed_seeds)
+    _disable_env_sequential_reset(env)
+
+
+def reset_to_strict_eval_map(env, seed: int, allowed_seeds: Optional[List[int]] = None):
+    seed = int(seed)
+    if allowed_seeds is None:
+        allowed_seeds = [seed]
+    allowed_seeds = [int(x) for x in allowed_seeds]
+
+    if seed not in allowed_seeds:
+        raise ValueError(f"seed={seed} is not in allowed_seeds={allowed_seeds}")
+
+    _apply_fixed_seed_config(env, allowed_seeds)
+    _disable_env_sequential_reset(env)
+
+    obs, info = env.reset(seed=seed)
+    _sync_env_current_seed(env, seed)
+
+    actual_seed = None
+    for key in ("current_seed", "seed", "scenario_seed", "map_seed"):
+        if key in info:
+            try:
+                actual_seed = int(info[key])
+                break
+            except Exception:
+                pass
+
+    if actual_seed is not None and actual_seed != seed:
+        print(f"WARNING: seed mismatch, requested={seed}, actual={actual_seed}")
+
+    return obs, info
+
+
+# ============================================================================
+# Info extraction
+# ============================================================================
+
+def _safe_float(info: Dict[str, Any], *keys: str) -> Optional[float]:
+    for key in keys:
+        if key in info:
+            try:
+                v = info[key]
+                if isinstance(v, (list, tuple, np.ndarray)):
+                    arr = np.asarray(v, dtype=np.float32)
+                    if arr.size == 1:
+                        return float(arr.reshape(-1)[0])
+                    continue
+                return float(v)
+            except Exception:
+                continue
+    return None
+
+
+def get_speed_mps(info: Dict[str, Any]) -> float:
+    speed = _safe_float(info, "speed")
+    if speed is not None:
+        return speed
+
+    speed_kmh = _safe_float(info, "speed_kmh")
+    if speed_kmh is not None:
+        return speed_kmh / 3.6
+
+    velocity = info.get("velocity", None)
+    if velocity is not None:
+        try:
+            arr = np.asarray(velocity, dtype=np.float32)
+            if arr.ndim == 0:
+                return float(arr)
+            if arr.size >= 2:
+                return float(np.linalg.norm(arr[:2]))
+            if arr.size == 1:
+                return float(arr.reshape(-1)[0])
+        except Exception:
+            pass
+
+    return 0.0
+
+
+# ============================================================================
+# Policy load / action adapter
+# ============================================================================
+
+def load_policy_payload(policy_pkl: Path) -> Optional[Any]:
+    try:
+        with open(policy_pkl, "rb") as f:
+            return pickle.load(f)
+    except Exception as e:
+        print(f"ERROR: failed to load {policy_pkl.name}: {e}")
+        return None
+
+
+def _extract_log_alpha_from_payload(payload: Any):
+    try:
+        if hasattr(payload, "log_alpha"):
+            return payload.log_alpha
+    except Exception:
+        pass
+    if isinstance(payload, dict) and "log_alpha" in payload:
+        return payload["log_alpha"]
+    if isinstance(payload, (list, tuple)) and len(payload) >= 2:
+        return payload[1]
+    return None
+
+
+def _extract_policy_only_from_payload(payload: Any):
+    try:
+        if hasattr(payload, "policy"):
+            return payload.policy
+    except Exception:
+        pass
+    if isinstance(payload, dict) and "policy" in payload:
+        return payload["policy"]
+    if isinstance(payload, (list, tuple)) and len(payload) >= 1:
+        return payload[0]
+    return payload
+
+
+def _candidate_policy_objs(payload: Any) -> List[Tuple[str, Any]]:
+    out: List[Tuple[str, Any]] = []
+    seen = set()
+
+    def _add(tag: str, obj: Any):
+        k = id(obj)
+        if k in seen:
+            return
+        seen.add(k)
+        out.append((tag, obj))
+
+    _add("raw", payload)
+    policy_only = _extract_policy_only_from_payload(payload)
+    _add("policy_only", policy_only)
+
+    log_alpha = _extract_log_alpha_from_payload(payload)
+    if log_alpha is not None:
+        try:
+            _add("policy_plus_log_alpha", (policy_only, log_alpha))
+        except Exception:
+            pass
+
+    return out
+
+
+def _extract_guidance_components_from_payload(payload: Any):
+    policy_only = _extract_policy_only_from_payload(payload)
+    log_alpha = _extract_log_alpha_from_payload(payload)
+    if log_alpha is None:
+        return None
+
+    online_q1 = online_q2 = None
+    target_q1 = target_q2 = None
+    mean_q1_std = mean_q2_std = None
+    sigma_ref = None
+    version = "legacy"
+
+    if isinstance(payload, dict):
+        online_q1 = payload.get("q1")
+        online_q2 = payload.get("q2")
+        target_q1 = payload.get("target_q1", payload.get("q1"))
+        target_q2 = payload.get("target_q2", payload.get("q2"))
+        mean_q1_std = payload.get("mean_q1_std", None)
+        mean_q2_std = payload.get("mean_q2_std", None)
+        sigma_ref = payload.get("sigma_ref", None)
+        version = str(payload.get("version", version))
+    elif isinstance(payload, (list, tuple)) and len(payload) >= 4:
+        online_q1 = payload[2]
+        online_q2 = payload[3]
+        target_q1 = payload[2]
+        target_q2 = payload[3]
+
+    if target_q1 is None or target_q2 is None:
+        return None
+    if online_q1 is None or online_q2 is None:
+        online_q1, online_q2 = target_q1, target_q2
+
+    if sigma_ref is None and mean_q1_std is not None and mean_q2_std is not None:
+        sigma_ref = 0.5 * (jnp.asarray(mean_q1_std) + jnp.asarray(mean_q2_std))
+    if sigma_ref is None:
+        sigma_ref = jnp.float32(1.0)
+
+    sigma_ref = sanitize_sigma_ref(sigma_ref)
+    return {
+        "policy_obj": (policy_only, log_alpha),
+        "q_params": (target_q1, target_q2),
+        "target_q_params": (target_q1, target_q2),
+        "online_q_params": (online_q1, online_q2),
+        "sigma_ref": sigma_ref,
+        "version": version,
+        "has_target_critics": isinstance(payload, dict) and "target_q1" in payload and "target_q2" in payload,
+    }
+
+
+# ============================================================================
+# JIT inference
+# ============================================================================
+
+def _build_jit_action_fn(agent, obs_mode: str, guidance_cfg: Optional[Dict[str, Any]] = None):
+    guidance_cfg = guidance_cfg or {}
+    use_guidance = bool(guidance_cfg.get("use_value_guidance", False))
+    if int(guidance_cfg.get("rerank_topk", 0) or 0) > 1:
+        return None
+
+    if use_guidance and obs_mode == "batched":
+        lambda_0 = jnp.float32(guidance_cfg["lambda_0"])
+        beta_unc = jnp.float32(guidance_cfg["beta_unc"])
+        p_decay = jnp.float32(guidance_cfg["p_decay"])
+        grad_clip = jnp.float32(guidance_cfg["grad_clip"])
+        guidance_mode = jnp.int32(guidance_cfg["guidance_mode_id"])
+        guidance_target = jnp.int32(guidance_cfg["guidance_target_id"])
+        guidance_step_interval = jnp.int32(guidance_cfg["guidance_step_interval"])
+        guidance_q_agg = jnp.int32(guidance_cfg["guidance_q_agg_id"])
+        guidance_kappa = jnp.float32(guidance_cfg.get("guidance_kappa", 1.0))
+        guidance_injection = jnp.int32(guidance_cfg.get("guidance_injection_id", 0))
+        guidance_schedule = jnp.int32(guidance_cfg.get("guidance_schedule_id", 0))
+
+        @jax.jit
+        def _jit_action(policy_obj, q_params, sigma_ref, obs):
+            obs_batched = obs[None, :]
+            key = random_key_from_data(obs_batched)
+            act, info = agent.get_deterministic_action_guided_with_metrics(
+                key, policy_obj, q_params, obs_batched, sigma_ref,
+                lambda_0, beta_unc, p_decay, grad_clip, guidance_mode,
+                guidance_target, guidance_step_interval, guidance_q_agg,
+                guidance_kappa, guidance_injection, guidance_schedule,
+            )
+            return act[0], info
+        return _jit_action
+
+    if use_guidance:
+        lambda_0 = jnp.float32(guidance_cfg["lambda_0"])
+        beta_unc = jnp.float32(guidance_cfg["beta_unc"])
+        p_decay = jnp.float32(guidance_cfg["p_decay"])
+        grad_clip = jnp.float32(guidance_cfg["grad_clip"])
+        guidance_mode = jnp.int32(guidance_cfg["guidance_mode_id"])
+        guidance_target = jnp.int32(guidance_cfg["guidance_target_id"])
+        guidance_step_interval = jnp.int32(guidance_cfg["guidance_step_interval"])
+        guidance_q_agg = jnp.int32(guidance_cfg["guidance_q_agg_id"])
+        guidance_kappa = jnp.float32(guidance_cfg.get("guidance_kappa", 1.0))
+        guidance_injection = jnp.int32(guidance_cfg.get("guidance_injection_id", 0))
+        guidance_schedule = jnp.int32(guidance_cfg.get("guidance_schedule_id", 0))
+
+        @jax.jit
+        def _jit_action(policy_obj, q_params, sigma_ref, obs):
+            key = random_key_from_data(obs)
+            act, info = agent.get_deterministic_action_guided_with_metrics(
+                key, policy_obj, q_params, obs, sigma_ref,
+                lambda_0, beta_unc, p_decay, grad_clip, guidance_mode,
+                guidance_target, guidance_step_interval, guidance_q_agg,
+                guidance_kappa, guidance_injection, guidance_schedule,
+            )
+            if act.ndim == 2:
+                act = act[0]
+            return act, info
+        return _jit_action
+
+    if obs_mode == "batched":
+        @jax.jit
+        def _jit_action(policy_obj, obs):
+            obs_batched = obs[None, :]
+            act = agent.get_deterministic_action(policy_obj, obs_batched)
+            return act[0]
+        return _jit_action
+    else:
+        @jax.jit
+        def _jit_action(policy_obj, obs):
+            act = agent.get_deterministic_action(policy_obj, obs)
+            if act.ndim == 2:
+                act = act[0]
+            return act
+        return _jit_action
+
+
+def resolve_action_adapter(
+    agent,
+    policy_payload: Any,
+    sample_obs: np.ndarray,
+    guidance_cfg: Optional[Dict[str, Any]] = None,
+):
+    sample_obs = np.asarray(sample_obs, dtype=np.float32)
+    guidance_cfg = guidance_cfg or {}
+    use_guidance = bool(guidance_cfg.get("use_value_guidance", False))
+    rerank_topk = int(guidance_cfg.get("rerank_topk", 0) or 0)
+    obs_variants = [
+        ("single", jnp.asarray(sample_obs, dtype=jnp.float32)),
+        ("batched", jnp.asarray(sample_obs[None, :], dtype=jnp.float32)),
+    ]
+    last_error: Optional[Exception] = None
+
+    if rerank_topk > 1:
+        components = _extract_guidance_components_from_payload(policy_payload)
+        if components is None:
+            print("   ERROR: top-k rerank requires policy/log_alpha plus q critics in checkpoint")
+            return None
+        policy_obj = components["policy_obj"]
+        critic_params_source = str(guidance_cfg.get("critic_params", "target"))
+        if critic_params_source == "online":
+            q_params = components["online_q_params"]
+        else:
+            q_params = components["target_q_params"]
+        for obs_mode, obs_val in obs_variants:
+            try:
+                adapter = {
+                    "policy_obj": policy_obj,
+                    "policy_tag": f"topk_rerank_{rerank_topk}",
+                    "obs_mode": obs_mode,
+                    "jit_fn": None,
+                    "use_topk_rerank": True,
+                    "use_final_gate": False,
+                    "q_params": q_params,
+                    "guidance_cfg": guidance_cfg,
+                }
+                out_np = det_action(agent, adapter, sample_obs)
+                if out_np.shape != (ACT_DIM,) or not np.all(np.isfinite(out_np)):
+                    continue
+                print(
+                    f"Action adapter resolved | policy=topk_rerank | obs={obs_mode} | "
+                    f"K={rerank_topk} | critic_params={critic_params_source}"
+                )
+                return adapter
+            except Exception as e:
+                last_error = e
+                continue
+        if last_error is not None:
+            print(f"   ERROR: top-k action adapter validation failed: {type(last_error).__name__}: {last_error}")
+        return None
+
+    if use_guidance:
+        components = _extract_guidance_components_from_payload(policy_payload)
+        if components is None:
+            print("   ERROR: guided eval requires policy/log_alpha plus q critics in checkpoint")
+            return None
+        if not components["has_target_critics"]:
+            print("   WARNING: checkpoint has no target critics; falling back to saved q1/q2 for guided eval")
+        if components["version"] == "legacy":
+            print("   WARNING: legacy checkpoint has no saved mean_q_std; sigma_ref fallback may be approximate")
+
+        policy_obj = components["policy_obj"]
+        critic_params_source = str(guidance_cfg.get("critic_params", "target"))
+        if critic_params_source == "online":
+            q_params = components["online_q_params"]
+        else:
+            q_params = components["target_q_params"]
+        sigma_ref = components["sigma_ref"]
+        for obs_mode, obs_val in obs_variants:
+            try:
+                key = random_key_from_data(obs_val)
+                out = agent.get_deterministic_action_guided(
+                    key,
+                    policy_obj,
+                    q_params,
+                    obs_val,
+                    sigma_ref,
+                    jnp.float32(guidance_cfg["lambda_0"]),
+                    jnp.float32(guidance_cfg["beta_unc"]),
+                    jnp.float32(guidance_cfg["p_decay"]),
+                    jnp.float32(guidance_cfg["grad_clip"]),
+                    jnp.int32(guidance_cfg["guidance_mode_id"]),
+                    jnp.int32(guidance_cfg["guidance_target_id"]),
+                    jnp.int32(guidance_cfg["guidance_step_interval"]),
+                    jnp.int32(guidance_cfg["guidance_q_agg_id"]),
+                    jnp.float32(guidance_cfg.get("guidance_kappa", 1.0)),
+                    jnp.int32(guidance_cfg.get("guidance_injection_id", 0)),
+                    jnp.int32(guidance_cfg.get("guidance_schedule_id", 0)),
+                )
+                out_np = np.asarray(jax.device_get(out), dtype=np.float32)
+                if out_np.ndim == 2 and out_np.shape[0] == 1:
+                    out_np = out_np[0]
+                if out_np.ndim != 1 or out_np.shape[-1] != ACT_DIM:
+                    continue
+                if not np.all(np.isfinite(out_np)):
+                    continue
+
+                jit_fn = _build_jit_action_fn(agent, obs_mode, guidance_cfg)
+                warmup_out = jit_fn(policy_obj, q_params, sigma_ref, jnp.asarray(sample_obs, dtype=jnp.float32))
+                warmup_act = warmup_out[0] if isinstance(warmup_out, tuple) else warmup_out
+                warmup_out_np = np.asarray(jax.device_get(warmup_act), dtype=np.float32)
+                if warmup_out_np.shape != (ACT_DIM,) or not np.all(np.isfinite(warmup_out_np)):
+                    print("WARNING: guided JIT output validation failed, fallback to non-JIT mode")
+                    jit_fn = None
+
+                vanilla_jit_fn = None
+                if bool(guidance_cfg.get("use_final_gate", False)):
+                    try:
+                        vanilla_jit_fn = _build_jit_action_fn(agent, obs_mode, None)
+                        vanilla_warm = vanilla_jit_fn(
+                            policy_obj,
+                            jnp.asarray(sample_obs, dtype=jnp.float32),
+                        )
+                        vanilla_warm_np = np.asarray(jax.device_get(vanilla_warm), dtype=np.float32)
+                        if vanilla_warm_np.shape != (ACT_DIM,) or not np.all(np.isfinite(vanilla_warm_np)):
+                            print("WARNING: final-gate vanilla JIT output validation failed, fallback to non-JIT mode")
+                            vanilla_jit_fn = None
+                    except Exception as e:
+                        print(f"WARNING: final-gate vanilla JIT warmup failed: {type(e).__name__}: {e}")
+                        vanilla_jit_fn = None
+
+                print(
+                    f"Action adapter resolved | policy=guided:{components['version']} | obs={obs_mode} | "
+                    f"JIT={'yes' if jit_fn else 'no'} | sigma_ref={float(jax.device_get(sigma_ref)):.6g}"
+                    f" | critic_params={critic_params_source}"
+                    f" | final_gate_vanilla_JIT={'yes' if vanilla_jit_fn else 'no'}"
+                )
+                return {
+                    "policy_obj": policy_obj,
+                    "policy_tag": "guided",
+                    "obs_mode": obs_mode,
+                    "jit_fn": jit_fn,
+                    "vanilla_jit_fn": vanilla_jit_fn,
+                    "use_value_guidance": True,
+                    "use_final_gate": bool(guidance_cfg.get("use_final_gate", False)),
+                    "q_params": q_params,
+                    "sigma_ref": sigma_ref,
+                    "guidance_cfg": guidance_cfg,
+                }
+            except Exception as e:
+                last_error = e
+                continue
+        if last_error is not None:
+            print(f"   ERROR: guided action adapter validation failed: {type(last_error).__name__}: {last_error}")
+        return None
+
+    for policy_tag, policy_obj in _candidate_policy_objs(policy_payload):
+        for obs_mode, obs_val in obs_variants:
+            try:
+                out = agent.get_deterministic_action(policy_obj, obs_val)
+                out_np = np.asarray(jax.device_get(out), dtype=np.float32)
+
+                if out_np.ndim == 2 and out_np.shape[0] == 1:
+                    out_np = out_np[0]
+
+                if out_np.ndim != 1 or out_np.shape[-1] != ACT_DIM:
+                    continue
+                if not np.all(np.isfinite(out_np)):
+                    continue
+
+                jit_fn = _build_jit_action_fn(agent, obs_mode)
+                obs_jax = jnp.asarray(sample_obs, dtype=jnp.float32)
+                warmup_out = jit_fn(policy_obj, obs_jax)
+                warmup_out_np = np.asarray(jax.device_get(warmup_out), dtype=np.float32)
+
+                if warmup_out_np.shape != (ACT_DIM,) or not np.all(np.isfinite(warmup_out_np)):
+                    print("WARNING: JIT output validation failed, fallback to non-JIT mode")
+                    jit_fn = None
+
+                print(
+                    f"Action adapter resolved | policy={policy_tag} | obs={obs_mode} | "
+                    f"JIT={'yes' if jit_fn else 'no'}"
+                )
+                return {
+                    "policy_obj": policy_obj,
+                    "policy_tag": policy_tag,
+                    "obs_mode": obs_mode,
+                    "jit_fn": jit_fn,
+                }
+            except Exception as e:
+                last_error = e
+                continue
+
+    if last_error is not None:
+        print(f"   ERROR: action adapter validation failed: {type(last_error).__name__}: {last_error}")
+    return None
+
+
+def _as_action_1d(action: Any) -> np.ndarray:
+    arr = np.asarray(jax.device_get(action), dtype=np.float32)
+    if arr.ndim == 2 and arr.shape[0] == 1:
+        arr = arr[0]
+    return np.clip(arr.reshape(-1), -1.0, 1.0)
+
+
+def _q_bounds(agent, q_params, obs_b, act_b, kappa: float) -> Tuple[float, float, float, float]:
+    q1m, _ = agent.q(q_params[0], obs_b, act_b)
+    q2m, _ = agent.q(q_params[1], obs_b, act_b)
+    q1 = float(jax.device_get(jnp.ravel(q1m)[0]))
+    q2 = float(jax.device_get(jnp.ravel(q2m)[0]))
+    qbar = 0.5 * (q1 + q2)
+    uq = 0.5 * abs(q1 - q2)
+    return qbar - float(kappa) * uq, qbar + float(kappa) * uq, qbar, uq
+
+
+def _scalar_from_jax(value: Any) -> float:
+    try:
+        arr = np.asarray(jax.device_get(value), dtype=np.float64)
+        return float(np.mean(arr))
+    except Exception:
+        try:
+            return float(value)
+        except Exception:
+            return float("nan")
+
+
+def _append_guidance_stats(adapter: Dict[str, Any], guidance_info: Optional[Dict[str, Any]], extra: Optional[Dict[str, float]] = None) -> None:
+    if not guidance_info:
+        return
+    stats: Dict[str, float] = {}
+    for k, v in guidance_info.items():
+        stats[k] = _scalar_from_jax(v)
+    if extra:
+        for k, v in extra.items():
+            stats[k] = float(v)
+    adapter.setdefault("_episode_gate_stats", []).append(stats)
+
+
+def _diffusion_prior_energy(
+    agent,
+    policy_obj,
+    obs_b,
+    act_b,
+    *,
+    samples: int,
+    alpha: float,
+) -> float:
+    samples = max(1, int(samples))
+    timesteps = np.linspace(0, max(int(agent.num_timesteps) - 1, 0), samples, dtype=np.int32)
+    base_key = random_key_from_data(obs_b)
+    losses: List[float] = []
+    for idx, t_i in enumerate(timesteps):
+        t = jnp.asarray(int(t_i), dtype=jnp.int32)
+        noise = jax.random.normal(jax.random.fold_in(base_key, int(idx) + 7919), act_b.shape)
+        x_noisy = agent.diffusion.q_sample(t, act_b, noise)
+        pred = agent.predict_noise(policy_obj, obs_b, t, x_noisy)
+        loss = jnp.mean((pred - noise) ** 2)
+        losses.append(float(jax.device_get(loss)))
+    return float(alpha) * float(np.mean(losses))
+
+
+def _dove_final_gate_action(agent, adapter: Dict[str, Any], obs: np.ndarray) -> np.ndarray:
+    cfg = adapter["guidance_cfg"]
+    obs_jax = jnp.asarray(obs, dtype=jnp.float32)
+    obs_b = obs_jax[None, :]
+    key = random_key_from_data(obs_b)
+
+    # IMPORTANT: final gate needs both vanilla and guided actions.
+    # Reuse pre-warmed JIT samplers. Otherwise JAX/XLA may recompile
+    # the diffusion lax.scan inside every closed-loop env step.
+    vanilla_jit_fn = adapter.get("vanilla_jit_fn")
+    if vanilla_jit_fn is not None:
+        vanilla_jax = vanilla_jit_fn(adapter["policy_obj"], obs_jax)
+    else:
+        vanilla_jax = agent.get_deterministic_action(adapter["policy_obj"], obs_b)
+
+    guided_jit_fn = adapter.get("jit_fn")
+    if guided_jit_fn is not None:
+        guided_out = guided_jit_fn(
+            adapter["policy_obj"],
+            adapter["q_params"],
+            adapter["sigma_ref"],
+            obs_jax,
+        )
+        if isinstance(guided_out, tuple):
+            guided_jax, guidance_info = guided_out
+        else:
+            guided_jax, guidance_info = guided_out, {}
+    else:
+        guided_jax, guidance_info = agent.get_deterministic_action_guided_with_metrics(
+            key,
+            adapter["policy_obj"],
+            adapter["q_params"],
+            obs_b,
+            adapter["sigma_ref"],
+            jnp.float32(cfg["lambda_0"]),
+            jnp.float32(cfg["beta_unc"]),
+            jnp.float32(cfg["p_decay"]),
+            jnp.float32(cfg["grad_clip"]),
+            jnp.int32(cfg["guidance_mode_id"]),
+            jnp.int32(cfg["guidance_target_id"]),
+            jnp.int32(cfg["guidance_step_interval"]),
+            jnp.int32(cfg["guidance_q_agg_id"]),
+            jnp.float32(cfg.get("guidance_kappa", 1.0)),
+            jnp.int32(cfg.get("guidance_injection_id", 0)),
+            jnp.int32(cfg.get("guidance_schedule_id", 0)),
+        )
+
+    vanilla = _as_action_1d(vanilla_jax)
+    guided = _as_action_1d(guided_jax)
+    if guidance_info:
+        _append_guidance_stats(adapter, guidance_info)
+
+    vanilla_b = jnp.asarray(vanilla[None, :], dtype=jnp.float32)
+    guided_b = jnp.asarray(guided[None, :], dtype=jnp.float32)
+    kappa = float(cfg.get("final_gate_kappa", 1.0))
+    lcb_g, _, qbar_g, uq_g = _q_bounds(agent, adapter["q_params"], obs_b, guided_b, kappa)
+    _, ucb_0, qbar_0, uq_0 = _q_bounds(agent, adapter["q_params"], obs_b, vanilla_b, kappa)
+    proxy_gain = lcb_g - ucb_0
+
+    energy_g = _diffusion_prior_energy(
+        agent,
+        adapter["policy_obj"],
+        obs_b,
+        guided_b,
+        samples=int(cfg.get("final_gate_energy_samples", 4)),
+        alpha=float(cfg.get("final_gate_energy_alpha", 1.0)),
+    )
+    energy_0 = _diffusion_prior_energy(
+        agent,
+        adapter["policy_obj"],
+        obs_b,
+        vanilla_b,
+        samples=int(cfg.get("final_gate_energy_samples", 4)),
+        alpha=float(cfg.get("final_gate_energy_alpha", 1.0)),
+    )
+    energy_shift = energy_g - energy_0
+    prior_delta = -energy_shift
+    shift = float(np.linalg.norm(guided - vanilla))
+    shift_cost = 0.5 * shift * shift
+    sat_cost = float(np.mean(np.maximum(np.abs(guided) - 0.98, 0.0) > 0.0))
+    mode = str(cfg.get("final_gate_mode", "proxy_prior"))
+    if mode == "proxy_only":
+        raw_score = proxy_gain
+    elif mode == "prior_only":
+        raw_score = float(cfg.get("final_gate_beta_prior", 1.0)) * prior_delta
+    else:
+        raw_score = proxy_gain + float(cfg.get("final_gate_beta_prior", 1.0)) * prior_delta
+    score = raw_score - float(cfg.get("final_gate_rho_shift", 0.0)) * shift_cost - float(cfg.get("final_gate_rho_sat", 0.0)) * sat_cost
+    finite_ok = bool(np.all(np.isfinite(guided)))
+    shift_ok = bool(shift <= float(cfg.get("final_gate_max_action_shift", 2.0)))
+    score_ok = bool(score > float(cfg.get("final_gate_margin", 0.0)))
+    hard_ok = finite_ok and shift_ok
+    accepted = bool(score_ok and hard_ok)
+
+    stats = {
+        "final_gate/accepted": float(accepted),
+        "final_gate/score": float(score),
+        "final_gate/proxy_gain_lcb": float(proxy_gain),
+        "final_gate/prior_delta": float(prior_delta),
+        "final_gate/energy_guided": float(energy_g),
+        "final_gate/energy_vanilla": float(energy_0),
+        "final_gate/energy_shift": float(energy_shift),
+        "final_gate/action_shift": float(shift),
+        "final_gate/qbar_guided": float(qbar_g),
+        "final_gate/qbar_vanilla": float(qbar_0),
+        "final_gate/uq_guided": float(uq_g),
+        "final_gate/uq_vanilla": float(uq_0),
+        "final_gate/hard_ok": float(hard_ok),
+        "final_gate/score_ok": float(score_ok),
+        "final_gate/shift_ok": float(shift_ok),
+        "final_gate/finite_ok": float(finite_ok),
+        "final_gate/reject_low_score": float((not accepted) and hard_ok and (not score_ok)),
+        "final_gate/reject_shift": float((not accepted) and finite_ok and (not shift_ok)),
+        "final_gate/reject_nonfinite": float((not accepted) and (not finite_ok)),
+    }
+    for k, v in guidance_info.items():
+        stats[k] = _scalar_from_jax(v)
+    adapter.setdefault("_episode_gate_stats", []).append(stats)
+    return guided if accepted else vanilla
+
+
+def det_action(agent, adapter: Dict[str, Any], obs: np.ndarray) -> np.ndarray:
+    obs_jax = jnp.asarray(obs, dtype=jnp.float32)
+    jit_fn = adapter.get("jit_fn")
+    use_guidance = bool(adapter.get("use_value_guidance", False))
+    use_topk_rerank = bool(adapter.get("use_topk_rerank", False))
+    use_final_gate = bool(adapter.get("use_final_gate", False))
+
+    if use_final_gate and use_guidance and not use_topk_rerank:
+        return _dove_final_gate_action(agent, adapter, obs)
+
+    if use_topk_rerank:
+        cfg = adapter["guidance_cfg"]
+        topk = max(2, int(cfg.get("rerank_topk", 2)))
+        q_agg_id = int(cfg.get("guidance_q_agg_id", 0))
+        if adapter["obs_mode"] == "batched":
+            obs_for_policy = obs_jax[None, :]
+        else:
+            obs_for_policy = obs_jax
+        obs_b = obs_jax[None, :]
+        base_key = random_key_from_data(obs_b)
+        best_action = None
+        best_score = None
+        for idx in range(topk):
+            key_i = jax.random.fold_in(base_key, idx)
+            act_jax = agent.get_action(key_i, adapter["policy_obj"], obs_for_policy)
+            act = np.asarray(jax.device_get(act_jax), dtype=np.float32)
+            if act.ndim == 2 and act.shape[0] == 1:
+                act = act[0]
+            act = np.clip(act, -1.0, 1.0)
+            act_b = jnp.asarray(act[None, :], dtype=jnp.float32)
+            q1m, _ = agent.q(adapter["q_params"][0], obs_b, act_b)
+            q2m, _ = agent.q(adapter["q_params"][1], obs_b, act_b)
+            if q_agg_id == 1:
+                score = 0.5 * (q1m + q2m)
+            elif q_agg_id == 2:
+                score = q1m
+            elif q_agg_id == 3:
+                qbar = 0.5 * (q1m + q2m)
+                uq = 0.5 * jnp.abs(q1m - q2m)
+                score = qbar - float(cfg.get("guidance_kappa", 1.0)) * uq
+            else:
+                score = jnp.minimum(q1m, q2m)
+            score_f = float(jax.device_get(jnp.ravel(score)[0]))
+            if best_score is None or score_f > best_score:
+                best_score = score_f
+                best_action = act
+        return np.asarray(best_action, dtype=np.float32)
+
+    if jit_fn is not None:
+        if use_guidance:
+            jit_out = jit_fn(adapter["policy_obj"], adapter["q_params"], adapter["sigma_ref"], obs_jax)
+            if isinstance(jit_out, tuple):
+                act_jax, guidance_info = jit_out
+                _append_guidance_stats(adapter, guidance_info)
+            else:
+                act_jax = jit_out
+        else:
+            act_jax = jit_fn(adapter["policy_obj"], obs_jax)
+        act = np.asarray(jax.device_get(act_jax), dtype=np.float32)
+    else:
+        if adapter["obs_mode"] == "batched":
+            obs_jax = obs_jax[None, :]
+        if use_guidance:
+            cfg = adapter["guidance_cfg"]
+            key = random_key_from_data(obs_jax)
+            act, guidance_info = agent.get_deterministic_action_guided_with_metrics(
+                key,
+                adapter["policy_obj"],
+                adapter["q_params"],
+                obs_jax,
+                adapter["sigma_ref"],
+                jnp.float32(cfg["lambda_0"]),
+                jnp.float32(cfg["beta_unc"]),
+                jnp.float32(cfg["p_decay"]),
+                jnp.float32(cfg["grad_clip"]),
+                jnp.int32(cfg["guidance_mode_id"]),
+                jnp.int32(cfg["guidance_target_id"]),
+                jnp.int32(cfg["guidance_step_interval"]),
+                jnp.int32(cfg["guidance_q_agg_id"]),
+                jnp.float32(cfg.get("guidance_kappa", 1.0)),
+                jnp.int32(cfg.get("guidance_injection_id", 0)),
+                jnp.int32(cfg.get("guidance_schedule_id", 0)),
+            )
+            _append_guidance_stats(adapter, guidance_info)
+        else:
+            act = agent.get_deterministic_action(adapter["policy_obj"], obs_jax)
+        act = np.asarray(jax.device_get(act), dtype=np.float32)
+        if act.ndim == 2 and act.shape[0] == 1:
+            act = act[0]
+
+    return np.clip(act, -1.0, 1.0)
+
+
+def guidance_dry_run(agent, adapter: Dict[str, Any], obs: np.ndarray) -> Optional[Dict[str, float]]:
+    if not bool(adapter.get("use_value_guidance", False)):
+        return None
+    cfg = adapter["guidance_cfg"]
+    obs_jax = jnp.asarray(obs, dtype=jnp.float32)
+    if adapter["obs_mode"] == "batched":
+        obs_jax = obs_jax[None, :]
+    key = random_key_from_data(obs_jax)
+    _, info = agent.get_deterministic_action_guided_with_metrics(
+        key,
+        adapter["policy_obj"],
+        adapter["q_params"],
+        obs_jax,
+        adapter["sigma_ref"],
+        jnp.float32(cfg["lambda_0"]),
+        jnp.float32(cfg["beta_unc"]),
+        jnp.float32(cfg["p_decay"]),
+        jnp.float32(cfg["grad_clip"]),
+        jnp.int32(cfg["guidance_mode_id"]),
+        jnp.int32(cfg["guidance_target_id"]),
+        jnp.int32(cfg["guidance_step_interval"]),
+        jnp.int32(cfg["guidance_q_agg_id"]),
+        jnp.float32(cfg.get("guidance_kappa", 1.0)),
+        jnp.int32(cfg.get("guidance_injection_id", 0)),
+        jnp.int32(cfg.get("guidance_schedule_id", 0)),
+    )
+    return {k: float(jax.device_get(v)) for k, v in info.items()}
+
+
+# ============================================================================
+# Policy file scan
+# ============================================================================
+
+def list_policy_files(log_dir: Path) -> List[Path]:
+    files: Dict[Path, Path] = {}
+    patterns = [
+        "policy-*.pkl",
+        "policy_*.pkl",
+        "final_policy_*.pkl",
+        "stage1b_offline_bc_policy.pkl",
+        "final_bundle_step_*/final_policy_*.pkl",
+        "final_bundle_step_*/stage1b_offline_bc_policy.pkl",
+    ]
+    for pattern in patterns:
+        for path in log_dir.glob(pattern):
+            files[path.resolve()] = path
+
+    def _step_key(path: Path) -> Tuple[int, str]:
+        name = path.name
+        if name == "stage1b_offline_bc_policy.pkl":
+            return (-1, name)
+        m = re.search(r"policy-(\d+)-", name)
+        if m:
+            return (int(m.group(1)), name)
+        m = re.search(r"final_policy_(\d+)", name)
+        if m:
+            return (int(m.group(1)), name)
+        m = re.search(r"policy_\D*(\d+)", name)
+        if m:
+            return (int(m.group(1)), name)
+        bundle_m = re.search(r"final_bundle_step_(\d+)", str(path))
+        if bundle_m:
+            return (int(bundle_m.group(1)), name)
+        return (10**18, name)
+
+    result = sorted(files.values(), key=_step_key)
+    result = [p for p in result if not p.name.endswith(".meta.pkl")]
+    return result
+
+
+def is_evaluable_policy_file(path: Path) -> bool:
+    return (
+        path.is_file()
+        and path.suffix == ".pkl"
+        and not path.name.endswith(".meta.pkl")
+    )
+
+
+def resolve_policy_selection(log_dir_arg: Path, policy_arg: Optional[str]) -> Tuple[Path, List[Path], bool]:
+    """
+    Returns (policy_root, policy_files, single_policy).
+
+    policy_root is used for relative policy names and default CSV placement.
+    """
+    log_dir_arg = log_dir_arg.expanduser()
+
+    if policy_arg:
+        base_dir = log_dir_arg if log_dir_arg.is_dir() else log_dir_arg.parent
+        policy_path = Path(policy_arg).expanduser()
+        if not policy_path.is_absolute():
+            policy_path = base_dir / policy_path
+        policy_path = policy_path.resolve()
+        if not is_evaluable_policy_file(policy_path):
+            raise FileNotFoundError(f"not an evaluable policy file: {policy_path}")
+        return policy_path.parent, [policy_path], True
+
+    if is_evaluable_policy_file(log_dir_arg):
+        policy_path = log_dir_arg.resolve()
+        return policy_path.parent, [policy_path], True
+
+    if not log_dir_arg.exists():
+        raise FileNotFoundError(f"log_dir does not exist: {log_dir_arg}")
+    if not log_dir_arg.is_dir():
+        raise FileNotFoundError(f"log_dir is not a directory or policy .pkl: {log_dir_arg}")
+
+    policy_files = list_policy_files(log_dir_arg)
+    return log_dir_arg, policy_files, False
+
+
+def policy_display_name(policy_pkl: Path, policy_root: Path) -> str:
+    try:
+        return str(policy_pkl.relative_to(policy_root)).replace("\\", "/")
+    except ValueError:
+        return policy_pkl.name
+
+
+class EvalVideoRecorder:
+    def __init__(
+        self,
+        output_path: Path,
+        fps: int = 30,
+        size: Tuple[int, int] = (1280, 720),
+        scaling: float = 6.0,
+        every_n_steps: int = 1,
+    ):
+        self.output_path = Path(output_path)
+        self.fps = int(fps)
+        self.size = (int(size[0]), int(size[1]))
+        self.scaling = float(scaling)
+        self.every_n_steps = max(int(every_n_steps), 1)
+        self.writer = None
+        self.frame_count = 0
+        self.capture_count = 0
+        self._warned = False
+
+    def _open_writer(self):
+        if self.writer is not None:
+            return
+        import imageio.v2 as imageio
+
+        self.output_path.parent.mkdir(parents=True, exist_ok=True)
+        self.writer = imageio.get_writer(
+            str(self.output_path),
+            fps=max(self.fps, 1),
+            macro_block_size=1,
+        )
+
+    def _normalize_topdown_frame(self, frame: Any) -> Optional[np.ndarray]:
+        if frame is None:
+            return None
+        arr = np.asarray(frame)
+        if arr.ndim == 2:
+            arr = np.repeat(arr[:, :, None], 3, axis=2)
+        if arr.ndim != 3 or arr.shape[2] < 3:
+            return None
+        arr = arr[:, :, :3]
+        if arr.dtype != np.uint8:
+            arr = np.clip(arr, 0, 255).astype(np.uint8)
+        # MetaDrive topdown renderer returns BGR.
+        return arr[:, :, ::-1].copy()
+
+    def capture(self, env: HumanInTheLoopEnv, force: bool = False) -> None:
+        self.capture_count += 1
+        if not force and (self.capture_count % self.every_n_steps != 0):
+            return
+
+        try:
+            frame = env.render(
+                mode="topdown",
+                film_size=self.size,
+                screen_size=self.size,
+                scaling=self.scaling,
+                window=False,
+            )
+            frame = self._normalize_topdown_frame(frame)
+            if frame is None:
+                raise RuntimeError("topdown renderer returned no frame")
+            self._open_writer()
+            self.writer.append_data(frame)
+            self.frame_count += 1
+        except Exception as e:
+            if not self._warned:
+                print(f"   WARNING: video frame capture failed: {e}")
+                self._warned = True
+
+    def close(self) -> None:
+        if self.writer is not None:
+            self.writer.close()
+            self.writer = None
+        if self.frame_count > 0:
+            print(f"   video saved: {self.output_path} ({self.frame_count} frames)")
+        elif self.output_path.exists():
+            print(f"   WARNING: video file created but no frames were recorded: {self.output_path}")
+
+
+def make_video_path(policy_pkl: Path, map_seed: int, episode_index: int) -> Path:
+    return policy_pkl.with_name(
+        f"{policy_pkl.stem}_map{int(map_seed)}_ep{int(episode_index) + 1}.mp4"
+    )
+
+
+# ============================================================================
+# Evaluation logic
+# ============================================================================
+
+def terminal_reason(info: Dict[str, Any], terminated: bool, truncated: bool) -> str:
+    if bool(info.get("arrive_dest", False)):
+        return "success"
+    if bool(info.get("crash", False)):
+        return "crash"
+    if bool(info.get("out_of_route", False)):
+        return "out_of_route"
+    if truncated:
+        return "timeout"
+    if terminated:
+        return "terminated_other"
+    return "unknown"
+
+
+def _mean_std(values: List[float]) -> Tuple[float, float]:
+    if not values:
+        return float("nan"), float("nan")
+    arr = np.asarray(values, dtype=np.float32)
+    return float(np.mean(arr)), float(np.std(arr))
+
+
+def _reset_and_verify_seed(env: HumanInTheLoopEnv, map_seed: int, allowed_maps: Optional[List[int]] = None):
+    obs, info = reset_to_strict_eval_map(env, map_seed, allowed_seeds=allowed_maps or [map_seed])
+    return obs, info
+
+
+def eval_episode(
+    agent,
+    adapter,
+    env,
+    map_seed,
+    dt,
+    allowed_maps=None,
+    verbose=False,
+    video_recorder: Optional[EvalVideoRecorder] = None,
+):
+    obs, info = _reset_and_verify_seed(env, map_seed, allowed_maps=allowed_maps or [int(map_seed)])
+    adapter["_episode_gate_stats"] = []
+    if video_recorder is not None:
+        video_recorder.capture(env, force=True)
+
+    done = False
+    ep_reward = 0.0
+    ep_steps = 0
+
+    speeds: List[float] = []
+    laterals: List[float] = []
+    accels: List[float] = []
+    jerks: List[float] = []
+    steering_cmds: List[float] = []
+    accel_cmds: List[float] = []
+    action_saturation_flags: List[float] = []
+    inference_latencies: List[float] = []
+    prev_spd: Optional[float] = None
+    prev_acc: Optional[float] = None
+    final_info: Dict[str, Any] = {}
+    terminated = False
+    truncated = False
+    takeover_steps = 0
+    first_takeover_step = -1
+
+    while not done:
+        t_action = time.time()
+        action = det_action(agent, adapter, obs)
+        inference_latencies.append(float(time.time() - t_action))
+        action_arr = np.asarray(action, dtype=np.float32).reshape(-1)
+        if action_arr.size >= 1:
+            steering_cmds.append(float(action_arr[0]))
+        if action_arr.size >= 2:
+            accel_cmds.append(float(action_arr[1]))
+        action_saturation_flags.append(float(np.any(np.abs(action_arr) >= 0.98)))
+        obs, reward, terminated, truncated, info = env.step(action)
+        if video_recorder is not None:
+            video_recorder.capture(env)
+        done = bool(terminated) or bool(truncated)
+        final_info = info
+        ep_reward += float(reward)
+        ep_steps += 1
+        if float(info.get("takeover", False)) > 0.5:
+            takeover_steps += 1
+            if first_takeover_step < 0:
+                first_takeover_step = ep_steps
+
+        spd = get_speed_mps(info)
+        speeds.append(spd)
+
+        lateral = _safe_float(info, "lateral_offset", "lateral")
+        if lateral is not None:
+            laterals.append(abs(lateral))
+
+        if prev_spd is not None and dt > 0:
+            acc = (spd - prev_spd) / dt
+            accels.append(abs(float(acc)))
+            if prev_acc is not None:
+                jerk = (acc - prev_acc) / dt
+                jerks.append(abs(float(jerk)))
+            prev_acc = float(acc)
+        prev_spd = spd
+
+    reason = terminal_reason(final_info, bool(terminated), bool(truncated))
+
+    if verbose:
+        true_keys = [k for k, v in final_info.items()
+                     if isinstance(v, (bool, int, float)) and v]
+        print(
+            f"      [DEBUG] reason={reason} | steps={ep_steps} | rew={ep_reward:.2f}"
+            f" | terminated={terminated} truncated={truncated}"
+            f" | info_true_keys={true_keys}"
+        )
+
+    lateral_mean, lateral_std = _mean_std(laterals)
+    speed_mean, speed_std = _mean_std(speeds)
+    accel_mean, accel_std = _mean_std(accels)
+    jerk_mean, jerk_std = _mean_std(jerks)
+    steering_var = float(np.var(steering_cmds)) if steering_cmds else float("nan")
+    accel_cmd_var = float(np.var(accel_cmds)) if accel_cmds else float("nan")
+    action_saturation_ratio = float(np.mean(action_saturation_flags)) if action_saturation_flags else float("nan")
+    inference_latency_mean = float(np.mean(inference_latencies)) if inference_latencies else float("nan")
+    inference_latency_p95 = float(np.percentile(inference_latencies, 95)) if inference_latencies else float("nan")
+    closed_loop_distance = float(np.sum(speeds) * max(float(dt), 0.0)) if speeds else 0.0
+    interventions_per_km = float(takeover_steps / max(closed_loop_distance / 1000.0, 1e-6))
+    time_to_first_intervention = float((first_takeover_step if first_takeover_step >= 0 else ep_steps) * max(float(dt), 0.0))
+    route_completion_val = _safe_float(final_info, "route_completion", "completion", "progress", "complete_ratio")
+    if route_completion_val is None:
+        route_completion_val = 1.0 if reason == "success" else 0.0
+    gate_stats = list(adapter.get("_episode_gate_stats", []))
+
+    def _stat_mean(key: str) -> float:
+        vals = [float(item[key]) for item in gate_stats if key in item and np.isfinite(float(item[key]))]
+        return float(np.mean(vals)) if vals else float("nan")
+
+    return {
+        "reward": float(ep_reward),
+        "length": float(ep_steps),
+        "takeover_rate": float(takeover_steps / max(ep_steps, 1)),
+        "intervention_count": float(takeover_steps),
+        "interventions_per_km": interventions_per_km,
+        "autonomous_steps": float(max(ep_steps - takeover_steps, 0)),
+        "first_takeover_step": float(first_takeover_step if first_takeover_step >= 0 else ep_steps),
+        "time_to_first_intervention": time_to_first_intervention,
+        "reason": reason,
+        "success": 1.0 if reason == "success" else 0.0,
+        "crash": 1.0 if reason == "crash" else 0.0,
+        "out_of_route": 1.0 if reason == "out_of_route" else 0.0,
+        "timeout": 1.0 if reason == "timeout" else 0.0,
+        "route_completion": float(route_completion_val),
+        "closed_loop_distance": closed_loop_distance,
+        "lateral_offset_mean": lateral_mean,
+        "lateral_offset_std": lateral_std,
+        "speed_mean": speed_mean,
+        "speed_std": speed_std,
+        "accel_mean": accel_mean,
+        "accel_std": accel_std,
+        "jerk_mean": jerk_mean,
+        "jerk_std": jerk_std,
+        "steering_variance": steering_var,
+        "accel_cmd_variance": accel_cmd_var,
+        "action_saturation_ratio": action_saturation_ratio,
+        "inference_latency_mean": inference_latency_mean,
+        "inference_latency_p95": inference_latency_p95,
+        "final_gate_accept_rate": _stat_mean("final_gate/accepted"),
+        "final_gate_score_mean": _stat_mean("final_gate/score"),
+        "final_gate_proxy_gain_lcb_mean": _stat_mean("final_gate/proxy_gain_lcb"),
+        "final_gate_prior_delta_mean": _stat_mean("final_gate/prior_delta"),
+        "final_gate_action_shift_mean": _stat_mean("final_gate/action_shift"),
+        "final_gate_energy_shift_mean": _stat_mean("final_gate/energy_shift"),
+        "final_gate_energy_guided_mean": _stat_mean("final_gate/energy_guided"),
+        "final_gate_energy_vanilla_mean": _stat_mean("final_gate/energy_vanilla"),
+        "final_gate_hard_ok_rate": _stat_mean("final_gate/hard_ok"),
+        "final_gate_reject_low_score_rate": _stat_mean("final_gate/reject_low_score"),
+        "final_gate_reject_shift_rate": _stat_mean("final_gate/reject_shift"),
+        "final_gate_reject_nonfinite_rate": _stat_mean("final_gate/reject_nonfinite"),
+        "guidance_q_grad_norm_mean": _stat_mean("guidance/q_grad_norm"),
+        "guidance_q_grad_norm_preclip_mean": _stat_mean("guidance/q_grad_norm_preclip"),
+        "guidance_grad_clip_frac_mean": _stat_mean("guidance/grad_clip_frac"),
+        "guidance_grad_nan_frac_mean": _stat_mean("guidance/grad_nan_frac"),
+        "guidance_lambda_mean": _stat_mean("guidance/lambda"),
+        "guidance_uncertainty_mean": _stat_mean("guidance/sigma_q"),
+        "guidance_x0_clip_frac_mean": _stat_mean("guidance/x0_clip_frac"),
+        "guidance_q_mean": _stat_mean("guidance/q_mean"),
+        "guidance_action_shift_mean": _stat_mean("guidance/action_shift"),
+        "guidance_clean_injection_rate": _stat_mean("guidance/clean_injection_rate"),
+    }
+
+
+def eval_map_multi(
+    agent,
+    adapter,
+    env,
+    map_seed,
+    dt,
+    num_episodes,
+    allowed_maps=None,
+    verbose=False,
+    policy_pkl: Optional[Path] = None,
+    record_video: bool = False,
+    video_episodes: int = 1,
+    video_fps: int = 30,
+    video_size: Tuple[int, int] = (1280, 720),
+    video_scaling: float = 6.0,
+    video_every_n_steps: int = 1,
+):
+    results = []
+    for ep_idx in range(num_episodes):
+        video_recorder = None
+        if record_video and policy_pkl is not None and ep_idx < max(int(video_episodes), 0):
+            video_recorder = EvalVideoRecorder(
+                make_video_path(policy_pkl, int(map_seed), ep_idx),
+                fps=video_fps,
+                size=video_size,
+                scaling=video_scaling,
+                every_n_steps=video_every_n_steps,
+            )
+        try:
+            metrics = eval_episode(
+                agent, adapter, env, map_seed, dt,
+                allowed_maps=allowed_maps, verbose=verbose,
+                video_recorder=video_recorder,
+            )
+            results.append(metrics)
+        finally:
+            if video_recorder is not None:
+                video_recorder.close()
+    return results
+
+
+def _aggregate_episodes(episodes):
+    if not episodes:
+        return {}
+    keys = episodes[0].keys()
+    agg = {}
+    for k in keys:
+        if k == "reason":
+            continue
+        vals = [ep[k] for ep in episodes if np.isfinite(ep[k])]
+        agg[k] = float(np.mean(vals)) if vals else float("nan")
+    return agg
+
+
+# ============================================================================
+# Main
+# ============================================================================
+
+def main():
+    parser = argparse.ArgumentParser(description="PVP-DACER Policy Batch Evaluation v4")
+    parser.add_argument("--log_dir", type=str, required=True,
+                        help="training log directory, or a single policy .pkl for one-policy evaluation")
+    parser.add_argument("--policy", "--policy_file", dest="policy_file", type=str, default=None,
+                        help="single policy .pkl to evaluate/visualize; relative paths are resolved under --log_dir")
+    parser.add_argument("--output_csv", type=str, default=None, help="output CSV path")
+    parser.add_argument("--maps", type=int, nargs="+", default=EVAL_MAPS_DEFAULT,
+                        help="evaluation map seed list")
+    parser.add_argument("--horizon", type=int, default=1000,
+                        help="max steps per episode (default 1000, aligned with training)")
+    parser.add_argument("--dt", type=float, default=None,
+                        help="explicit simulation dt; default infer automatically, fallback 0.02")
+    parser.add_argument("--num_episodes", type=int, default=5,
+                        help="episodes per map, default 5")
+    parser.add_argument("--use_render", dest="use_render", action="store_true",
+                        help="enable render for visual inspection")
+    parser.add_argument("--no_use_render", dest="use_render", action="store_false",
+                        help="disable render")
+    parser.set_defaults(use_render=False)
+    parser.add_argument("--verbose", action="store_true", default=False,
+                        help="print per-episode termination reason")
+    parser.add_argument("--record_video", action="store_true", default=False,
+                        help="record mp4 video for the evaluated policy episode(s)")
+    parser.add_argument("--video_episodes", type=int, default=1,
+                        help="episodes per map to record when --record_video is set")
+    parser.add_argument("--video_fps", type=int, default=30,
+                        help="video fps for --record_video")
+    parser.add_argument("--video_size", type=int, nargs=2, default=[1280, 720], metavar=("W", "H"),
+                        help="topdown video frame size, default 1280 720")
+    parser.add_argument("--video_scaling", type=float, default=6.0,
+                        help="MetaDrive topdown renderer scaling for video")
+    parser.add_argument("--video_every_n_steps", type=int, default=1,
+                        help="record one video frame every N env steps")
+    parser.add_argument("--use_value_guidance", action="store_true",
+                        help="use deterministic UPV-GDS guided inference for evaluation")
+    parser.add_argument("--guidance_lambda0", type=float, default=0.5,
+                        help="UPV-GDS guidance base strength")
+    parser.add_argument("--guidance_beta_unc", type=float, default=1.0,
+                        help="UPV-GDS uncertainty gate coefficient")
+    parser.add_argument("--guidance_p_decay", type=float, default=1.0,
+                        help="UPV-GDS time schedule exponent")
+    parser.add_argument("--guidance_grad_clip", type=float, default=1.0,
+                        help="UPV-GDS global action/latent gradient norm clip")
+    parser.add_argument("--guidance_kappa", type=float, default=1.0,
+                        help="LCB multiplier used when --guidance_q_agg=lcb")
+    parser.add_argument("--guidance_injection", type=str, default="clean_x0",
+                        choices=["clean_x0", "latent_mean"],
+                        help="where to inject guidance: paper-aligned clean action x0 or legacy reverse mean")
+    parser.add_argument("--guidance_schedule", type=str, default="noise_level",
+                        choices=["noise_level", "alpha_cumprod"],
+                        help="guidance schedule: paper phi(t)=((t+1)/T)^p or legacy alpha_cumprod^p")
+    parser.add_argument("--guidance_mode", type=str, default="proxy_value",
+                        choices=["proxy_value", "random_grad", "none", "reverse_grad"],
+                        help="guided direction: proxy_value corrected main method, reverse_grad opposite-signed diagnostic, random_grad/none controls")
+    parser.add_argument("--guidance_target", type=str, default="x0",
+                        choices=["x0", "xt"],
+                        help="critic input for guidance: Tweedie clean action x0 or noisy latent xt")
+    parser.add_argument("--guidance_step_interval", type=int, default=1,
+                        help="1 means every denoising step; K>1 means every K steps; 0 means final step only")
+    parser.add_argument("--guidance_critic_params", type=str, default="target",
+                        choices=["target", "online"],
+                        help="use target critics or online critics for guidance")
+    parser.add_argument("--guidance_q_agg", type=str, default="lcb",
+                        choices=["min", "mean", "single_q1", "lcb"],
+                        help="aggregate double-Q for guidance: min, mean, single q1, or paper LCB mean-kappa*disagreement")
+    parser.add_argument("--rerank_topk", type=int, default=0,
+                        help="Top-K Q reranking baseline. 0 disables it; K>1 samples K actions and chooses highest Q.")
+    parser.add_argument("--use_final_gate", action="store_true",
+                        help="enable DOVE Q2RL-style final execution gate after UPV-GDS")
+    parser.add_argument("--final_gate_mode", type=str, default="proxy_prior",
+                        choices=["proxy_prior", "proxy_only", "prior_only"],
+                        help="final gate score terms: full proxy+prior, proxy-only ablation, or prior-only ablation")
+    parser.add_argument("--final_gate_margin", type=float, default=0.0,
+                        help="minimum conservative gate score required to execute the guided action")
+    parser.add_argument("--final_gate_kappa", type=float, default=1.0,
+                        help="LCB/UCB multiplier for twin-Q disagreement in final gate")
+    parser.add_argument("--final_gate_beta_prior", type=float, default=1.0,
+                        help="weight for diffusion-prior relative value in final gate")
+    parser.add_argument("--final_gate_rho_shift", type=float, default=0.0,
+                        help="quadratic action-shift penalty in final gate")
+    parser.add_argument("--final_gate_rho_sat", type=float, default=0.0,
+                        help="action saturation penalty in final gate")
+    parser.add_argument("--final_gate_max_action_shift", type=float, default=2.0,
+                        help="hard maximum L2 shift between guided and vanilla actions")
+    parser.add_argument("--final_gate_energy_samples", type=int, default=4,
+                        help="number of diffusion timesteps used to estimate denoising energy")
+    parser.add_argument("--final_gate_energy_alpha", type=float, default=1.0,
+                        help="scale applied to denoising-energy relative prior value")
+    parser.add_argument("--guidance_dry_run", action="store_true",
+                        help="print one-state guided inference diagnostics and skip environment rollout")
+    args = parser.parse_args()
+    args.guidance_mode_id = GUIDANCE_MODE_IDS[args.guidance_mode]
+    args.guidance_target_id = GUIDANCE_TARGET_IDS[args.guidance_target]
+    args.guidance_q_agg_id = GUIDANCE_Q_AGG_IDS[args.guidance_q_agg]
+    args.guidance_injection_id = GUIDANCE_INJECTION_IDS[args.guidance_injection]
+    args.guidance_schedule_id = GUIDANCE_SCHEDULE_IDS[args.guidance_schedule]
+    if args.guidance_lambda0 < 0 or args.guidance_beta_unc < 0 or args.guidance_p_decay < 0 or args.guidance_grad_clip <= 0:
+        raise ValueError("invalid guidance hyperparameters")
+    if args.guidance_kappa < 0:
+        raise ValueError("--guidance_kappa must be >= 0")
+    if args.guidance_step_interval < 0:
+        raise ValueError("--guidance_step_interval must be >= 0")
+    if args.rerank_topk < 0:
+        raise ValueError("--rerank_topk must be >= 0")
+    if args.use_final_gate and not args.use_value_guidance:
+        raise ValueError("--use_final_gate requires --use_value_guidance")
+    if args.rerank_topk > 1 and args.use_final_gate:
+        raise ValueError("--use_final_gate and --rerank_topk are mutually exclusive")
+    if args.final_gate_energy_samples <= 0:
+        raise ValueError("--final_gate_energy_samples must be > 0")
+    if args.final_gate_max_action_shift <= 0:
+        raise ValueError("--final_gate_max_action_shift must be > 0")
+
+    log_dir_input = Path(args.log_dir).expanduser()
+    try:
+        policy_root, policy_files, single_policy = resolve_policy_selection(log_dir_input, args.policy_file)
+    except Exception as e:
+        print(f"ERROR: {e}")
+        return
+
+    if not policy_files:
+        print(f"ERROR: no evaluable policy files found under {log_dir_input}")
+        return
+
+    if args.output_csv:
+        output_csv = Path(args.output_csv)
+    elif single_policy:
+        output_csv = policy_files[0].with_name(f"{policy_files[0].stem}_policy_eval_results_v4.csv")
+    else:
+        output_csv = policy_root / "policy_eval_results_v4.csv"
+
+    run_args_dir = find_run_args_dir(log_dir_input, policy_files)
+    run_args = load_run_args(run_args_dir)
+    jax_backend, jax_devices = require_jax_gpu_ready()
+
+    sep = "=" * 72
+    print(f"\n{sep}")
+    print("PVP-DACER Policy Batch Evaluation v4 (strict training alignment)")
+    print(f"  input        : {log_dir_input}")
+    print(f"  policy_root  : {policy_root}")
+    print(f"  single_policy: {single_policy}")
+    print(f"  maps         : {args.maps}")
+    print(f"  num_episodes : {args.num_episodes}")
+    print(f"  horizon      : {args.horizon}")
+    print(f"  use_render   : {args.use_render}")
+    print(f"  record_video : {args.record_video}")
+    print(f"  value_guided : {args.use_value_guidance}")
+    print(f"  rerank_topk  : {args.rerank_topk}")
+    print(f"  final_gate   : {args.use_final_gate}")
+    if args.use_value_guidance:
+        print(
+            f"  guidance     : lambda0={args.guidance_lambda0} beta_unc={args.guidance_beta_unc} "
+            f"p_decay={args.guidance_p_decay} grad_clip={args.guidance_grad_clip} kappa={args.guidance_kappa} "
+            f"mode={args.guidance_mode} target={args.guidance_target} step_interval={args.guidance_step_interval} "
+            f"injection={args.guidance_injection} schedule={args.guidance_schedule} "
+            f"critic_params={args.guidance_critic_params} q_agg={args.guidance_q_agg}"
+        )
+    if args.use_final_gate:
+        print(
+            f"  gate         : mode={args.final_gate_mode} margin={args.final_gate_margin} "
+            f"kappa={args.final_gate_kappa} beta_prior={args.final_gate_beta_prior} "
+            f"rho_shift={args.final_gate_rho_shift} rho_sat={args.final_gate_rho_sat} "
+            f"max_shift={args.final_gate_max_action_shift} energy_samples={args.final_gate_energy_samples}"
+        )
+    if args.record_video:
+        print(f"  video        : fps={args.video_fps} size={tuple(args.video_size)} every={args.video_every_n_steps} episodes/map={args.video_episodes}")
+    print(f"  verbose      : {args.verbose}")
+    print(f"  output       : {output_csv}")
+    print(f"  JAX backend  : {jax_backend}")
+    print(f"  JAX devices  : {jax_devices}")
+    print()
+    print("  Env config (training-aligned):")
+    print(f"    start_seed       = {run_args.get('start_seed', 104)}")
+    print(f"    num_scenarios    = {run_args.get('num_scenarios', 1)}")
+    print(f"    traffic_density  = {run_args.get('traffic_density', 0.06)}")
+    print(f"    horizon          = {args.horizon}")
+    print(f"    use_render       = {args.use_render}")
+    print(f"    manual_control   = False")
+    print(f"    enable_takeover  = False")
+    print(f"    out_of_route_done= True")
+    print(f"    crash_done       = True")
+    print(f"    allowed_maps     = {[int(m) for m in args.maps]}")
+    print(f"{sep}\n")
+
+    print(f"Found {len(policy_files)} policy files")
+
+    env = None
+    try:
+        print("Creating evaluation environment...", flush=True)
+        env = create_eval_env(
+            horizon=int(args.horizon),
+            run_args=run_args,
+            use_render=args.use_render,
+        )
+
+        allowed_maps = [int(m) for m in args.maps]
+        install_strict_eval_seed_controller(env, allowed_maps)
+
+        tmp_obs, _ = reset_to_strict_eval_map(
+            env,
+            seed=int(args.maps[0]),
+            allowed_seeds=allowed_maps,
+        )
+        obs_dim = int(np.asarray(tmp_obs).shape[0])
+        dt = infer_dt(env, args.dt)
+        print(f"obs_dim={obs_dim}  act_dim={ACT_DIM}  dt={dt:.6f}")
+
+        print("Building DACER agent...", flush=True)
+        agent = build_agent(obs_dim, run_args)
+        guidance_cfg = {
+            "use_value_guidance": bool(args.use_value_guidance),
+            "lambda_0": float(args.guidance_lambda0),
+            "beta_unc": float(args.guidance_beta_unc),
+            "p_decay": float(args.guidance_p_decay),
+            "grad_clip": float(args.guidance_grad_clip),
+            "guidance_kappa": float(args.guidance_kappa),
+            "guidance_injection": str(args.guidance_injection),
+            "guidance_injection_id": int(args.guidance_injection_id),
+            "guidance_schedule": str(args.guidance_schedule),
+            "guidance_schedule_id": int(args.guidance_schedule_id),
+            "guidance_mode": str(args.guidance_mode),
+            "guidance_mode_id": int(args.guidance_mode_id),
+            "guidance_target": str(args.guidance_target),
+            "guidance_target_id": int(args.guidance_target_id),
+            "guidance_step_interval": int(args.guidance_step_interval),
+            "critic_params": str(args.guidance_critic_params),
+            "guidance_q_agg": str(args.guidance_q_agg),
+            "guidance_q_agg_id": int(args.guidance_q_agg_id),
+            "rerank_topk": int(args.rerank_topk),
+            "use_final_gate": bool(args.use_final_gate),
+            "final_gate_mode": str(args.final_gate_mode),
+            "final_gate_margin": float(args.final_gate_margin),
+            "final_gate_kappa": float(args.final_gate_kappa),
+            "final_gate_beta_prior": float(args.final_gate_beta_prior),
+            "final_gate_rho_shift": float(args.final_gate_rho_shift),
+            "final_gate_rho_sat": float(args.final_gate_rho_sat),
+            "final_gate_max_action_shift": float(args.final_gate_max_action_shift),
+            "final_gate_energy_samples": int(args.final_gate_energy_samples),
+            "final_gate_energy_alpha": float(args.final_gate_energy_alpha),
+        }
+
+        metric_keys = [
+            "reward", "length", "takeover_rate", "intervention_count", "interventions_per_km",
+            "autonomous_steps", "first_takeover_step", "time_to_first_intervention",
+            "success", "crash", "out_of_route", "timeout",
+            "route_completion", "closed_loop_distance",
+            "lateral_offset_mean", "lateral_offset_std",
+            "speed_mean", "speed_std",
+            "accel_mean", "accel_std",
+            "jerk_mean", "jerk_std",
+            "steering_variance", "accel_cmd_variance", "action_saturation_ratio",
+            "inference_latency_mean", "inference_latency_p95",
+            "final_gate_accept_rate", "final_gate_score_mean",
+            "final_gate_proxy_gain_lcb_mean", "final_gate_prior_delta_mean",
+            "final_gate_action_shift_mean", "final_gate_energy_shift_mean",
+            "final_gate_energy_guided_mean", "final_gate_energy_vanilla_mean",
+            "final_gate_hard_ok_rate", "final_gate_reject_low_score_rate",
+            "final_gate_reject_shift_rate", "final_gate_reject_nonfinite_rate",
+            "guidance_q_grad_norm_mean", "guidance_q_grad_norm_preclip_mean",
+            "guidance_grad_clip_frac_mean", "guidance_grad_nan_frac_mean",
+            "guidance_lambda_mean", "guidance_uncertainty_mean",
+            "guidance_x0_clip_frac_mean", "guidance_q_mean",
+            "guidance_action_shift_mean", "guidance_clean_injection_rate",
+        ]
+
+        header = ["policy_name"]
+        for m in args.maps:
+            for mk in metric_keys:
+                header.append(f"map{m}_{mk}")
+            if args.num_episodes > 1:
+                header.append(f"map{m}_reward_std_across_eps")
+                header.append(f"map{m}_success_std_across_eps")
+        header.extend([
+            "avg_reward", "avg_takeover_rate", "avg_intervention_count", "avg_interventions_per_km",
+            "avg_autonomous_steps", "avg_first_takeover_step", "avg_time_to_first_intervention",
+            "avg_success", "avg_crash", "avg_out_of_route", "avg_timeout",
+            "avg_route_completion", "avg_closed_loop_distance",
+            "avg_lateral_offset_mean", "avg_speed_mean", "avg_accel_mean", "avg_jerk_mean",
+            "avg_steering_variance", "avg_accel_cmd_variance", "avg_action_saturation_ratio",
+            "avg_inference_latency_mean", "avg_inference_latency_p95",
+            "avg_final_gate_accept_rate", "avg_final_gate_score_mean",
+            "avg_final_gate_proxy_gain_lcb_mean", "avg_final_gate_prior_delta_mean",
+            "avg_final_gate_action_shift_mean", "avg_final_gate_energy_shift_mean",
+            "avg_final_gate_energy_guided_mean", "avg_final_gate_energy_vanilla_mean",
+            "avg_final_gate_hard_ok_rate", "avg_final_gate_reject_low_score_rate",
+            "avg_final_gate_reject_shift_rate", "avg_final_gate_reject_nonfinite_rate",
+            "avg_guidance_q_grad_norm_mean", "avg_guidance_q_grad_norm_preclip_mean",
+            "avg_guidance_grad_clip_frac_mean", "avg_guidance_grad_nan_frac_mean",
+            "avg_guidance_lambda_mean", "avg_guidance_uncertainty_mean",
+            "avg_guidance_x0_clip_frac_mean", "avg_guidance_q_mean",
+            "avg_guidance_action_shift_mean", "avg_guidance_clean_injection_rate",
+        ])
+
+        rows: List[List[Any]] = []
+        summaries: List[Tuple[str, float, float]] = []
+        total = len(policy_files)
+
+        for idx, policy_pkl in enumerate(policy_files, start=1):
+            policy_name = policy_display_name(policy_pkl, policy_root)
+            print(f"\n[{idx:3d}/{total}] {policy_name}", flush=True)
+
+            payload = load_policy_payload(policy_pkl)
+            if payload is None:
+                print("   skip: load failed")
+                continue
+
+            adapter = resolve_action_adapter(agent, payload, tmp_obs, guidance_cfg=guidance_cfg)
+            if adapter is None:
+                print("   ERROR: unable to resolve action interface, skip")
+                continue
+
+            if args.guidance_dry_run:
+                info = guidance_dry_run(agent, adapter, tmp_obs)
+                if info is None:
+                    print("   guidance_dry_run: vanilla deterministic adapter, no guidance metrics")
+                else:
+                    parts = [f"{k}={v:.6g}" for k, v in sorted(info.items())]
+                    print("   guidance_dry_run: " + " | ".join(parts))
+                continue
+
+            row: List[Any] = [policy_name]
+            per_map_agg: List[Dict[str, float]] = []
+
+            for map_seed in args.maps:
+                try:
+                    t0 = time.time()
+                    episodes = eval_map_multi(
+                        agent, adapter, env, int(map_seed), dt,
+                        args.num_episodes, allowed_maps=allowed_maps, verbose=args.verbose,
+                        policy_pkl=policy_pkl,
+                        record_video=args.record_video,
+                        video_episodes=args.video_episodes,
+                        video_fps=args.video_fps,
+                        video_size=(int(args.video_size[0]), int(args.video_size[1])),
+                        video_scaling=args.video_scaling,
+                        video_every_n_steps=args.video_every_n_steps,
+                    )
+                    elapsed = time.time() - t0
+                    agg = _aggregate_episodes(episodes)
+                    per_map_agg.append(agg)
+
+                    for mk in metric_keys:
+                        row.append(agg.get(mk, float("nan")))
+
+                    if args.num_episodes > 1:
+                        rew_vals = [ep["reward"] for ep in episodes if np.isfinite(ep["reward"])]
+                        suc_vals = [ep["success"] for ep in episodes if np.isfinite(ep["success"])]
+                        row.append(float(np.std(rew_vals)) if rew_vals else float("nan"))
+                        row.append(float(np.std(suc_vals)) if suc_vals else float("nan"))
+
+                    n_succ = sum(1 for ep in episodes if ep["success"] > 0.5)
+                    n_crash = sum(1 for ep in episodes if ep["crash"] > 0.5)
+                    n_oor = sum(1 for ep in episodes if ep["out_of_route"] > 0.5)
+                    n_tout = sum(1 for ep in episodes if ep["timeout"] > 0.5)
+
+                    reasons = [ep.get("reason", "?") for ep in episodes]
+                    reason_counts = {}
+                    for r in reasons:
+                        reason_counts[r] = reason_counts.get(r, 0) + 1
+                    reason_str = " ".join(f"{r}x{c}" for r, c in reason_counts.items())
+
+                    print(
+                        f"   map={map_seed} ({args.num_episodes}ep)"
+                        f" | rew={agg.get('reward', float('nan')):8.2f}"
+                        f" | len={int(agg.get('length', 0)):4d}"
+                        f" | tkv={agg.get('takeover_rate', float('nan')):.3f}"
+                        f" | succ={n_succ}/{args.num_episodes}"
+                        f" | crash={n_crash} oor={n_oor} tout={n_tout}"
+                        f" | [{reason_str}]"
+                        f" | spd={agg.get('speed_mean', float('nan')):.2f}m/s"
+                        f" | {elapsed:.1f}s",
+                        flush=True,
+                    )
+                except Exception as e:
+                    print(f"   ERROR: map={map_seed} evaluation failed: {e}")
+                    traceback.print_exc()
+                    nan_count = len(metric_keys) + (2 if args.num_episodes > 1 else 0)
+                    row.extend([float('nan')] * nan_count)
+
+            def _avg(key: str) -> float:
+                vals = [m[key] for m in per_map_agg if key in m and np.isfinite(m[key])]
+                return float(np.mean(vals)) if vals else float("nan")
+
+            avg_reward = _avg("reward")
+            avg_success = _avg("success")
+            row.extend([
+                avg_reward, _avg("takeover_rate"), _avg("intervention_count"), _avg("interventions_per_km"),
+                _avg("autonomous_steps"), _avg("first_takeover_step"), _avg("time_to_first_intervention"),
+                avg_success,
+                _avg("crash"), _avg("out_of_route"), _avg("timeout"),
+                _avg("route_completion"), _avg("closed_loop_distance"),
+                _avg("lateral_offset_mean"), _avg("speed_mean"),
+                _avg("accel_mean"), _avg("jerk_mean"),
+                _avg("steering_variance"), _avg("accel_cmd_variance"), _avg("action_saturation_ratio"),
+                _avg("inference_latency_mean"), _avg("inference_latency_p95"),
+                _avg("final_gate_accept_rate"), _avg("final_gate_score_mean"),
+                _avg("final_gate_proxy_gain_lcb_mean"), _avg("final_gate_prior_delta_mean"),
+                _avg("final_gate_action_shift_mean"), _avg("final_gate_energy_shift_mean"),
+                _avg("final_gate_energy_guided_mean"), _avg("final_gate_energy_vanilla_mean"),
+                _avg("final_gate_hard_ok_rate"), _avg("final_gate_reject_low_score_rate"),
+                _avg("final_gate_reject_shift_rate"), _avg("final_gate_reject_nonfinite_rate"),
+                _avg("guidance_q_grad_norm_mean"), _avg("guidance_q_grad_norm_preclip_mean"),
+                _avg("guidance_grad_clip_frac_mean"), _avg("guidance_grad_nan_frac_mean"),
+                _avg("guidance_lambda_mean"), _avg("guidance_uncertainty_mean"),
+                _avg("guidance_x0_clip_frac_mean"), _avg("guidance_q_mean"),
+                _avg("guidance_action_shift_mean"), _avg("guidance_clean_injection_rate"),
+            ])
+            rows.append(row)
+            summaries.append((policy_name, avg_success, avg_reward))
+
+        output_csv.parent.mkdir(parents=True, exist_ok=True)
+        with open(output_csv, "w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            writer.writerow(header)
+            writer.writerows(rows)
+
+        summaries = sorted(
+            summaries,
+            key=lambda x: (
+                float("inf") if not np.isfinite(x[1]) else -x[1],
+                float("inf") if not np.isfinite(x[2]) else -x[2],
+                x[0],
+            ),
+        )
+
+        print(f"\n{'=' * 72}")
+        print(
+            f"Evaluation done: {len(rows)} policies x {len(args.maps)} maps x "
+            f"{args.num_episodes} episodes"
+        )
+        print(f"CSV saved to: {output_csv}")
+        if summaries:
+            print("Top policies (by avg_success -> avg_reward):")
+            for rank, (name, succ, rew) in enumerate(summaries[:10], start=1):
+                print(f"  {rank:2d}. succ={succ:.3f} | rew={rew:8.2f} | {name}")
+        print(f"{'=' * 72}")
+
+    finally:
+        if env is not None:
+            try:
+                env.close()
+            except Exception:
+                pass
+
+
+if __name__ == "__main__":
+    main()

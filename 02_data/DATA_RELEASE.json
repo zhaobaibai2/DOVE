@@ -1,0 +1,51 @@
+{
+  "repository": "zhaobaibai2/DOVE",
+  "release_tag": "paper-data-20261021-1417",
+  "file_count": 27065,
+  "uncompressed_bytes": 7807363484,
+  "archive_parts": [
+    {
+      "name": "dove-data.tar.gz.part001",
+      "bytes": 536870912,
+      "sha256": "13e9d63e7e8497203dd00933adccf9bf44d385d2fd6c6c763fa8850ebd58ca16",
+      "url": "https://github.com/zhaobaibai2/DOVE/releases/download/paper-data-20261021-1417/dove-data.tar.gz.part001"
+    },
+    {
+      "name": "dove-data.tar.gz.part002",
+      "bytes": 536870912,
+      "sha256": "ca286c374ba890351d6cc40cd1de382949809e721c05262ee9606d28a6264c97",
+      "url": "https://github.com/zhaobaibai2/DOVE/releases/download/paper-data-20261021-1417/dove-data.tar.gz.part002"
+    },
+    {
+      "name": "dove-data.tar.gz.part003",
+      "bytes": 536870912,
+      "sha256": "c95bcd21c1bf9b14688c521d157653e89ad390aa1af8dbb58bfeba13b309fdeb",
+      "url": "https://github.com/zhaobaibai2/DOVE/releases/download/paper-data-20261021-1417/dove-data.tar.gz.part003"
+    },
+    {
+      "name": "dove-data.tar.gz.part004",
+      "bytes": 536870912,
+      "sha256": "d67e49eb657a5b773ce41a7b9d2993df162045f8ce2dd324ae7a561c409a0ee7",
+      "url": "https://github.com/zhaobaibai2/DOVE/releases/download/paper-data-20261021-1417/dove-data.tar.gz.part004"
+    },
+    {
+      "name": "dove-data.tar.gz.part005",
+      "bytes": 536870912,
+      "sha256": "f4c59f1e99311a0fd40e56b545a4056acb154226f8d2bc38cb6e0fe333653c34",
+      "url": "https://github.com/zhaobaibai2/DOVE/releases/download/paper-data-20261021-1417/dove-data.tar.gz.part005"
+    },
+    {
+      "name": "dove-data.tar.gz.part006",
+      "bytes": 4518998,
+      "sha256": "6476e1db042c040eea76024a2e42e5f8c90796d0c014756ea904aa1847fb7683",
+      "url": "https://github.com/zhaobaibai2/DOVE/releases/download/paper-data-20261021-1417/dove-data.tar.gz.part006"
+    }
+  ],
+  "excluded": [
+    {
+      "path": "02_data/models/final/simulation/DOVE/policy-13000-25998.pkl",
+      "reason": "Main DOVE simulation checkpoint withheld at the author's request."
+    }
+  ],
+  "manifest_sha256": "e0e1fac96d482d7843f1917b03c57e1cafdec80530fc2523b8bddfbc8a75c0c7"
+}

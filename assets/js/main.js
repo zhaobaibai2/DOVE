@@ -1,6 +1,6 @@
 const NS = 'http://www.w3.org/2000/svg';
 
-fetch('data/main_results.json')
+fetch('02_data/current_paper/website_results.json')
   .then(response => {
     if (!response.ok) throw new Error(`Results data: ${response.status}`);
     return response.json();
