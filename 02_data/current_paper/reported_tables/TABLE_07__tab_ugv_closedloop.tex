@@ -1,0 +1,18 @@
+\begin{table}[!t]
+\centering
+\caption{{\normalfont Closed-loop scenario results on the physical UGV.  Speed, lateral MAE, and jerk are reported in $\mathrm{m\,s^{-1}}$, $\mathrm{m}$, and $\mathrm{m\,s^{-3}}$, respectively. The C/P/O/S entries report successful trials (n/10) in curve meeting, pedestrian yielding, obstacle avoidance, and straight lane keeping, respectively.}}
+\label{tab:ugv_closedloop}
+\footnotesize
+\setlength{\tabcolsep}{1pt}
+\renewcommand{\arraystretch}{1.03}
+\begin{tabular*}{0.96\columnwidth}{@{\extracolsep{\fill}}lccccc@{}}
+\toprule
+Method & Speed$\uparrow$ & Lat.\ MAE$\downarrow$ & Jerk$\downarrow$ & Succ.$\uparrow$ & C/P/O/S$\uparrow$ \\
+\midrule
+Positive-only & $1.25{\pm}0.52$ & $1.31{\pm}1.03$ & $2.53{\pm}0.39$ & 0.40 & 3/3/3/7\\
+IWR~\cite{mandlekar2020iwr} & $1.24{\pm}0.78$ & $1.10{\pm}0.39$ & $3.06{\pm}0.92$ & 0.30 & 2/3/2/5\\
+PVP~\cite{peng2023pvp} & $0.62{\pm}0.26$ & $\bm{0.47}{\pm}0.29$ & $1.90{\pm}1.37$ & 0.20 & 1/2/2/3\\
+\DOVE{} & $\bm{1.39}{\pm}0.75$ & $0.51{\pm}0.36$ & $\bm{1.16}{\pm}0.20$ & \textbf{0.80} & \textbf{8/8/7/9}\\
+\bottomrule
+\end{tabular*}
+\end{table}

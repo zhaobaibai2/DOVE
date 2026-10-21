@@ -20,5 +20,5 @@ css = (ROOT / 'assets/css/style.css').read_text()
 parser.paths.update(re.findall(r'url\(["\']?([^"\')]+)', css))
 missing = sorted(path for path in parser.paths if not (ROOT / path).exists())
 assert not missing, f'Missing local assets: {missing}'
-assert (ROOT / 'data/main_results.json').is_file()
+assert (ROOT / '02_data/current_paper/website_results.json').is_file()
 print(f'OK: {len(parser.paths)} local references and results data exist')

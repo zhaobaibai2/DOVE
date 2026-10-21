@@ -1,0 +1,91 @@
+{
+    "seed": 1,
+    "train_cfgs": {
+        "device": "cuda:1",
+        "torch_threads": 4,
+        "vector_env_nums": 1,
+        "parallel": 1,
+        "total_steps": 1000000,
+        "epochs": 500
+    },
+    "algo_cfgs": {
+        "steps_per_epoch": 2000,
+        "update_iters": 1,
+        "batch_size": 64,
+        "target_kl": 0.02,
+        "entropy_coef": 0.0,
+        "reward_normalize": false,
+        "cost_normalize": false,
+        "obs_normalize": true,
+        "kl_early_stop": true,
+        "use_max_grad_norm": true,
+        "max_grad_norm": 40.0,
+        "use_critic_norm": true,
+        "critic_norm_coef": 0.001,
+        "gamma": 0.99,
+        "cost_gamma": 0.99,
+        "lam": 0.95,
+        "lam_c": 0.95,
+        "clip": 0.2,
+        "adv_estimation_method": "gae",
+        "standardized_rew_adv": true,
+        "standardized_cost_adv": true,
+        "penalty_coef": 0.0,
+        "use_cost": false
+    },
+    "logger_cfgs": {
+        "use_wandb": false,
+        "wandb_project": "omnisafe",
+        "use_tensorboard": true,
+        "save_model_freq": 10,
+        "log_dir": "./exp-x/Tutorial_benchmark/Custom-v0---1cc66b7be72881ed6a5ed51366fe0e4238224ea4c07cd6df38d8b45251ebb13c/",
+        "window_lens": 100
+    },
+    "model_cfgs": {
+        "weight_initialization_mode": "kaiming_uniform",
+        "actor_type": "gaussian_learning",
+        "linear_lr_decay": true,
+        "exploration_noise_anneal": false,
+        "std_range": [
+            0.5,
+            0.1
+        ],
+        "actor": {
+            "hidden_sizes": [
+                64,
+                64
+            ],
+            "activation": "tanh",
+            "lr": 0.0003
+        },
+        "critic": {
+            "hidden_sizes": [
+                64,
+                64
+            ],
+            "activation": "tanh",
+            "lr": 0.0003
+        }
+    },
+    "exp_increment_cfgs": {
+        "logger_cfgs": {
+            "save_model_freq": 10,
+            "use_wandb": false,
+            "log_dir": "./exp-x/Tutorial_benchmark/Custom-v0---1cc66b7be72881ed6a5ed51366fe0e4238224ea4c07cd6df38d8b45251ebb13c/"
+        },
+        "algo_cfgs": {
+            "update_iters": 1,
+            "steps_per_epoch": 2000
+        },
+        "train_cfgs": {
+            "total_steps": 1000000,
+            "torch_threads": 4,
+            "vector_env_nums": 1,
+            "device": "cuda:1"
+        },
+        "seed": 1
+    },
+    "exp_name": "PPO-{Custom-v0}",
+    "env_id": "Custom-v0",
+    "algo": "PPO"
+}
