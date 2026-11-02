@@ -1,0 +1,33 @@
+\begin{table*}[!t]
+\centering
+\caption{{\normalfont MetaDrive closed-loop comparison under different training protocols. }}
+\label{tab:main}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular*}{0.98\textwidth}{@{\extracolsep{\fill}}lcccccc@{}}
+\toprule
+Method & Human Data$\downarrow$ & Online Env.\ Steps & Train Safety Cost$\downarrow$ & Return$\uparrow$ & Test Cost$\downarrow$ & Succ.$\uparrow$\\
+\midrule
+\multicolumn{7}{l}{\textit{Human reference}}\\
+Human Demo. & 50K & \text{N/A} & 23 & 377.52 & 0.39 & 0.97\\
+\midrule
+\multicolumn{7}{l}{\textit{Standard online RL baselines}}\\
+SAC~\cite{haarnoja2018sac} & \text{N/A} & 1M & $7.94\mathrm{K}{\pm}3.24\mathrm{K}$ & $350.18{\pm}16.21$ & $1.00{\pm}0.28$ & $0.73{\pm}0.13$\\
+PPO~\cite{schulman2017ppo} & \text{N/A} & 1M & $45.12\mathrm{K}{\pm}21.11\mathrm{K}$ & $278.65{\pm}35.07$ & $3.92{\pm}1.91$ & $0.44{\pm}0.14$\\
+DSAC~\cite{duan2021dsac} & \text{N/A} & 1M & $7.44\mathrm{K}{\pm}3.59\mathrm{K}$ & $349.35{\pm}22.15$ & $0.47{\pm}0.08$ & $0.77{\pm}0.09$\\
+\midrule
+\multicolumn{7}{l}{\textit{Offline, imitation, and diffusion-RL baselines}}\\
+CQL~\cite{kumar2020cql} & 50K  & \text{N/A} & \text{N/A} & $93.12{\pm}16.31$ & $1.45{\pm}0.15$ & $0.09{\pm}0.05$\\
+BC & 50K  & \text{N/A} & \text{N/A} & $59.13{\pm}8.92$ & $0.12{\pm}0.03$ & $0.00{\pm}0.00$\\
+Diffusion-QL~\cite{wang2023diffusionql}  & \text{N/A} & 1M & 5{,}634 & $366.79{\pm}16.78$ & $0.11{\pm}0.07$ & $0.88{\pm}0.03$\\
+DACER~\cite{wang2024dacer}  & \text{N/A} & 1M & 1{,}092 & $369.78{\pm}15.38$ & $0.10{\pm}0.04$ & $0.89{\pm}0.01$\\
+\midrule
+\multicolumn{7}{l}{\textit{Learned-HIL methods under the matched 0.05M protocol}}\\
+HG-DAgger~\cite{kelly2019hgdagger} & 34.9K  & 0.05M & 56.13 & 142.35 & 2.10 & 0.30\\
+IWR~\cite{mandlekar2020iwr} & 37.1K  & 0.05M & 48.78 & 329.97 & 4.00 & 0.70\\
+PVP~\cite{peng2023pvp} & 15.7K & 0.05M & $33.67{\pm}3.46$ & $338.28{\pm}10.21$ & $0.65{\pm}0.12$ & $0.80{\pm}0.03$\\
+H-DSAC~\cite{li2025hdsac} & 14.8K & 0.05M & $32.12{\pm}4.68$ & $353.39{\pm}12.34$ & $0.31{\pm}0.03$ & $0.83{\pm}0.05$\\
+\DOVE{} & \textbf{4.2K} (\textbf{--71.6\% vs. H-DSAC})  & 0.05M & \textbf{23.18} & $\bm{369.23}{\pm}15.33$ & $\bm{0.10}{\pm}0.03$ & $\bm{0.90}{\pm}0.03$\\
+\bottomrule
+\end{tabular*}
+\end{table*}

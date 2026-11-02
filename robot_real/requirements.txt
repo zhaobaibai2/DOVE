@@ -1,0 +1,5 @@
+numpy
+PyYAML
+python-can
+tensorboardX
+# Install a PyTorch build matching the target's CUDA/Python environment separately.

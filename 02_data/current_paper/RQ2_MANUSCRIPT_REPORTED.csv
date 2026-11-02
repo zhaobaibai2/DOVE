@@ -1,0 +1,5 @@
+method,EnergyRank,CPCal,rho_VLB,HSR,RMR_0p5,PairAcc_C_mean
+Positive-only,0,0,0.619,0.615,0.295,0.789
+ER_without_CPCal,1,0,0.989,0.981,0.007,0.345
+CPCal-only,0,1,0.772,0.722,0.189,0.987
+Full_DOVE,1,1,0.821,0.772,0.151,0.891

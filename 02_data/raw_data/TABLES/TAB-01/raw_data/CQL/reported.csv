@@ -1,0 +1,2 @@
+group,method,human_data_steps,online_env_steps,train_cost_mean,train_cost_sd,return_mean,return_sd,test_cost_mean,test_cost_sd,success_mean,success_sd,row_order
+offline_imitation_diffusion,CQL,50000,,,,93.12,16.31,1.45,0.15,0.09,0.05,4

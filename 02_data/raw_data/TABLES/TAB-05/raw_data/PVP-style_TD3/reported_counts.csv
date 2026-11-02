@@ -1,0 +1,2 @@
+paper_method,curve_meeting,pedestrian_yielding,obstacle_avoidance,straight_tracking,total_successes,trials_per_scenario,total_trials
+PVP-style_TD3,1,2,2,3,8,10,40

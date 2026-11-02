@@ -1,0 +1,14 @@
+numpy
+jax==0.4.27
+optax
+dm-haiku
+numpyro
+numba
+gymnasium==0.29.1
+metadrive-simulator==0.4.3
+dill==0.3.8
+tensorboardX
+tqdm
+setproctitle
+matplotlib
+pandas

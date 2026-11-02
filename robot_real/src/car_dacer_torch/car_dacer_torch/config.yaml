@@ -1,0 +1,133 @@
+# PVP-DACER (Torch) 实车配置
+# 仅 PyTorch，不依赖 JAX
+framework: "torch"
+seed: 42
+
+env:  # 环境/观测动作维度
+  state_dim: 344
+  action_dim: 2
+  max_action: [1.0, 1.0]
+  min_action: [-1.0, -1.0]
+
+training:  # 训练与阶段管理
+  phase1_episodes: 12000           # Phase1 收集接管/行为数据的步数（按迭代计数）
+  phase2_updates: 100000           # Phase2 离线 BC 目标总更新次数
+  phase3_interval: 100            # 预留字段（暂未用到，可保留）
+  buffer_warm_size: 1000           # 开始训练前 human buffer 最小大小
+  update_interval: 2             # 每隔多少循环触发一次训练；Phase3 默认不在控制回调里训练
+  phase2_bc_updates_per_iter: 200   # Phase2 每次触发做几步 BC，调大=更快完成 Phase2
+  replay_batch_size: 64           # 训练批大小（BC/PVP 共用）
+  buffer_max_size: 100000         # Route1 采集建议保留 30k-50k ticks，不再按 batch size 截断
+  human_buffer_max_size: 50000    # DOVE 核心是 same-state intervention pairs，单独保留足够 human buffer
+  max_iteration: 1000000
+  log_save_interval: 500          # TensorBoard 记录间隔
+  apprfunc_save_interval: 500     # 模型/缓冲保存间隔
+  policy_update_time: 1           # 预留字段
+  demo_data_path: null            # 单个buffer文件路径
+  # demo_data_path: "./outputs/dove_default/buffers/buffer_00001234.pkl"
+  demo_data_dir: null              # 批量加载目录（会加载目录下所有buffer_*.pkl和segment_*.pkl文件）
+  # demo_data_dir: "./outputs/dove_default_260210-234221/buffers/"
+  use_one_step_delay: true        # one-step delay 经验对齐
+  phase1_collect_only_intervention: true  # Phase1 仅收接管样本
+  collect_only: false
+  phase3_human_mix_ratio: 0.5     # Phase3 训练混合 demo 比例
+  phase3_online_train_enabled: true  # Phase3 保持在线训练学习
+  phase3_train_in_background: true # Phase3 在线训练放到后台线程，控制回调只做推理/发车/采样
+  phase3_train_period_s: 0.2      # 后台训练间隔，0.2s 约等价于原 10Hz 控制下每 2 步训练一次
+  phase3_skip_train_on_deadline_miss: true  # 最近控制周期超时/推理过慢时，后台训练主动让一步
+  phase3_max_infer_time_ms: 80.0  # 最近推理超过该阈值时跳过一次后台训练
+  actor_sync_interval: 10         # learner 每训练 N 次同步一次 actor，控制线程使用 actor 快照推理
+  runtime_tb_interval: 10         # 运行时 TensorBoard 指标每 N 个控制周期写一次
+  action_path: "fast"               # fast=实车低延迟路径；debug=每tick完整gate/guidance诊断
+  gate_diagnostics_interval: 20      # fast路径下每N tick记录一次完整gate诊断
+  console_status_interval: 20        # 终端状态行打印间隔
+  offline_mode: "full"            # offline_train_doveer.py: full 或 positive_only
+  offline_bc_updates: 10000       # Route1 buffer 离线 BC 更新数
+  offline_pvp_updates: 10000      # full DOVE 离线 PVP/EnergyRank 更新数
+
+algorithm:  # 算法超参
+  gamma: 0.99
+  lr: 0.0001
+  alpha_lr: 0.03
+  tau: 0.005
+  delay_update: 1                 # 策略/BC 更新频率（每 delay_update 次 Q 更新后做一次）
+  delay_alpha_update: 1000        # alpha 更新间隔（fix_alpha=false 时有效）
+  reward_scale: 1.0
+  target_entropy: -2.0
+  critic_objective: "cost"        # 与 the paper's proxy-risk critic 保持一致：lower-is-better proxy risk
+  num_timesteps: 10               # 扩散步数（越小越快，精度略降）
+  use_ddim: true                  # 实车推理默认使用 DDIM，减少采样压力
+  ddim_steps: 5                   # DDIM 推理步数；小于 num_timesteps 可降低延迟
+  ddim_eta: 0.0                   # 0 为确定性 DDIM；>0 会加入 DDIM 噪声
+  num_samples: 100                # 采样数（推理/训练加噪）
+  lambda_pv: 1.0                  # PV 损失权重
+  B: 1.0                          # PV 边界 B
+  lambda_energy: 0.5              # EnergyRank pair loss 权重
+  energy_margin: 0.5              # diffusion energy rank: E_den(a+) + m <= E_den(a-)
+  energy_min_action_gap: 0.03     # 原版 EnergyRank pair_ok 的最小动作差
+  rejected_action_radius: 0.20    # 统计 RAGR/P_delta 时的动作半径
+  lambda_bc: 5.0                  # BC boost 权重（干预段）
+  reward_free: true               # 干预段屏蔽 TD（无回报模式）
+  phase3_use_bc_boost: true       # Phase3 干预样本做 diffusion BC boost
+  fix_alpha: true                 # 固定 alpha，不自适应
+  init_alpha: 0.1                 # 初始 alpha（fix_alpha 时固定为此）
+  action_noise_scale: 0.00       # 动作探索噪声尺度
+  use_guidance: true              # 推理时启用 proxy-value guided DDIM
+  guidance_scale: 0.04            # UPV-GDS 梯度注入强度
+  guidance_uncertainty_kappa: 1.0 # twin/distributional uncertainty gate 强度
+  guidance_min_gate: 0.05         # gate 低于该值时不注入 guidance
+  guidance_sigma_ref: 1.0         # 原版 Cpsi uncertainty attenuation 的 sigma_ref
+  guidance_grad_clip: 1.0         # 原版 UPV-GDS critic-gradient norm clip
+  final_gate_enabled: true        # Final Gate：不满足经验约束时回退到 unguided action
+  final_gate_max_shift: 0.45      # guided 相对 unguided 的最大动作位移
+  final_gate_min_q_improve: 0.0   # 实车主结果建议要求 guided proxy 不差于 unguided
+  final_gate_max_uncertainty: 0.50 # guided action 的 twin-critic disagreement 上限
+  final_gate_use_uncertainty: true # gate 是否把 uncertainty predicate 纳入 accept
+
+network:  # 网络结构
+  hidden_dims: [256, 256, 256]
+  diffusion_hidden_dims: [256, 256, 256]
+  time_dim: 16
+  activation: "relu"
+  use_layer_norm: true
+
+safety:  # 安全阈值（逻辑见 safety_manager.py）
+  takeover_threshold: 0.8         # 接管判定阈值（预留）
+  max_steering_angle: 200         # 转向角度限制（物理角度）
+  emergency_brake_threshold: 5.0  # 紧急制动触发速度差阈值
+  min_safe_distance: 2.0          # 最小安全距离
+  max_abs_lateral_error: 2.0      # 横向误差双侧经验阈值，超过后触发保护
+  min_obstacle_distance_brake: 0.0 # >0 时启用 surroundinginfo 最小距离制动检查
+  obstacle_brake_speed: 2.0       # 障碍物近距保护的最低车速
+
+hardware:  # 硬件与接口
+  use_gpu: true
+  cuda_mem_fraction: 0.9          # CUDA 显存占用上限（best-effort）
+  dry_run: false                  # 调试时设 true，不发 CAN
+  enable_keyboard_pause: true
+  can_interface: "can1"
+  can_id: 0x210
+
+eval:  # 实车评估（eval）配置
+  # model_dir: "./outputs/dove_default/models/"  # 默认从这里选最新pt
+  model_dir: "./outputs"  # 默认从这里选最新pt
+  model_path: null                   # 手动指定某个pt（优先级最高）
+  deterministic: true              # 默认确定性采样（真正确定性：eval里会关闭agent内部噪声）
+  action_path: "fast"               # eval默认走低延迟gate；debug可恢复完整诊断
+  gate_diagnostics_interval: 20      # eval每N tick记录一次完整gate诊断
+  noise_std: 0                 # noisy评估模式下，动作额外高斯噪声标准差
+  method_name: "DOVE_full"
+  route_id: "Route2"
+  trial_id: "R2_DOVE_001"
+  scenario_id: "default"
+  checkpoint_id: ""
+  weather: ""
+  traffic_density: ""
+  obstacle_setup: ""
+
+logging:  # 日志
+  save_folder: "./outputs/dove_default"
+  tensorboard_flush_secs: 20
+  runtime_csv_interval: 1
+  runtime_csv_flush_interval: 20
+  verbose: true

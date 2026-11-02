@@ -1,0 +1,2 @@
+paper_method,speed_mean,speed_sd,lateral_mae_mean,lateral_mae_sd,jerk_mean,jerk_sd,successes,trials
+DOVE,1.386,0.747,0.512,0.361,1.159,0.203,32,40

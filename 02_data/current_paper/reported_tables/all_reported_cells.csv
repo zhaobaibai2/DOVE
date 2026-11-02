@@ -1,0 +1,350 @@
+table_number,tex_label,row_index,column_index,reported_tex,evidence_type
+1,tab:impl_hparams,1,1,"[!t]
+\centering
+\caption{{\normalfont Implementation and training hyperparameters of \DOVE{}.}}
+\label{tab:impl_hparams}
+\footnotesize
+\renewcommand{\arraystretch}{1.08}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}p{0.56\columnwidth}p{0.37\columnwidth}@{}}
+\toprule
+\textbf{Setting}",manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,1,2,\textbf{Value},manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,3,1,Action dimension / diffusion steps,manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,3,2,$2$ / $20$,manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,4,1,Denoiser / critic hidden width,manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,4,2,$128$ / $256$,manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,5,1,Denoiser / critic Adam learning rate,manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,5,2,$1.5\times10^{-4}$ / $3\times10^{-4}$,manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,6,1,Batch size,manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,6,2,$256$,manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,7,1,Sampling mix $\DN:\DI:\Ddemo$,manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,7,2,$75:15:10$,manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,8,1,Pair-distance threshold $\tau_{\mathrm{pair}}$,manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,8,2,$0.03$,manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,9,1,Noise schedule,manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,9,2,"VP ($b_{\min}=0.1$, $b_{\max}=10$)",manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,11,1,$m_{\mathrm{rank}}$,manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,11,2,$0.05$,manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,12,1,"Final $\lambda_{\mathrm{BC}},\lambda_{\mathrm{RL}},\lambda_{\mathrm{reg}}$",manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,12,2,"$12,\ 0.1,\ 2.0$",manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,13,1,"$\zeta_{\mathrm E},\varepsilon_{\mathrm E},\eta_{\mathrm E}^{\mathrm{init}}$",manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,13,2,"$10^{-3},\ 0.01,\ 1.0$",manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,15,1,Discount factor / Polyak coefficient,manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,15,2,$0.99$ / $5\times10^{-3}$,manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,16,1,"$m_{\mathrm C},\lambda_{\mathrm{cal}},c_{\mathrm{clip}}$",manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,16,2,"$0.1,\ 1.0,\ 1$",manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,18,1,"$\lambda_{\mathrm g},\phi_t,g_{\max}$",manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,18,2,"$0.5,\ t/T,\ 1.0$",manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,19,1,"$d_{\max},\kappa_{\mathrm C}$",manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,19,2,"$0.2,\ 0.02$",manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,20,1,"$\tau_{\mathrm{comp}},\tau_{\mathrm D}$",manuscript_reported_not_raw_measurement
+1,tab:impl_hparams,20,2,"$0.02,\ 1.0$",manuscript_reported_not_raw_measurement
+2,tab:main,1,1,"[!t]
+\centering
+\caption{{\normalfont MetaDrive closed-loop comparison under different training protocols. }}
+\label{tab:main}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular*}{0.98\textwidth}{@{\extracolsep{\fill}}lcccccc@{}}
+\toprule
+Method",manuscript_reported_not_raw_measurement
+2,tab:main,1,2,Human Data$\downarrow$,manuscript_reported_not_raw_measurement
+2,tab:main,1,3,Online Env.\ Steps,manuscript_reported_not_raw_measurement
+2,tab:main,1,4,Train Safety Cost$\downarrow$,manuscript_reported_not_raw_measurement
+2,tab:main,1,5,Return$\uparrow$,manuscript_reported_not_raw_measurement
+2,tab:main,1,6,Test Cost$\downarrow$,manuscript_reported_not_raw_measurement
+2,tab:main,1,7,Succ.$\uparrow$,manuscript_reported_not_raw_measurement
+2,tab:main,3,1,Human Demo.,manuscript_reported_not_raw_measurement
+2,tab:main,3,2,50K,manuscript_reported_not_raw_measurement
+2,tab:main,3,3,\text{N/A},manuscript_reported_not_raw_measurement
+2,tab:main,3,4,23,manuscript_reported_not_raw_measurement
+2,tab:main,3,5,377.52,manuscript_reported_not_raw_measurement
+2,tab:main,3,6,0.39,manuscript_reported_not_raw_measurement
+2,tab:main,3,7,0.97,manuscript_reported_not_raw_measurement
+2,tab:main,5,1,SAC~\cite{haarnoja2018sac},manuscript_reported_not_raw_measurement
+2,tab:main,5,2,\text{N/A},manuscript_reported_not_raw_measurement
+2,tab:main,5,3,1M,manuscript_reported_not_raw_measurement
+2,tab:main,5,4,$7.94\mathrm{K}{\pm}3.24\mathrm{K}$,manuscript_reported_not_raw_measurement
+2,tab:main,5,5,$350.18{\pm}16.21$,manuscript_reported_not_raw_measurement
+2,tab:main,5,6,$1.00{\pm}0.28$,manuscript_reported_not_raw_measurement
+2,tab:main,5,7,$0.73{\pm}0.13$,manuscript_reported_not_raw_measurement
+2,tab:main,6,1,PPO~\cite{schulman2017ppo},manuscript_reported_not_raw_measurement
+2,tab:main,6,2,\text{N/A},manuscript_reported_not_raw_measurement
+2,tab:main,6,3,1M,manuscript_reported_not_raw_measurement
+2,tab:main,6,4,$45.12\mathrm{K}{\pm}21.11\mathrm{K}$,manuscript_reported_not_raw_measurement
+2,tab:main,6,5,$278.65{\pm}35.07$,manuscript_reported_not_raw_measurement
+2,tab:main,6,6,$3.92{\pm}1.91$,manuscript_reported_not_raw_measurement
+2,tab:main,6,7,$0.44{\pm}0.14$,manuscript_reported_not_raw_measurement
+2,tab:main,7,1,DSAC~\cite{duan2021dsac},manuscript_reported_not_raw_measurement
+2,tab:main,7,2,\text{N/A},manuscript_reported_not_raw_measurement
+2,tab:main,7,3,1M,manuscript_reported_not_raw_measurement
+2,tab:main,7,4,$7.44\mathrm{K}{\pm}3.59\mathrm{K}$,manuscript_reported_not_raw_measurement
+2,tab:main,7,5,$349.35{\pm}22.15$,manuscript_reported_not_raw_measurement
+2,tab:main,7,6,$0.47{\pm}0.08$,manuscript_reported_not_raw_measurement
+2,tab:main,7,7,$0.77{\pm}0.09$,manuscript_reported_not_raw_measurement
+2,tab:main,9,1,CQL~\cite{kumar2020cql},manuscript_reported_not_raw_measurement
+2,tab:main,9,2,50K,manuscript_reported_not_raw_measurement
+2,tab:main,9,3,\text{N/A},manuscript_reported_not_raw_measurement
+2,tab:main,9,4,\text{N/A},manuscript_reported_not_raw_measurement
+2,tab:main,9,5,$93.12{\pm}16.31$,manuscript_reported_not_raw_measurement
+2,tab:main,9,6,$1.45{\pm}0.15$,manuscript_reported_not_raw_measurement
+2,tab:main,9,7,$0.09{\pm}0.05$,manuscript_reported_not_raw_measurement
+2,tab:main,10,1,BC,manuscript_reported_not_raw_measurement
+2,tab:main,10,2,50K,manuscript_reported_not_raw_measurement
+2,tab:main,10,3,\text{N/A},manuscript_reported_not_raw_measurement
+2,tab:main,10,4,\text{N/A},manuscript_reported_not_raw_measurement
+2,tab:main,10,5,$59.13{\pm}8.92$,manuscript_reported_not_raw_measurement
+2,tab:main,10,6,$0.12{\pm}0.03$,manuscript_reported_not_raw_measurement
+2,tab:main,10,7,$0.00{\pm}0.00$,manuscript_reported_not_raw_measurement
+2,tab:main,11,1,Diffusion-QL~\cite{wang2023diffusionql},manuscript_reported_not_raw_measurement
+2,tab:main,11,2,\text{N/A},manuscript_reported_not_raw_measurement
+2,tab:main,11,3,1M,manuscript_reported_not_raw_measurement
+2,tab:main,11,4,"5{,}634",manuscript_reported_not_raw_measurement
+2,tab:main,11,5,$366.79{\pm}16.78$,manuscript_reported_not_raw_measurement
+2,tab:main,11,6,$0.11{\pm}0.07$,manuscript_reported_not_raw_measurement
+2,tab:main,11,7,$0.88{\pm}0.03$,manuscript_reported_not_raw_measurement
+2,tab:main,12,1,DACER~\cite{wang2024dacer},manuscript_reported_not_raw_measurement
+2,tab:main,12,2,\text{N/A},manuscript_reported_not_raw_measurement
+2,tab:main,12,3,1M,manuscript_reported_not_raw_measurement
+2,tab:main,12,4,"1{,}092",manuscript_reported_not_raw_measurement
+2,tab:main,12,5,$369.78{\pm}15.38$,manuscript_reported_not_raw_measurement
+2,tab:main,12,6,$0.10{\pm}0.04$,manuscript_reported_not_raw_measurement
+2,tab:main,12,7,$0.89{\pm}0.01$,manuscript_reported_not_raw_measurement
+2,tab:main,14,1,HG-DAgger~\cite{kelly2019hgdagger},manuscript_reported_not_raw_measurement
+2,tab:main,14,2,34.9K,manuscript_reported_not_raw_measurement
+2,tab:main,14,3,0.05M,manuscript_reported_not_raw_measurement
+2,tab:main,14,4,56.13,manuscript_reported_not_raw_measurement
+2,tab:main,14,5,142.35,manuscript_reported_not_raw_measurement
+2,tab:main,14,6,2.10,manuscript_reported_not_raw_measurement
+2,tab:main,14,7,0.30,manuscript_reported_not_raw_measurement
+2,tab:main,15,1,IWR~\cite{mandlekar2020iwr},manuscript_reported_not_raw_measurement
+2,tab:main,15,2,37.1K,manuscript_reported_not_raw_measurement
+2,tab:main,15,3,0.05M,manuscript_reported_not_raw_measurement
+2,tab:main,15,4,48.78,manuscript_reported_not_raw_measurement
+2,tab:main,15,5,329.97,manuscript_reported_not_raw_measurement
+2,tab:main,15,6,4.00,manuscript_reported_not_raw_measurement
+2,tab:main,15,7,0.70,manuscript_reported_not_raw_measurement
+2,tab:main,16,1,PVP~\cite{peng2023pvp},manuscript_reported_not_raw_measurement
+2,tab:main,16,2,15.7K,manuscript_reported_not_raw_measurement
+2,tab:main,16,3,0.05M,manuscript_reported_not_raw_measurement
+2,tab:main,16,4,$33.67{\pm}3.46$,manuscript_reported_not_raw_measurement
+2,tab:main,16,5,$338.28{\pm}10.21$,manuscript_reported_not_raw_measurement
+2,tab:main,16,6,$0.65{\pm}0.12$,manuscript_reported_not_raw_measurement
+2,tab:main,16,7,$0.80{\pm}0.03$,manuscript_reported_not_raw_measurement
+2,tab:main,17,1,H-DSAC~\cite{li2025hdsac},manuscript_reported_not_raw_measurement
+2,tab:main,17,2,14.8K,manuscript_reported_not_raw_measurement
+2,tab:main,17,3,0.05M,manuscript_reported_not_raw_measurement
+2,tab:main,17,4,$32.12{\pm}4.68$,manuscript_reported_not_raw_measurement
+2,tab:main,17,5,$353.39{\pm}12.34$,manuscript_reported_not_raw_measurement
+2,tab:main,17,6,$0.31{\pm}0.03$,manuscript_reported_not_raw_measurement
+2,tab:main,17,7,$0.83{\pm}0.05$,manuscript_reported_not_raw_measurement
+2,tab:main,18,1,\DOVE{},manuscript_reported_not_raw_measurement
+2,tab:main,18,2,\textbf{4.2K} (\textbf{--71.6\% vs. H-DSAC}),manuscript_reported_not_raw_measurement
+2,tab:main,18,3,0.05M,manuscript_reported_not_raw_measurement
+2,tab:main,18,4,\textbf{23.18},manuscript_reported_not_raw_measurement
+2,tab:main,18,5,$\bm{369.23}{\pm}15.33$,manuscript_reported_not_raw_measurement
+2,tab:main,18,6,$\bm{0.10}{\pm}0.03$,manuscript_reported_not_raw_measurement
+2,tab:main,18,7,$\bm{0.90}{\pm}0.03$,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,1,1,"[!t]
+\centering
+\caption{{\normalfont
+Actor- and critic-side diagnostics with EnergyRank and \CPCal{}
+enabled ($\checkmark$) or disabled ($\times$).
+The last row corresponds to Full \DOVE{}.}}
+\label{tab:rq2_audit}
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\renewcommand{\arraystretch}{1.08}
+
+\begin{tabularx}{\columnwidth}{
+@{}cc*{3}{>{\centering\arraybackslash}X}c@{}
+}
+\toprule
+\multicolumn{2}{c}{Components}",manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,1,2,\multicolumn{3}{c}{Actor diagnostics},manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,1,3,Critic,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,2,1,"\cmidrule(lr){1-2}
+\cmidrule(lr){3-5}
+\cmidrule(l){6-6}
+
+EnergyRank",manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,2,2,\CPCal{},manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,2,3,$\rho_{\mathrm{VLB}}\uparrow$,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,2,4,HSR$\uparrow$,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,2,5,RMR$_{0.5}\downarrow$,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,2,6,$\mathrm{PairAcc}_{\mathrm C}^{\mathrm{mean}}\uparrow$,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,3,1,"\midrule
+
+$\times$",manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,3,2,$\times$,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,3,3,0.619,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,3,4,0.615,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,3,5,0.295,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,3,6,0.789,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,4,1,$\checkmark$,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,4,2,$\times$,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,4,3,\textbf{0.989},manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,4,4,\textbf{0.981},manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,4,5,\textbf{0.007},manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,4,6,0.345,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,5,1,$\times$,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,5,2,$\checkmark$,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,5,3,0.772,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,5,4,0.722,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,5,5,0.189,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,5,6,\textbf{0.987},manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,6,1,$\checkmark$,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,6,2,$\checkmark$,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,6,3,0.821,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,6,4,0.772,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,6,5,0.151,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,6,6,0.891,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,1,1,"[!t]
+\centering
+\caption{{\normalfont Inference-side execution-mode ablation with the
+Full-\DOVE{} training configuration held fixed.}}
+\label{tab:simulation_diagnostics}
+\footnotesize
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.00}
+\begin{tabularx}{\columnwidth}{@{}L{0.46\columnwidth}*{4}{>{\centering\arraybackslash}X}@{}}
+\toprule
+Inference mode",manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,1,2,Succ.$\uparrow$,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,1,3,Coll.$\downarrow$,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,1,4,Route$\uparrow$,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,1,5,Ep.\ Reward$\uparrow$,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,2,1,"\midrule
+Actor only (no guidance)",manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,2,2,0.400,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,2,3,0.400,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,2,4,0.768,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,2,5,288.53,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,3,1,Top-8 rerank,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,3,2,0.388,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,3,3,0.500,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,3,4,0.703,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,3,5,261.45,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,4,1,"Guidance, always execute",manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,4,2,0.472,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,4,3,0.490,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,4,4,0.658,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,4,5,244.14,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,5,1,"\midrule
+Guidance, compatibility-only gate",manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,5,2,0.492,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,5,3,0.470,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,5,4,0.647,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,5,5,240.55,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,6,1,"Guidance, proxy-only gate",manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,6,2,0.770,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,6,3,0.230,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,6,4,0.854,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,6,5,322.30,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,7,1,"Guidance, w/o disagreement",manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,7,2,0.838,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,7,3,0.162,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,7,4,0.874,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,7,5,\textbf{330.81},manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,8,1,"Guidance, full gate",manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,8,2,\textbf{0.842},manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,8,3,\textbf{0.158},manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,8,4,\textbf{0.883},manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,8,5,330.76,manuscript_reported_not_raw_measurement
+5,tab:ugv_audit,1,1,"[!b]
+\centering
+\caption{{\normalfont Route~1 physical-UGV phase-level data-path audit.}}
+\label{tab:ugv_audit}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.00}
+\begin{tabularx}{0.96\columnwidth}{@{}L{0.32\columnwidth}*{4}{>{\centering\arraybackslash}X}@{}}
+\toprule
+Phase",manuscript_reported_not_raw_measurement
+5,tab:ugv_audit,1,2,Rows,manuscript_reported_not_raw_measurement
+5,tab:ugv_audit,1,3,Gate dec.,manuscript_reported_not_raw_measurement
+5,tab:ugv_audit,1,4,Accept.,manuscript_reported_not_raw_measurement
+5,tab:ugv_audit,1,5,Fallback,manuscript_reported_not_raw_measurement
+5,tab:ugv_audit,2,1,"\midrule
+Collection",manuscript_reported_not_raw_measurement
+5,tab:ugv_audit,2,2,"7{,}514",manuscript_reported_not_raw_measurement
+5,tab:ugv_audit,2,3,375,manuscript_reported_not_raw_measurement
+5,tab:ugv_audit,2,4,0.005,manuscript_reported_not_raw_measurement
+5,tab:ugv_audit,2,5,0.995,manuscript_reported_not_raw_measurement
+5,tab:ugv_audit,3,1,Online repair,manuscript_reported_not_raw_measurement
+5,tab:ugv_audit,3,2,"22{,}362",manuscript_reported_not_raw_measurement
+5,tab:ugv_audit,3,3,"1{,}104",manuscript_reported_not_raw_measurement
+5,tab:ugv_audit,3,4,0.746,manuscript_reported_not_raw_measurement
+5,tab:ugv_audit,3,5,0.254,manuscript_reported_not_raw_measurement
+5,tab:ugv_audit,4,1,Frozen execution,manuscript_reported_not_raw_measurement
+5,tab:ugv_audit,4,2,"2{,}629",manuscript_reported_not_raw_measurement
+5,tab:ugv_audit,4,3,131,manuscript_reported_not_raw_measurement
+5,tab:ugv_audit,4,4,0.985,manuscript_reported_not_raw_measurement
+5,tab:ugv_audit,4,5,0.015,manuscript_reported_not_raw_measurement
+6,tab:ugv_timing,1,1,"[!t]
+\centering
+\caption{{\normalfont Mean onboard timing on the physical UGV, in milliseconds for latency and period and in hertz for rate. }}
+\label{tab:ugv_timing}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.00}
+\begin{tabularx}{0.96\columnwidth}{@{}L{0.32\columnwidth}*{3}{>{\centering\arraybackslash}X}@{}}
+\toprule
+Component",manuscript_reported_not_raw_measurement
+6,tab:ugv_timing,1,2,Latency,manuscript_reported_not_raw_measurement
+6,tab:ugv_timing,1,3,Period,manuscript_reported_not_raw_measurement
+6,tab:ugv_timing,1,4,Rate,manuscript_reported_not_raw_measurement
+6,tab:ugv_timing,2,1,"\midrule
+Diffusion-only",manuscript_reported_not_raw_measurement
+6,tab:ugv_timing,2,2,33.35,manuscript_reported_not_raw_measurement
+6,tab:ugv_timing,2,3,100.08,manuscript_reported_not_raw_measurement
+6,tab:ugv_timing,2,4,9.99,manuscript_reported_not_raw_measurement
+6,tab:ugv_timing,3,1,\DOVE{},manuscript_reported_not_raw_measurement
+6,tab:ugv_timing,3,2,154.22,manuscript_reported_not_raw_measurement
+6,tab:ugv_timing,3,3,170.12,manuscript_reported_not_raw_measurement
+6,tab:ugv_timing,3,4,5.88,manuscript_reported_not_raw_measurement
+6,tab:ugv_timing,4,1,Vehicle interface,manuscript_reported_not_raw_measurement
+6,tab:ugv_timing,4,2,0.82,manuscript_reported_not_raw_measurement
+6,tab:ugv_timing,4,3,105.48,manuscript_reported_not_raw_measurement
+6,tab:ugv_timing,4,4,9.48,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,1,1,"[!t]
+\centering
+\caption{{\normalfont Closed-loop scenario results on the physical UGV.  Speed, lateral MAE, and jerk are reported in $\mathrm{m\,s^{-1}}$, $\mathrm{m}$, and $\mathrm{m\,s^{-3}}$, respectively. The C/P/O/S entries report successful trials (n/10) in curve meeting, pedestrian yielding, obstacle avoidance, and straight lane keeping, respectively.}}
+\label{tab:ugv_closedloop}
+\footnotesize
+\setlength{\tabcolsep}{1pt}
+\renewcommand{\arraystretch}{1.03}
+\begin{tabular*}{0.96\columnwidth}{@{\extracolsep{\fill}}lccccc@{}}
+\toprule
+Method",manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,1,2,Speed$\uparrow$,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,1,3,Lat.\ MAE$\downarrow$,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,1,4,Jerk$\downarrow$,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,1,5,Succ.$\uparrow$,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,1,6,C/P/O/S$\uparrow$,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,2,1,"\midrule
+Positive-only",manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,2,2,$1.25{\pm}0.52$,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,2,3,$1.31{\pm}1.03$,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,2,4,$2.53{\pm}0.39$,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,2,5,0.40,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,2,6,3/3/3/7,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,3,1,IWR~\cite{mandlekar2020iwr},manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,3,2,$1.24{\pm}0.78$,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,3,3,$1.10{\pm}0.39$,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,3,4,$3.06{\pm}0.92$,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,3,5,0.30,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,3,6,2/3/2/5,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,4,1,PVP~\cite{peng2023pvp},manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,4,2,$0.62{\pm}0.26$,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,4,3,$\bm{0.47}{\pm}0.29$,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,4,4,$1.90{\pm}1.37$,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,4,5,0.20,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,4,6,1/2/2/3,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,5,1,\DOVE{},manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,5,2,$\bm{1.39}{\pm}0.75$,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,5,3,$0.51{\pm}0.36$,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,5,4,$\bm{1.16}{\pm}0.20$,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,5,5,\textbf{0.80},manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,5,6,\textbf{8/8/7/9},manuscript_reported_not_raw_measurement

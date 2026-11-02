@@ -1,0 +1,17 @@
+\begin{table}[!t]
+\centering
+\caption{{\normalfont Mean onboard timing on the physical UGV, in milliseconds for latency and period and in hertz for rate. }}
+\label{tab:ugv_timing}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.00}
+\begin{tabularx}{0.96\columnwidth}{@{}L{0.32\columnwidth}*{3}{>{\centering\arraybackslash}X}@{}}
+\toprule
+Component & Latency & Period & Rate \\
+\midrule
+Diffusion-only & 33.35 & 100.08 & 9.99 \\
+\DOVE{} & 154.22 & 170.12 & 5.88 \\
+Vehicle interface & 0.82 & 105.48 & 9.48 \\
+\bottomrule
+\end{tabularx}
+\end{table}

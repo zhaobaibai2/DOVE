@@ -1,0 +1,2 @@
+group,method,human_data_steps,online_env_steps,train_cost_mean,train_cost_sd,return_mean,return_sd,test_cost_mean,test_cost_sd,success_mean,success_sd,row_order
+learned_hitl_005m,H-DSAC,14800,50000,32.12,4.68,353.39,12.34,0.31,0.03,0.83,0.05,11
