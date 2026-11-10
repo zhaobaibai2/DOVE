@@ -1,0 +1,3 @@
+policy_name,policy_path,map_seed,episode_idx,reward,cost,native_cost,takeover_cost,length,reason,success,crash,out_of_route,timeout
+seed1-final.pkl,/home/aaa/data2/ZCY/paper1/github/github1102/02_data/models/final/simulation/DOVE/seed1-final.pkl,104,0,379.60101989278485,0.0,0.0,0.0,673.0,success,1.0,0.0,0.0,0.0
+seed1-final.pkl,/home/aaa/data2/ZCY/paper1/github/github1102/02_data/models/final/simulation/DOVE/seed1-final.pkl,104,1,379.7186160426438,0.0,0.0,0.0,670.0,success,1.0,0.0,0.0,0.0

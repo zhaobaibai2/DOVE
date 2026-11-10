@@ -1,0 +1,37 @@
+{
+  "table": "TAB-03",
+  "schema": "inference_seven_modes_v2",
+  "smoke": false,
+  "inputs": [
+    {
+      "file": "Full_gate/episodes.csv",
+      "sha256": "cc848ff561b9f57b541a0f75c40537fc410ac096a79a692b2767edaadae3c346"
+    },
+    {
+      "file": "Loss_only_gate/episodes.csv",
+      "sha256": "c2cbc94f712eae70baa785101616204ddad0bf4233411fa031981399d1153d8b"
+    },
+    {
+      "file": "No_disagreement/episodes.csv",
+      "sha256": "f7bc2297a8175e65fd467c3651284bb5c5e74abf14c347ea00e9b571816ddee4"
+    },
+    {
+      "file": "No_gate/episodes.csv",
+      "sha256": "f463d55d1a5dc3bc46f413321f3a0f2d4b3aff05660741f7b9a7f3c076aa8389"
+    },
+    {
+      "file": "Proxy_only_gate/episodes.csv",
+      "sha256": "5a78e77b29112c24280b48610db79ac64c935e01711f3032934e2a0d03287e86"
+    },
+    {
+      "file": "TopK_8/episodes.csv",
+      "sha256": "27b1f01ad420fdee0e793aefd3e03c7cbb640756ed84562a2707581d241f682a"
+    },
+    {
+      "file": "Vanilla/episodes.csv",
+      "sha256": "75450e5ed2ee8824e36dcf253ed0c63024f7045686c4e0623771fc71d888214b"
+    }
+  ],
+  "metrics_source": "Local episode records; run.sh test loads the packaged models and generates fresh episodes.",
+  "processing": "Seven execution modes use the same five frozen Full_DOVE checkpoints with 100 consecutive episodes each; pool 500 episodes per mode. Retain sample SD, SE, and per-checkpoint metrics. Stored reward includes its fixed historical factor once; reward_raw remains unchanged. No training-ablation rows enter this table."
+}

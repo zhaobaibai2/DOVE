@@ -1,0 +1,356 @@
+{
+  "run": "evaluations/20261110_123819_316993",
+  "comparison": [
+    {
+      "folder": "positive_only",
+      "checkpoint": "44000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9694586499381178,
+      "legacy_to_current_return_ratio_max": 0.9694586499381181,
+      "legacy_max_return": 370.0,
+      "current_max_return": 381.6562986194591
+    },
+    {
+      "folder": "positive_only",
+      "checkpoint": "final50000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9770974825072754,
+      "legacy_to_current_return_ratio_max": 0.9770974825072757,
+      "legacy_max_return": 370.0,
+      "current_max_return": 378.6725548105636
+    },
+    {
+      "folder": "positive_only",
+      "checkpoint": "27000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9773368793932597,
+      "legacy_to_current_return_ratio_max": 0.97733687939326,
+      "legacy_max_return": 370.0,
+      "current_max_return": 378.57979965894623
+    },
+    {
+      "folder": "positive_only",
+      "checkpoint": "16000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9668379721454649,
+      "legacy_to_current_return_ratio_max": 0.9668379721454652,
+      "legacy_max_return": 370.0,
+      "current_max_return": 382.6908030711188
+    },
+    {
+      "folder": "positive_only",
+      "checkpoint": "48000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9743073320260587,
+      "legacy_to_current_return_ratio_max": 0.974307332026059,
+      "legacy_max_return": 370.0,
+      "current_max_return": 379.75696973417007
+    },
+    {
+      "folder": "ER_wo_CPCal",
+      "checkpoint": "21000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9782826692330376,
+      "legacy_to_current_return_ratio_max": 0.978282669233038,
+      "legacy_max_return": 370.0,
+      "current_max_return": 378.21379406636703
+    },
+    {
+      "folder": "ER_wo_CPCal",
+      "checkpoint": "23000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9837751673554759,
+      "legacy_to_current_return_ratio_max": 0.9837751673554762,
+      "legacy_max_return": 370.0,
+      "current_max_return": 376.10219517393523
+    },
+    {
+      "folder": "ER_wo_CPCal",
+      "checkpoint": "25000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9801058176421036,
+      "legacy_to_current_return_ratio_max": 0.9801058176421039,
+      "legacy_max_return": 370.0,
+      "current_max_return": 377.5102579128956
+    },
+    {
+      "folder": "ER_wo_CPCal",
+      "checkpoint": "1000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9892446137693897,
+      "legacy_to_current_return_ratio_max": 0.9892446137693899,
+      "legacy_max_return": 370.0,
+      "current_max_return": 374.0227592346068
+    },
+    {
+      "folder": "ER_wo_CPCal",
+      "checkpoint": "18000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.982794438194845,
+      "legacy_to_current_return_ratio_max": 0.9827944381948452,
+      "legacy_max_return": 370.0,
+      "current_max_return": 376.4775070152007
+    },
+    {
+      "folder": "ER_wo_CPCal",
+      "checkpoint": "7000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9796127563513843,
+      "legacy_to_current_return_ratio_max": 0.9796127563513846,
+      "legacy_max_return": 370.0,
+      "current_max_return": 377.7002673771655
+    },
+    {
+      "folder": "Full_DOVE",
+      "checkpoint": "12000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9999999999999984,
+      "legacy_to_current_return_ratio_max": 1.0000000000000016,
+      "legacy_max_return": 372.97394485005094,
+      "current_max_return": 372.97394485005094
+    },
+    {
+      "folder": "Full_DOVE",
+      "checkpoint": "13000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9999999999999987,
+      "legacy_to_current_return_ratio_max": 1.0000000000000013,
+      "legacy_max_return": 372.16664185910406,
+      "current_max_return": 372.1666418591044
+    },
+    {
+      "folder": "Full_DOVE",
+      "checkpoint": "14000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9999999999999992,
+      "legacy_to_current_return_ratio_max": 1.0000000000000018,
+      "legacy_max_return": 372.5897710953551,
+      "current_max_return": 372.5897710953545
+    },
+    {
+      "folder": "Full_DOVE",
+      "checkpoint": "32000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9999999999999987,
+      "legacy_to_current_return_ratio_max": 1.0000000000000013,
+      "legacy_max_return": 370.2076574744651,
+      "current_max_return": 370.2076574744649
+    },
+    {
+      "folder": "Vanilla",
+      "checkpoint": "12000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 1.0,
+      "legacy_to_current_return_ratio_max": 1.0000000000000002,
+      "legacy_max_return": 274.53166791190284,
+      "current_max_return": 274.5316679119028
+    },
+    {
+      "folder": "Vanilla",
+      "checkpoint": "13000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 1.0,
+      "legacy_to_current_return_ratio_max": 1.0000000000000002,
+      "legacy_max_return": 378.51687056131686,
+      "current_max_return": 378.5168705613168
+    },
+    {
+      "folder": "Vanilla",
+      "checkpoint": "14000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 1.0,
+      "legacy_to_current_return_ratio_max": 1.0000000000000002,
+      "legacy_max_return": 89.35449367712592,
+      "current_max_return": 89.3544936771259
+    },
+    {
+      "folder": "Vanilla",
+      "checkpoint": "20000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 1.0,
+      "legacy_to_current_return_ratio_max": 1.0000000000000002,
+      "legacy_max_return": 376.86875041160226,
+      "current_max_return": 376.8687504116022
+    },
+    {
+      "folder": "Vanilla",
+      "checkpoint": "32000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 1.0,
+      "legacy_to_current_return_ratio_max": 1.0000000000000002,
+      "legacy_max_return": 326.4591592736082,
+      "current_max_return": 326.4591592736082
+    },
+    {
+      "folder": "TopK_8",
+      "checkpoint": "12000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9945971862668023,
+      "legacy_to_current_return_ratio_max": 0.9945971862668026,
+      "legacy_max_return": 379.6895872755744,
+      "current_max_return": 381.7521228877899
+    },
+    {
+      "folder": "TopK_8",
+      "checkpoint": "13000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9945971862668024,
+      "legacy_to_current_return_ratio_max": 0.9945971862668026,
+      "legacy_max_return": 380.0,
+      "current_max_return": 382.06422182463757
+    },
+    {
+      "folder": "TopK_8",
+      "checkpoint": "14000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9945971862668024,
+      "legacy_to_current_return_ratio_max": 0.9945971862668026,
+      "legacy_max_return": 379.99976953478364,
+      "current_max_return": 382.06399010749664
+    },
+    {
+      "folder": "TopK_8",
+      "checkpoint": "20000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9945971862668024,
+      "legacy_to_current_return_ratio_max": 0.9945971862668026,
+      "legacy_max_return": 374.8920897997324,
+      "current_max_return": 376.92856462512344
+    },
+    {
+      "folder": "TopK_8",
+      "checkpoint": "32000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9945971862668024,
+      "legacy_to_current_return_ratio_max": 0.9945971862668026,
+      "legacy_max_return": 373.62185505757,
+      "current_max_return": 375.6514297611789
+    },
+    {
+      "folder": "No_gate",
+      "checkpoint": "12000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 1.0,
+      "legacy_to_current_return_ratio_max": 1.0000000000000002,
+      "legacy_max_return": 376.83962133134963,
+      "current_max_return": 376.8396213313496
+    },
+    {
+      "folder": "No_gate",
+      "checkpoint": "13000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 1.0,
+      "legacy_to_current_return_ratio_max": 1.0000000000000002,
+      "legacy_max_return": 376.6290324710355,
+      "current_max_return": 376.62903247103543
+    },
+    {
+      "folder": "No_gate",
+      "checkpoint": "14000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 1.0,
+      "legacy_to_current_return_ratio_max": 1.0000000000000002,
+      "legacy_max_return": 376.26148575063473,
+      "current_max_return": 376.26148575063473
+    },
+    {
+      "folder": "No_gate",
+      "checkpoint": "20000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 1.0,
+      "legacy_to_current_return_ratio_max": 1.0000000000000002,
+      "legacy_max_return": 58.65714762060541,
+      "current_max_return": 58.6571476206054
+    },
+    {
+      "folder": "No_gate",
+      "checkpoint": "32000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 1.0,
+      "legacy_to_current_return_ratio_max": 1.0000000000000002,
+      "legacy_max_return": 61.381799423161034,
+      "current_max_return": 61.381799423161034
+    },
+    {
+      "folder": "Full_gate",
+      "checkpoint": "12000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9999999999999984,
+      "legacy_to_current_return_ratio_max": 1.0000000000000016,
+      "legacy_max_return": 372.97394485005094,
+      "current_max_return": 372.97394485005094
+    },
+    {
+      "folder": "Full_gate",
+      "checkpoint": "13000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9999999999999987,
+      "legacy_to_current_return_ratio_max": 1.0000000000000013,
+      "legacy_max_return": 372.16664185910406,
+      "current_max_return": 372.1666418591044
+    },
+    {
+      "folder": "Full_gate",
+      "checkpoint": "14000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9999999999999992,
+      "legacy_to_current_return_ratio_max": 1.0000000000000018,
+      "legacy_max_return": 372.5897710953551,
+      "current_max_return": 372.5897710953545
+    },
+    {
+      "folder": "Full_gate",
+      "checkpoint": "20000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9945971862668024,
+      "legacy_to_current_return_ratio_max": 0.9945971862668026,
+      "legacy_max_return": 371.6769009079428,
+      "current_max_return": 373.69591030417394
+    },
+    {
+      "folder": "Full_gate",
+      "checkpoint": "32000",
+      "episodes": 100,
+      "outcomes_identical": true,
+      "legacy_to_current_return_ratio_min": 0.9999999999999987,
+      "legacy_to_current_return_ratio_max": 1.0000000000000013,
+      "legacy_max_return": 370.2076574744651,
+      "current_max_return": 370.2076574744649
+    }
+  ],
+  "note": "Return ratios describe historical processing differences only. They do not modify fresh evaluation results."
+}

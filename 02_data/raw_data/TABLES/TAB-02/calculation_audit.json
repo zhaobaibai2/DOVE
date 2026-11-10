@@ -1,0 +1,64 @@
+{
+  "schema": "rq2_vlb_hsr_rmr_v2",
+  "paper_table": "DOVE_v3.tex tab:rq2_audit (Table III)",
+  "smoke": false,
+  "inputs": [
+    {
+      "file": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-02/evaluations/20261110_150350_527870/raw_data/Positive-only/pairs.csv",
+      "sha256": "644b9e8d250780dafb4669f8da4b2923d4daf1409de58ff3bc3691a704992b2d",
+      "rows": 12800
+    },
+    {
+      "file": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-02/evaluations/20261110_150350_527870/raw_data/ER_wo_CPCal/pairs.csv",
+      "sha256": "ded7fb83b6b807de2b5f5d983ec85ab722c85024a8b2a3b361234b1054bf1f43",
+      "rows": 12800
+    },
+    {
+      "file": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-02/evaluations/20261110_150350_527870/raw_data/CPCal_only/pairs.csv",
+      "sha256": "c6f936c68760c2b9505e3e9221ffe0acbfb0e5c4eed12867fc3dd8cb23bdf2bc",
+      "rows": 11776
+    },
+    {
+      "file": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-02/evaluations/20261110_150350_527870/raw_data/Full_DOVE/pairs.csv",
+      "sha256": "991696afe86cecc733fa39598b9bddb6f4e2a3a427a2772c9d4af9b600e73e99",
+      "rows": 11776
+    }
+  ],
+  "definitions": {
+    "rho_vlb": "pooled fraction delta_VLB > 0; 20 VP steps, 64 matched draws per step; Gaussian decoder beta1 then posterior variance",
+    "hsr": "pooled fraction of 64 actor samples with (a-midpoint).(accepted-rejected)/gap_squared > 0",
+    "rmr_0p5": "pooled fraction with ||a-rejected|| < 0.5*||accepted-rejected||",
+    "pairacc_c_mean": "pooled fraction (target_q1_neg+target_q2_neg)/2 > (target_q1_pos+target_q2_pos)/2 on the same 256 pairs"
+  },
+  "processing": "No rescaling or target adjustment; all rates derive from integer event counts. Checkpoint SD and SE are supplementary.",
+  "paper_comparison": [
+    {
+      "setting": "Positive-only",
+      "rho_vlb_matches_paper_3dp": false,
+      "hsr_matches_paper_3dp": false,
+      "rmr_0p5_matches_paper_3dp": true,
+      "pairacc_c_mean_matches_paper_3dp": false
+    },
+    {
+      "setting": "ER w/o CPCal",
+      "rho_vlb_matches_paper_3dp": true,
+      "hsr_matches_paper_3dp": true,
+      "rmr_0p5_matches_paper_3dp": true,
+      "pairacc_c_mean_matches_paper_3dp": false
+    },
+    {
+      "setting": "CPCal only",
+      "rho_vlb_matches_paper_3dp": true,
+      "hsr_matches_paper_3dp": true,
+      "rmr_0p5_matches_paper_3dp": true,
+      "pairacc_c_mean_matches_paper_3dp": true
+    },
+    {
+      "setting": "Full DOVE",
+      "rho_vlb_matches_paper_3dp": false,
+      "hsr_matches_paper_3dp": true,
+      "rmr_0p5_matches_paper_3dp": true,
+      "pairacc_c_mean_matches_paper_3dp": false
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+setting,checkpoint,kind,samples,pairsat_e,ovr_e,diversity,pairacc_c
+Positive-only,run11_noer_policy-1000-1998,actor,4,0.0,0.25,0.038746852427721024,
+Positive-only,policy-1000-1998.pkl,critic,4,,,,0.25
+ER w/o CPCal,run13_eronly_policy-1000-1998,actor,4,0.25,0.0,0.036867222748696804,
+ER w/o CPCal,policy-1000-1998.pkl,critic,4,,,,0.0
+Full DOVE,run12_full_policy-1000-1998,actor,4,0.25,0.0,0.043453970924019814,
+Full DOVE,policy-1000-1998.pkl,critic,4,,,,0.25

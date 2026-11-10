@@ -1,0 +1,28 @@
+TAB-02：模型诊断
+运行 bash scripts/run_tab02.sh test（或本表 run.sh test），默认全量加载 152 个原 checkpoint。
+Actor 使用 50 / 50 / 46 个 checkpoint，每个 256 对接管样本；Critic 使用 52 / 52 / 48 个 checkpoint，每个 512 对。
+模型、args.json 和配对输入已经复制到本表 models/、inputs/。运行时无需 Backup、github/git 或 TAB-01。
+
+配对来源：接管时的 observation；正动作 action_behavior，负动作 action_agent。精确行号在 inputs/pair_ids.json。
+Actor：固定 8 个扩散时间步，正负动作使用同一观测派生的随机噪声，计算去噪均方误差 E。
+PairSat_E = mean(E_neg - E_pos >= 0.05)。
+OVR_E = mean(32 次采样中，到负动作的最小欧氏距离 <= 0.05)。
+Diversity = 32 次采样动作之间，所有不同无序对的欧氏距离均值。
+Critic：使用 target_q1 / target_q2 的均值；PairAcc_C = mean(Qbar_neg > Qbar_pos)，安全成本越低越好。
+先对每个 checkpoint 求均值，再对 checkpoint 均值等权平均；误差为 checkpoint 样本标准差 / sqrt(checkpoint 数)。
+
+旧 Actor audit 完整脚本没有找回。当前公式由已有能量/采样代码重建，并用三个训练组各一完整 checkpoint 的 256 条旧记录核对；两个判定完全相同，多样性误差 < 6e-8。
+原始输入、旧指标及原计算脚本保存在 reference/，不参与新的模型推理。
+本表定义是旧目录的 PairSat_E / OVR_E / Diversity / PairAcc_C，和 current_paper 中后来变更的 VLB 诊断表不同。
+
+输出（均在本表目录内）：
+  test_results.csv：终端显示的逐项结果和最终结果，terminal_text 保留原显示文本。
+  test_results_时间.csv：本次运行的独立 CSV。
+  final_metrics.csv：表中最终指标。
+  table_values.csv：精确数值、样本数、SD/SE 和旧表比较（适用时）。
+  per_checkpoint.csv / per_phase.csv / per_run.csv / scenario_counts.csv：相应中间聚合。
+  calculation_audit.json：输入哈希、计算口径和证据范围。
+仿真/诊断全量运行另有 evaluations/时间/，保存真实测量及本次清单；只在全部成功后发布顶层结果。
+只重新聚合已有本地记录：bash 本表/run.sh calculate；该操作不执行模型仿真。
+TAB-02/03 支持 test --smoke 验证整条链路；该模式在 evaluations 下单独保存，明确标为 smoke，不覆盖正式结果。
+每个 calculate.py 独立使用 Python 标准库和本表输入，无需 Backup 或其他表的文件。

@@ -1,0 +1,5 @@
+record_type,setting,checkpoint,pairs,samples,rho_vlb,hsr,rmr_0p5,pairacc_c_mean,terminal_text
+checkpoint,Positive-only,policy-1000-1998,4,256,1.0,0.9921875,0.0078125,0.25,Positive-only 第1/1组 rho_VLB=1.000 HSR=0.992 RMR_0.5=0.008 PairAcc_C_mean=0.250
+checkpoint,ER_wo_CPCal,policy-1000-1998,4,256,1.0,1.0,0.0,0.0,ER_wo_CPCal 第1/1组 rho_VLB=1.000 HSR=1.000 RMR_0.5=0.000 PairAcc_C_mean=0.000
+checkpoint,CPCal_only,policy-1000-1998,4,256,1.0,1.0,0.0,0.25,CPCal_only 第1/1组 rho_VLB=1.000 HSR=1.000 RMR_0.5=0.000 PairAcc_C_mean=0.250
+checkpoint,Full_DOVE,policy-1000-1998,4,256,1.0,1.0,0.0,0.25,Full_DOVE 第1/1组 rho_VLB=1.000 HSR=1.000 RMR_0.5=0.000 PairAcc_C_mean=0.250

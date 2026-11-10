@@ -1,0 +1,39 @@
+record_type,setting,checkpoint,episode,arrive,crash,out_of_route,timeout,other,success,reward,route_completion,terminal_text,Panel,Setting,Episodes,Succ.↑,Crash↓,Route Completion↑,Return↑
+episode,positive_only,16000,1,0,0,0,0,1,0.0,150.0490122961732,0.4158119417851718,positive_only 第16000组 1/1 arrive=0 crash=0 out_of_route=0 timeout=0 other=1 success=0.0%,,,,,,,
+episode,positive_only,27000,1,0,1,0,0,0,0.0,334.7786459133477,0.9028455898406432,positive_only 第27000组 1/1 arrive=0 crash=1 out_of_route=0 timeout=0 other=0 success=0.0%,,,,,,,
+episode,positive_only,44000,1,0,1,0,0,0,0.0,295.90926049164,0.8015970021805259,positive_only 第44000组 1/1 arrive=0 crash=1 out_of_route=0 timeout=0 other=0 success=0.0%,,,,,,,
+episode,positive_only,final50000,1,0,0,0,0,1,0.0,338.3457995309342,0.9211480427752998,positive_only 第final50000组 1/1 arrive=0 crash=0 out_of_route=0 timeout=0 other=1 success=0.0%,,,,,,,
+episode,positive_only,48000,1,1,0,0,0,0,1.0,379.3949613015483,0.9854504442265647,positive_only 第48000组 1/1 arrive=1 crash=0 out_of_route=0 timeout=0 other=0 success=100.0%,,,,,,,
+episode,ER_wo_CPCal,21000,1,0,1,0,0,0,0.0,339.59723746781964,0.9108732460623585,ER_wo_CPCal 第21000组 1/1 arrive=0 crash=1 out_of_route=0 timeout=0 other=0 success=0.0%,,,,,,,
+episode,ER_wo_CPCal,25000,1,1,0,0,0,0,1.0,374.52182596517906,0.9859130747198777,ER_wo_CPCal 第25000组 1/1 arrive=1 crash=0 out_of_route=0 timeout=0 other=0 success=100.0%,,,,,,,
+episode,ER_wo_CPCal,23000,1,1,0,0,0,0,1.0,375.49978283298174,0.9846472671918433,ER_wo_CPCal 第23000组 1/1 arrive=1 crash=0 out_of_route=0 timeout=0 other=0 success=100.0%,,,,,,,
+episode,ER_wo_CPCal,1000,1,0,1,0,0,0,0.0,60.39680293557785,0.18817528928982968,ER_wo_CPCal 第1000组 1/1 arrive=0 crash=1 out_of_route=0 timeout=0 other=0 success=0.0%,,,,,,,
+episode,ER_wo_CPCal,7000,1,1,0,0,0,0,1.0,377.55144467668566,0.9874031800511981,ER_wo_CPCal 第7000组 1/1 arrive=1 crash=0 out_of_route=0 timeout=0 other=0 success=100.0%,,,,,,,
+episode,ER_wo_CPCal,18000,1,1,0,0,0,0,1.0,373.43468985020615,0.9854005569985527,ER_wo_CPCal 第18000组 1/1 arrive=1 crash=0 out_of_route=0 timeout=0 other=0 success=100.0%,,,,,,,
+episode,Full_DOVE,12000,1,1,0,0,0,0,1.0,371.7589200876988,0.9849959529348872,Full_DOVE 第12000组 1/1 arrive=1 crash=0 out_of_route=0 timeout=0 other=0 success=100.0%,,,,,,,
+episode,Vanilla,12000,1,0,0,0,0,1,0.0,275.99837170202517,0.7535725230087127,Vanilla 第12000组 1/1 arrive=0 crash=0 out_of_route=0 timeout=0 other=1 success=0.0%,,,,,,,
+episode,Full_DOVE,13000,1,1,0,0,0,0,1.0,371.7015880516956,0.9855248124050734,Full_DOVE 第13000组 1/1 arrive=1 crash=0 out_of_route=0 timeout=0 other=0 success=100.0%,,,,,,,
+episode,Full_DOVE,14000,1,0,1,0,0,0,0.0,93.32478107578443,0.256546168247597,Full_DOVE 第14000组 1/1 arrive=0 crash=1 out_of_route=0 timeout=0 other=0 success=0.0%,,,,,,,
+episode,Full_DOVE,32000,1,1,0,0,0,0,1.0,370.11606163073185,0.9853641063296463,Full_DOVE 第32000组 1/1 arrive=1 crash=0 out_of_route=0 timeout=0 other=0 success=100.0%,,,,,,,
+episode,Vanilla,13000,1,1,0,0,0,0,1.0,380.18955464531854,0.9859085491470704,Vanilla 第13000组 1/1 arrive=1 crash=0 out_of_route=0 timeout=0 other=0 success=100.0%,,,,,,,
+episode,Vanilla,14000,1,0,1,0,0,0,0.0,89.0105244994844,0.24001291331302982,Vanilla 第14000组 1/1 arrive=0 crash=1 out_of_route=0 timeout=0 other=0 success=0.0%,,,,,,,
+episode,Vanilla,20000,1,1,0,0,0,0,1.0,378.60207612270125,0.9852242733480604,Vanilla 第20000组 1/1 arrive=1 crash=0 out_of_route=0 timeout=0 other=0 success=100.0%,,,,,,,
+episode,Vanilla,32000,1,0,1,0,0,0,0.0,327.54595734395957,0.8777463501172348,Vanilla 第32000组 1/1 arrive=0 crash=1 out_of_route=0 timeout=0 other=0 success=0.0%,,,,,,,
+episode,TopK_8,12000,1,0,1,0,0,0,0.0,353.72516265450105,0.9447000234092567,TopK_8 第12000组 1/1 arrive=0 crash=1 out_of_route=0 timeout=0 other=0 success=0.0%,,,,,,,
+episode,TopK_8,13000,1,1,0,0,0,0,1.0,378.5914261119957,0.985528787019649,TopK_8 第13000组 1/1 arrive=1 crash=0 out_of_route=0 timeout=0 other=0 success=100.0%,,,,,,,
+episode,TopK_8,14000,1,1,0,0,0,0,1.0,379.42563773123106,0.9866280396554172,TopK_8 第14000组 1/1 arrive=1 crash=0 out_of_route=0 timeout=0 other=0 success=100.0%,,,,,,,
+episode,TopK_8,20000,1,1,0,0,0,0,1.0,373.45231046671194,0.984491341853075,TopK_8 第20000组 1/1 arrive=1 crash=0 out_of_route=0 timeout=0 other=0 success=100.0%,,,,,,,
+episode,TopK_8,32000,1,1,0,0,0,0,1.0,372.9267967095854,0.9862338736320269,TopK_8 第32000组 1/1 arrive=1 crash=0 out_of_route=0 timeout=0 other=0 success=100.0%,,,,,,,
+episode,No_gate,12000,1,1,0,0,0,0,1.0,378.08768070727206,0.9846688289228611,No_gate 第12000组 1/1 arrive=1 crash=0 out_of_route=0 timeout=0 other=0 success=100.0%,,,,,,,
+episode,No_gate,13000,1,1,0,0,0,0,1.0,378.41980300837423,0.9862865846637332,No_gate 第13000组 1/1 arrive=1 crash=0 out_of_route=0 timeout=0 other=0 success=100.0%,,,,,,,
+episode,No_gate,14000,1,0,1,0,0,0,0.0,331.826842128016,0.9024372707742687,No_gate 第14000组 1/1 arrive=0 crash=1 out_of_route=0 timeout=0 other=0 success=0.0%,,,,,,,
+episode,No_gate,20000,1,0,1,0,0,0,0.0,58.77006078471779,0.18797243572725453,No_gate 第20000组 1/1 arrive=0 crash=1 out_of_route=0 timeout=0 other=0 success=0.0%,,,,,,,
+episode,No_gate,32000,1,0,1,0,0,0,0.0,59.762614230684164,0.19038463728475177,No_gate 第32000组 1/1 arrive=0 crash=1 out_of_route=0 timeout=0 other=0 success=0.0%,,,,,,,
+episode,Full_gate,20000,1,1,0,0,0,0,1.0,373.11234628937507,0.9862871062398972,Full_gate 第20000组 1/1 arrive=1 crash=0 out_of_route=0 timeout=0 other=0 success=100.0%,,,,,,,
+summary,,,,,,,,,,,,Positive-only (DBC + critic) arrive=20.0% crash=40.0% route_completion=0.805 Return↑=299.70,A,Positive-only (DBC + critic),5,0.2,0.4,0.805370604162,299.695535907
+summary,,,,,,,,,,,,ER w/o CPCal arrive=66.7% crash=33.3% route_completion=0.840 Return↑=316.83,A,ER w/o CPCal,6,0.666666666667,0.333333333333,0.840402102386,316.833630621
+summary,,,,,,,,,,,,Full DOVE arrive=75.0% crash=25.0% route_completion=0.803 Return↑=301.73,A,Full DOVE,4,0.75,0.25,0.803107759979,301.725337711
+summary,,,,,,,,,,,,Repaired actor without test-time guidance arrive=40.0% crash=40.0% route_completion=0.768 Return↑=290.27,B,Repaired actor without test-time guidance,5,0.4,0.4,0.768492921787,290.269296863
+summary,,,,,,,,,,,,Top-K rerank (K=8) arrive=80.0% crash=20.0% route_completion=0.978 Return↑=371.62,B,Top-K rerank (K=8),5,0.8,0.2,0.977516413114,371.624266735
+summary,,,,,,,,,,,,"Projected guidance, always execute arrive=40.0% crash=60.0% route_completion=0.650 Return↑=241.37",B,"Projected guidance, always execute",5,0.4,0.6,0.650349951475,241.373400172
+summary,,,,,,,,,,,,Projected guidance with acceptance/fallback gate arrive=80.0% crash=20.0% route_completion=0.840 Return↑=316.00,B,Projected guidance with acceptance/fallback gate,5,0.8,0.2,0.839743629231,316.002739427

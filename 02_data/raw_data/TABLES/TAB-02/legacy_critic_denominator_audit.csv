@@ -1,0 +1,4 @@
+group,legacy_pairs_per_checkpoint,legacy_checkpoints,legacy_observations,legacy_pairacc_c_mean,current_pairs_per_checkpoint,current_actor_checkpoints
+Positive-only,512,52,26624,0.7890249399038461,256,50
+ER_wo_CPCal,512,52,26624,0.3452899639423077,256,50
+Full_DOVE,512,48,24576,0.8914794921875,256,46

@@ -1,0 +1,17 @@
+[
+  {
+    "source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/Latex0805/DOVE__Learning_Diffusion_Policies_from_Accepted_and_Rejected_Actions_in_Human_in_the_Loop_Driving/git/02_data/raw_data/harness_project/artifacts/tables/TAB-05/calculation.md",
+    "local": "02_data/raw_data/TABLES/TAB-05/provenance/calculation.md",
+    "sha256": "c0f22bc0172240786d04a43664a01848ae3ec7e34fe035617812b967f134d63a"
+  },
+  {
+    "source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/Latex0805/DOVE__Learning_Diffusion_Policies_from_Accepted_and_Rejected_Actions_in_Human_in_the_Loop_Driving/git/02_data/raw_data/harness_project/artifacts/tables/TAB-05/raw_trial_ledger_search_summary.csv",
+    "local": "02_data/raw_data/TABLES/TAB-05/provenance/raw_trial_ledger_search_summary.csv",
+    "sha256": "4c08065e54ebb36112b59850e8c72d9c9d584643b455509fe6f1bbce6acb079c"
+  },
+  {
+    "source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/Latex0805/DOVE__Learning_Diffusion_Policies_from_Accepted_and_Rejected_Actions_in_Human_in_the_Loop_Driving/git/02_data/raw_data/harness_project/artifacts/tables/TAB-05/unresolved_trial_ledger.csv",
+    "local": "02_data/raw_data/TABLES/TAB-05/provenance/unresolved_trial_ledger.csv",
+    "sha256": "fc02174c316353b852ae7fbb8285ac1a833114051fa523326cebd311bac9759c"
+  }
+]

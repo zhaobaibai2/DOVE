@@ -1,0 +1,531 @@
+{
+  "run": "evaluations/20261110_123819_316993",
+  "comparison": [
+    {
+      "folder": "positive_only",
+      "checkpoint": "44000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9694586499381178,
+      "reward_ratio_max": 0.9694586499381181,
+      "inferred_slope": 0.9694586499381181,
+      "inferred_intercept": 4.19512138802636e-14,
+      "max_affine_residual": 1.7053025658242404e-13
+    },
+    {
+      "folder": "positive_only",
+      "checkpoint": "final50000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9770974825072754,
+      "reward_ratio_max": 0.9770974825072757,
+      "inferred_slope": 0.9770974825072758,
+      "inferred_intercept": -3.751012189934327e-14,
+      "max_affine_residual": 1.1368683772161603e-13
+    },
+    {
+      "folder": "positive_only",
+      "checkpoint": "27000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9773368793932597,
+      "reward_ratio_max": 0.97733687939326,
+      "inferred_slope": 0.97733687939326,
+      "inferred_intercept": 2.5062570758016767e-15,
+      "max_affine_residual": 1.1368683772161603e-13
+    },
+    {
+      "folder": "positive_only",
+      "checkpoint": "16000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9668379721454649,
+      "reward_ratio_max": 0.9668379721454652,
+      "inferred_slope": 0.9668379721454653,
+      "inferred_intercept": 1.9891557188519832e-14,
+      "max_affine_residual": 1.7053025658242404e-13
+    },
+    {
+      "folder": "positive_only",
+      "checkpoint": "48000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9743073320260587,
+      "reward_ratio_max": 0.974307332026059,
+      "inferred_slope": 0.9743073320260582,
+      "inferred_intercept": 2.4429828725113683e-13,
+      "max_affine_residual": 5.684341886080802e-14
+    },
+    {
+      "folder": "ER_wo_CPCal",
+      "checkpoint": "21000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9782826692330376,
+      "reward_ratio_max": 0.978282669233038,
+      "inferred_slope": 0.9782826692330377,
+      "inferred_intercept": -3.4723802146410514e-14,
+      "max_affine_residual": 1.1368683772161603e-13
+    },
+    {
+      "folder": "ER_wo_CPCal",
+      "checkpoint": "23000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9837751673554759,
+      "reward_ratio_max": 0.9837751673554762,
+      "inferred_slope": 0.9837751673554737,
+      "inferred_intercept": 7.221319358885609e-13,
+      "max_affine_residual": 2.2737367544323206e-13
+    },
+    {
+      "folder": "ER_wo_CPCal",
+      "checkpoint": "25000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9801058176421036,
+      "reward_ratio_max": 0.9801058176421039,
+      "inferred_slope": 0.9801058176421031,
+      "inferred_intercept": 2.1923870146568517e-14,
+      "max_affine_residual": 2.8421709430404007e-13
+    },
+    {
+      "folder": "ER_wo_CPCal",
+      "checkpoint": "1000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9892446137693897,
+      "reward_ratio_max": 0.9892446137693899,
+      "inferred_slope": 0.9892446137693891,
+      "inferred_intercept": -7.161647780213202e-15,
+      "max_affine_residual": 2.2737367544323206e-13
+    },
+    {
+      "folder": "ER_wo_CPCal",
+      "checkpoint": "18000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.982794438194845,
+      "reward_ratio_max": 0.9827944381948452,
+      "inferred_slope": 0.9827944381948458,
+      "inferred_intercept": -1.3684332604017394e-13,
+      "max_affine_residual": 1.7053025658242404e-13
+    },
+    {
+      "folder": "ER_wo_CPCal",
+      "checkpoint": "7000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9796127563513843,
+      "reward_ratio_max": 0.9796127563513846,
+      "inferred_slope": 0.9796127563513842,
+      "inferred_intercept": -8.533802005018988e-14,
+      "max_affine_residual": 2.2737367544323206e-13
+    },
+    {
+      "folder": "Full_DOVE",
+      "checkpoint": "12000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9999999999999984,
+      "reward_ratio_max": 1.0000000000000016,
+      "inferred_slope": 1.0000000000000007,
+      "inferred_intercept": -1.0376713136394865e-13,
+      "max_affine_residual": 6.821210263296962e-13
+    },
+    {
+      "folder": "Full_DOVE",
+      "checkpoint": "13000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9999999999999987,
+      "reward_ratio_max": 1.0000000000000013,
+      "inferred_slope": 1.0000000000001803,
+      "inferred_intercept": -6.689520270933817e-11,
+      "max_affine_residual": 6.821210263296962e-13
+    },
+    {
+      "folder": "Full_DOVE",
+      "checkpoint": "14000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9999999999999992,
+      "reward_ratio_max": 1.0000000000000018,
+      "inferred_slope": 1.0000000000000002,
+      "inferred_intercept": 1.2583372454760673e-13,
+      "max_affine_residual": 5.115907697472721e-13
+    },
+    {
+      "folder": "Full_DOVE",
+      "checkpoint": "32000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9999999999999987,
+      "reward_ratio_max": 1.0000000000000013,
+      "inferred_slope": 0.9999999999999115,
+      "inferred_intercept": 3.2674150946603334e-11,
+      "max_affine_residual": 5.684341886080801e-13
+    },
+    {
+      "folder": "Vanilla",
+      "checkpoint": "12000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 1.0,
+      "reward_ratio_max": 1.0000000000000002,
+      "inferred_slope": 1.0000000000000828,
+      "inferred_intercept": -2.2682669299339728e-11,
+      "max_affine_residual": 5.684341886080802e-14
+    },
+    {
+      "folder": "Vanilla",
+      "checkpoint": "13000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 1.0,
+      "reward_ratio_max": 1.0000000000000002,
+      "inferred_slope": 0.9999999999999585,
+      "inferred_intercept": 1.5445559107134285e-11,
+      "max_affine_residual": 3.410605131648481e-13
+    },
+    {
+      "folder": "Vanilla",
+      "checkpoint": "14000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 1.0,
+      "reward_ratio_max": 1.0000000000000002,
+      "inferred_slope": 1.0000000000000027,
+      "inferred_intercept": -1.9735074734343405e-13,
+      "max_affine_residual": 4.263256414560601e-14
+    },
+    {
+      "folder": "Vanilla",
+      "checkpoint": "20000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 1.0,
+      "reward_ratio_max": 1.0000000000000002,
+      "inferred_slope": 0.999999999999942,
+      "inferred_intercept": 2.1630999710615845e-11,
+      "max_affine_residual": 2.8421709430404007e-13
+    },
+    {
+      "folder": "Vanilla",
+      "checkpoint": "32000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 1.0,
+      "reward_ratio_max": 1.0000000000000002,
+      "inferred_slope": 0.99999999999996,
+      "inferred_intercept": 1.3144490458959339e-11,
+      "max_affine_residual": 1.1368683772161603e-13
+    },
+    {
+      "folder": "TopK_8",
+      "checkpoint": "12000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9945971862668023,
+      "reward_ratio_max": 0.9945971862668026,
+      "inferred_slope": 0.994597186266802,
+      "inferred_intercept": -1.5207029858713904e-15,
+      "max_affine_residual": 2.2737367544323206e-13
+    },
+    {
+      "folder": "TopK_8",
+      "checkpoint": "13000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9945971862668024,
+      "reward_ratio_max": 0.9945971862668026,
+      "inferred_slope": 0.9945971862668032,
+      "inferred_intercept": -1.5940179988281098e-14,
+      "max_affine_residual": 2.8421709430404007e-13
+    },
+    {
+      "folder": "TopK_8",
+      "checkpoint": "14000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9945971862668024,
+      "reward_ratio_max": 0.9945971862668026,
+      "inferred_slope": 0.9945971862668032,
+      "inferred_intercept": 1.3219792290583766e-15,
+      "max_affine_residual": 2.8421709430404007e-13
+    },
+    {
+      "folder": "TopK_8",
+      "checkpoint": "20000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9945971862668024,
+      "reward_ratio_max": 0.9945971862668026,
+      "inferred_slope": 0.9945971862668027,
+      "inferred_intercept": -4.704647232162191e-15,
+      "max_affine_residual": 1.1368683772161603e-13
+    },
+    {
+      "folder": "TopK_8",
+      "checkpoint": "32000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9945971862668024,
+      "reward_ratio_max": 0.9945971862668026,
+      "inferred_slope": 0.9945971862668024,
+      "inferred_intercept": 8.809017866959575e-16,
+      "max_affine_residual": 5.684341886080802e-14
+    },
+    {
+      "folder": "No_gate",
+      "checkpoint": "12000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 1.0,
+      "reward_ratio_max": 1.0000000000000002,
+      "inferred_slope": 0.9999999999999968,
+      "inferred_intercept": 1.3230764681433301e-12,
+      "max_affine_residual": 1.1368683772161603e-13
+    },
+    {
+      "folder": "No_gate",
+      "checkpoint": "13000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 1.0,
+      "reward_ratio_max": 1.0000000000000002,
+      "inferred_slope": 0.9999999999999819,
+      "inferred_intercept": 6.640829095125524e-12,
+      "max_affine_residual": 2.8421709430404007e-13
+    },
+    {
+      "folder": "No_gate",
+      "checkpoint": "14000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 1.0,
+      "reward_ratio_max": 1.0000000000000002,
+      "inferred_slope": 0.9999999999999999,
+      "inferred_intercept": 4.5135933702437594e-14,
+      "max_affine_residual": 1.1368683772161603e-13
+    },
+    {
+      "folder": "No_gate",
+      "checkpoint": "20000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 1.0,
+      "reward_ratio_max": 1.0000000000000002,
+      "inferred_slope": 0.9999999999999595,
+      "inferred_intercept": 2.361802068177628e-12,
+      "max_affine_residual": 2.842170943040401e-14
+    },
+    {
+      "folder": "No_gate",
+      "checkpoint": "32000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 1.0,
+      "reward_ratio_max": 1.0000000000000002,
+      "inferred_slope": 1.0000000000000018,
+      "inferred_intercept": -6.318812883726063e-14,
+      "max_affine_residual": 4.263256414560601e-14
+    },
+    {
+      "folder": "Full_gate",
+      "checkpoint": "12000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9999999999999984,
+      "reward_ratio_max": 1.0000000000000016,
+      "inferred_slope": 1.0000000000000007,
+      "inferred_intercept": -1.0376713136394865e-13,
+      "max_affine_residual": 6.821210263296962e-13
+    },
+    {
+      "folder": "Full_gate",
+      "checkpoint": "13000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9999999999999987,
+      "reward_ratio_max": 1.0000000000000013,
+      "inferred_slope": 1.0000000000001803,
+      "inferred_intercept": -6.689520270933817e-11,
+      "max_affine_residual": 6.821210263296962e-13
+    },
+    {
+      "folder": "Full_gate",
+      "checkpoint": "14000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9999999999999992,
+      "reward_ratio_max": 1.0000000000000018,
+      "inferred_slope": 1.0000000000000002,
+      "inferred_intercept": 1.2583372454760673e-13,
+      "max_affine_residual": 5.115907697472721e-13
+    },
+    {
+      "folder": "Full_gate",
+      "checkpoint": "20000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9945971862668024,
+      "reward_ratio_max": 0.9945971862668026,
+      "inferred_slope": 0.9945971862668024,
+      "inferred_intercept": 3.182661707532667e-16,
+      "max_affine_residual": 1.1368683772161603e-13
+    },
+    {
+      "folder": "Full_gate",
+      "checkpoint": "32000",
+      "episodes": 100,
+      "outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "reward_ratio_min": 0.9999999999999987,
+      "reward_ratio_max": 1.0000000000000013,
+      "inferred_slope": 0.9999999999999115,
+      "inferred_intercept": 3.2674150946603334e-11,
+      "max_affine_residual": 5.684341886080801e-13
+    }
+  ],
+  "note": "Regression describes differences only; it is not used to alter live results."
+}

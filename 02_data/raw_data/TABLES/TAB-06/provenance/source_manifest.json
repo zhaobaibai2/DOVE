@@ -1,0 +1,12 @@
+[
+  {
+    "source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/Latex0805/DOVE__Learning_Diffusion_Policies_from_Accepted_and_Rejected_Actions_in_Human_in_the_Loop_Driving/git/02_data/raw_data/harness_project/artifacts/tables/TAB-06/calculation.md",
+    "local": "02_data/raw_data/TABLES/TAB-06/provenance/calculation.md",
+    "sha256": "5beb38e9ead128aefe9990ae8e9f857abf6fe9b7d854bf36dbdf56b15c7a2fe6"
+  },
+  {
+    "source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/Latex0805/DOVE__Learning_Diffusion_Policies_from_Accepted_and_Rejected_Actions_in_Human_in_the_Loop_Driving/git/02_data/raw_data/harness_project/artifacts/tables/TAB-06/source_manifest.csv",
+    "local": "02_data/raw_data/TABLES/TAB-06/provenance/source_manifest.csv",
+    "sha256": "38b2d46aeca260caad7e6413c98bc372c1c0a4bea409d9845d05aadc231ba23d"
+  }
+]

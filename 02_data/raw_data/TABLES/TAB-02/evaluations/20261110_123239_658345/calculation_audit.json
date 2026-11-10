@@ -1,0 +1,32 @@
+{
+  "table": "TAB-02",
+  "smoke": true,
+  "inputs": [
+    {
+      "file": "ER_wo_CPCal/actor_pairs.csv",
+      "sha256": "ca2213ed622cd8b3a45e84bcbb3c85f6679c9b9ba3e4da2401a268925894bedb"
+    },
+    {
+      "file": "ER_wo_CPCal/critic_pairs.csv",
+      "sha256": "a8654c380d517c6113c320d167d158f278373f0cdc01bb40d93cd0375e80ce3d"
+    },
+    {
+      "file": "Full_DOVE/actor_pairs.csv",
+      "sha256": "464843a927b9cc78b93ea74e542966dc99a98cb09ef14e30beb8354398902737"
+    },
+    {
+      "file": "Full_DOVE/critic_pairs.csv",
+      "sha256": "abc28e9d0a404bba910f526f2a4d1c180c94ab2fd471eae162f8480d84906686"
+    },
+    {
+      "file": "Positive-only/actor_pairs.csv",
+      "sha256": "ebd191114013e60c84da7c80b0800cc91091b4112509400d665826c7f41b2c24"
+    },
+    {
+      "file": "Positive-only/critic_pairs.csv",
+      "sha256": "f3def9f62acb98a4cce52f0ac57e0fbbf52cb7fd7dfe4e58a32f87330cb3693a"
+    }
+  ],
+  "metrics_source": "Local actor and critic pair records; run.sh test recomputes these using the packaged checkpoint models.",
+  "processing": "Checkpoint means are averaged with equal weight; SE uses sample SD across checkpoints. Actor 256 pairs, 8 energy samples, 32 sampled actions; critic 512 pairs and target critics."
+}

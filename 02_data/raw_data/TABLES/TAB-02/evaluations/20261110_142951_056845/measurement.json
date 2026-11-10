@@ -1,0 +1,38 @@
+{
+  "source": "live_checkpoint_diagnostics",
+  "smoke": true,
+  "models": [
+    {
+      "group": "Positive-only",
+      "filename": "policy-1000-1998.pkl",
+      "path": "models/Positive-only/policy-1000-1998.pkl",
+      "sha256": "0d568bb9941c2b28765d95a9e20ff2a399dc8ac1525893e445fa5de56ba86085",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-1000-1998.pkl",
+      "path": "models/ER_wo_CPCal/policy-1000-1998.pkl",
+      "sha256": "a0994b1fd34b56c3e0a4d868338b62d0e845c162e32528bbc719cca5836f19c9",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-1000-1998.pkl",
+      "path": "models/Full_DOVE/policy-1000-1998.pkl",
+      "sha256": "e12fe371a56abfc0c5bc9cddf2829e2b121e44f38aea402d9af1662c4ea232e2",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    }
+  ],
+  "validations": [],
+  "pairs_sha256": "112d8dd0530b5eaac7ad0e8f85df605380e83ac9acc029e159a76810d259687c",
+  "experiment_sha256": "b11b7baece4306c68c0232fd246b3e150ff280859365c4576e4029d8a3d2e89d",
+  "code_sha256": "99cb7f366123f4f0f0864dc4a3c5a90e543b4cce1afa364398a860abc33706bc",
+  "formula_origin": "Reconstructed from original energy/sampler/critic functions; diversity verified against archived per-pair measurements. Missing actor audit script was not recovered."
+}

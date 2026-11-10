@@ -1,0 +1,16 @@
+{
+  "group": "full_dove",
+  "samples_per_pair": 64,
+  "n_pairs": 256,
+  "checkpoint_count": 46,
+  "full_protocol": true,
+  "backend": "gpu",
+  "devices": [
+    "cuda:0"
+  ],
+  "pair_manifest_sha256": "3d4705d847dd64d3a1a6adf05fe8d9b8d46e67acfb5e1c609c91aa25d9a4a7be",
+  "sampling_key": "random_key_from_data(obs[None,:]); fold_in(sample_index+12345)",
+  "demo_source_sha256": {
+    "logs/01_stage1a_collect_seed104_5pass_20260522_151529/pvp_dacer_20260522_151541_s0/data/recorded_data/seed104_1_20260522_151652.pkl": "a6c30949e805e2663a403590f946441e94f79a2f63b1d16caa6b3359e03cbbbc"
+  }
+}

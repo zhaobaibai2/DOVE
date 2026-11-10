@@ -1,0 +1,5 @@
+setting,checkpoint,pairs,samples,rho_vlb,hsr,rmr_0p5,pairacc_c_mean
+Positive-only,policy-1000-1998,4,256,1.0,0.9921875,0.0078125,0.25
+ER w/o CPCal,policy-1000-1998,4,256,1.0,1.0,0.0,0.0
+CPCal only,policy-1000-1998,4,256,1.0,1.0,0.0,0.25
+Full DOVE,policy-1000-1998,4,256,1.0,1.0,0.0,0.25

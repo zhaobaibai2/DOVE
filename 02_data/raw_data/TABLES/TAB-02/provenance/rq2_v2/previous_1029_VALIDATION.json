@@ -1,0 +1,11 @@
+{
+  "paper": "2026-10-29 user-specified PDF",
+  "cpu_pipeline": "8 items completed; two curves match supplied PDF center-line geometry",
+  "gpu": "NVIDIA GeForce RTX 4070 SUPER, CUDA_VISIBLE_DEVICES=0; 146 frozen checkpoints, 256 pairs/checkpoint, 64 samples/pair; no training",
+  "tests": "10 unittest cases passed; complete CPU pipeline passed execution; data differences remain reported",
+  "table_02": "6 historical DOVE display values match; independent-run protocol not recovered",
+  "table_03": "10/16 display values match, 6 differ after using current 256-pair protocol",
+  "table_04": "28/28 display values match; recovered train and eval map seed both 104",
+  "portability": "all 12 shell --help checks passed; complete relocated run in a path with spaces; strict exit 2 for known evidence gaps",
+  "input_files": 408
+}

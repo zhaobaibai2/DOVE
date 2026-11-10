@@ -1,0 +1,1383 @@
+{
+  "table": "TAB-02",
+  "models": [
+    {
+      "group": "Positive-only",
+      "filename": "final_policy_50000.pkl",
+      "path": "models/Positive-only/final_policy_50000.pkl",
+      "sha256": "25f3da5c57dfe111f228b20ff7ebbda1e36547dba829cba4aaa129f8bcdeda7b",
+      "actor": false,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-1000-1998.pkl",
+      "path": "models/Positive-only/policy-1000-1998.pkl",
+      "sha256": "0d568bb9941c2b28765d95a9e20ff2a399dc8ac1525893e445fa5de56ba86085",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-10000-19998.pkl",
+      "path": "models/Positive-only/policy-10000-19998.pkl",
+      "sha256": "4c39856d80cc9c7cb8f7594a4a4634d1ac0524f0e7d7cd4b0ab71ef8f417776a",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-11000-21998.pkl",
+      "path": "models/Positive-only/policy-11000-21998.pkl",
+      "sha256": "7f2c7474e6f7706f699eed37b37f810e64a0a4f7d4569273a2b41902825f4cb2",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-12000-23998.pkl",
+      "path": "models/Positive-only/policy-12000-23998.pkl",
+      "sha256": "0f74cc38f99ccfe25ca0a9c6f6b5e7953f1087bf3d7af4aa5846c5cfd27e8b5f",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-13000-25998.pkl",
+      "path": "models/Positive-only/policy-13000-25998.pkl",
+      "sha256": "04289e159bb54cbfc0e8b450614e10159aafc826291f4518ba6d13c1f15de51e",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-14000-27998.pkl",
+      "path": "models/Positive-only/policy-14000-27998.pkl",
+      "sha256": "649a07bf7055307f10259c2f1537ed3b00732f48822411670ceadbfc1ca6e7d4",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-15000-29998.pkl",
+      "path": "models/Positive-only/policy-15000-29998.pkl",
+      "sha256": "967c572897811db91d4de9dbf180e3d24bfb82d755d154ac5081332e76fbd1df",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-16000-31998.pkl",
+      "path": "models/Positive-only/policy-16000-31998.pkl",
+      "sha256": "6d026783ce1e7ccdc4bd46ed57470c822ea58251f8227526bb8d2fef3a7ec122",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-17000-33998.pkl",
+      "path": "models/Positive-only/policy-17000-33998.pkl",
+      "sha256": "e0001e46552a0c0b8adad4af8e0b346661a50af5a4833266c35a48b3f7f5fe6e",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-18000-35998.pkl",
+      "path": "models/Positive-only/policy-18000-35998.pkl",
+      "sha256": "77a233e96f090450d66b3516e6ce45db90f80a60ce27df84d0301a2fa2d78907",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-19000-37998.pkl",
+      "path": "models/Positive-only/policy-19000-37998.pkl",
+      "sha256": "3330479065fdf57bcc17cc326423b12a4248b3cc408620f154f57f66e4d2985f",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-2000-3998.pkl",
+      "path": "models/Positive-only/policy-2000-3998.pkl",
+      "sha256": "77f4de414b11944b48b72cf15d36f0d502a51a416ecefcb1872f5ee96151d0fd",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-20000-39998.pkl",
+      "path": "models/Positive-only/policy-20000-39998.pkl",
+      "sha256": "5487143bcfa0492a8dd84f2918bbebb60c2c89c86751de21bc9dd520508ba9f8",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-21000-41998.pkl",
+      "path": "models/Positive-only/policy-21000-41998.pkl",
+      "sha256": "df7d96bffd770e26b65106c8c23514512483c1aa6955f9dc9cb001ef18985e11",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-22000-43998.pkl",
+      "path": "models/Positive-only/policy-22000-43998.pkl",
+      "sha256": "83206cd94c48099a67333130bb8f0c3e9a02dfafc25e62fdb84412287d302c87",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-23000-45998.pkl",
+      "path": "models/Positive-only/policy-23000-45998.pkl",
+      "sha256": "153d99034682c34cf31e0542247e5d5fe32b0002f4746ed84547ffd3fe7d9a26",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-24000-47998.pkl",
+      "path": "models/Positive-only/policy-24000-47998.pkl",
+      "sha256": "35186385073f2fa5b96931ff76268060f6894827a4805eaec245e9b19d8223a9",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-25000-49998.pkl",
+      "path": "models/Positive-only/policy-25000-49998.pkl",
+      "sha256": "81ed744005e229f98ac9a4991f2f88ee27a70c4e19838ea84ab0087e11a2b988",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-26000-51998.pkl",
+      "path": "models/Positive-only/policy-26000-51998.pkl",
+      "sha256": "967f42a91f10fecc64c2aa25a89515f6ba363bd2a7231f9f8603c19628adde70",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-27000-53998.pkl",
+      "path": "models/Positive-only/policy-27000-53998.pkl",
+      "sha256": "7226c128c88ae01230f8f6b7aad4ffc969713e49ca18ed9707eef03b874dd874",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-28000-55998.pkl",
+      "path": "models/Positive-only/policy-28000-55998.pkl",
+      "sha256": "f938fd554358d89fa2d272ca0cb3e663db615ad5b11b7b44ae66145dbd59257d",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-29000-57998.pkl",
+      "path": "models/Positive-only/policy-29000-57998.pkl",
+      "sha256": "b47b53ff3ed6cb8cb392dfa2c372ba3c5fa354fe7fe72a10921a46553ee33f4d",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-3000-5998.pkl",
+      "path": "models/Positive-only/policy-3000-5998.pkl",
+      "sha256": "3d998160be7302fefa21cfd17aa15a6aa370d9689c6cf367bfbefeefb0c15ced",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-30000-59998.pkl",
+      "path": "models/Positive-only/policy-30000-59998.pkl",
+      "sha256": "73774272dadd57bff4c7d28110aee55aac13a373e8a37120a92aad38d17a20ca",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-31000-61998.pkl",
+      "path": "models/Positive-only/policy-31000-61998.pkl",
+      "sha256": "e16ef26cb965e08122bf1f74c64a3ca834ce69652fb54de7193f74dca1e4d560",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-32000-63998.pkl",
+      "path": "models/Positive-only/policy-32000-63998.pkl",
+      "sha256": "89c099b300663220c16c0f6461bd8d895583b68445e0f00ba51e98d17b02d64d",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-33000-65998.pkl",
+      "path": "models/Positive-only/policy-33000-65998.pkl",
+      "sha256": "5d56e74d9942f2b7788debf841fd5ad8a82ea898be56a4b2253b077fcab2f706",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-34000-67998.pkl",
+      "path": "models/Positive-only/policy-34000-67998.pkl",
+      "sha256": "c0cb4ae7904798ac4f591266fd79415ec04fd8ab2a7dbbc6499d734c0688e386",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-35000-69998.pkl",
+      "path": "models/Positive-only/policy-35000-69998.pkl",
+      "sha256": "cb806557ad0ba5eab1e421cf0edcb247a3db140b86f5ca0a1cb4ddd33560333f",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-36000-71998.pkl",
+      "path": "models/Positive-only/policy-36000-71998.pkl",
+      "sha256": "818a695b49332579a92048b565e0797ba2e8266f7cd35efa419edebffb5c4750",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-37000-73998.pkl",
+      "path": "models/Positive-only/policy-37000-73998.pkl",
+      "sha256": "c7f9afabf18d994d181102db518d15d59ed850764b1ea6d4a314487ad99c7c4d",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-38000-75998.pkl",
+      "path": "models/Positive-only/policy-38000-75998.pkl",
+      "sha256": "94fb6881710eb2e642aa92160d153815356bbe6fd59c105d7c8fb5206246e885",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-39000-77998.pkl",
+      "path": "models/Positive-only/policy-39000-77998.pkl",
+      "sha256": "c2577928689639a0bc83c3992624047ede6be9def8f397c0a7840162ab576427",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-4000-7998.pkl",
+      "path": "models/Positive-only/policy-4000-7998.pkl",
+      "sha256": "d376ba7d74cb8d63173e1a1f4fcdd19563938e892d08a2bc9a9f89074cada206",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-40000-79998.pkl",
+      "path": "models/Positive-only/policy-40000-79998.pkl",
+      "sha256": "630b1e2ca3457659896031c96b88a4458dbb27cae5b4fa111caaa4a0a9e101eb",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-41000-81998.pkl",
+      "path": "models/Positive-only/policy-41000-81998.pkl",
+      "sha256": "7508b1989ff69b46cf44d77467e4b3f6cf5ca2b733c72142dd75e65e6c7098c8",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-42000-83998.pkl",
+      "path": "models/Positive-only/policy-42000-83998.pkl",
+      "sha256": "35161ec187220bde70b790ec064fc31bed74ac479464a3cd0c76473be7a04310",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-43000-85998.pkl",
+      "path": "models/Positive-only/policy-43000-85998.pkl",
+      "sha256": "3b0b405e55c96af4337be9e5d0e6236b45ed4fe038816889137f5fec512942bc",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-44000-87998.pkl",
+      "path": "models/Positive-only/policy-44000-87998.pkl",
+      "sha256": "8a6e0e150cf897f0cb6b08ad84db8fb5bac33d024fcfdd11fc5c948675c6a5af",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-45000-89998.pkl",
+      "path": "models/Positive-only/policy-45000-89998.pkl",
+      "sha256": "56660f6b7d8bdd10fade9e878869b3918b67de74137adaadbe3cabc4b59a3389",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-46000-91998.pkl",
+      "path": "models/Positive-only/policy-46000-91998.pkl",
+      "sha256": "3ad95bddcb6ec0aaafc01b35ae8cd422197fc2f7212363e367f42eeada645f1f",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-47000-93998.pkl",
+      "path": "models/Positive-only/policy-47000-93998.pkl",
+      "sha256": "0d2d5843d7a3982f816a521b0ab1a1c22d1e63f9ac5ed3f39d5a4a2e016d753a",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-48000-95998.pkl",
+      "path": "models/Positive-only/policy-48000-95998.pkl",
+      "sha256": "9875c0137427e8ef115af51272b9eddbf0a5658c2036b2a3ab341db3fc252473",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-49000-97998.pkl",
+      "path": "models/Positive-only/policy-49000-97998.pkl",
+      "sha256": "4d911c8147127adf21de3fd28bc101cf23c6dad3e2f02cb7f4ca71bd1587284c",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-5000-9998.pkl",
+      "path": "models/Positive-only/policy-5000-9998.pkl",
+      "sha256": "d3960d3185a1eab4a33594c8a686b2d7a06443fecc6bb7735a39f922681a4660",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-50000-99998.pkl",
+      "path": "models/Positive-only/policy-50000-99998.pkl",
+      "sha256": "dac546821d6c779517eb831d5e48051e5b8cef1a4f4a600f954ad80d38a52c8b",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-6000-11998.pkl",
+      "path": "models/Positive-only/policy-6000-11998.pkl",
+      "sha256": "6929f0a10a9c00c72be1c551cbdb9f3856938abcdda80a539652b5b12366933b",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-7000-13998.pkl",
+      "path": "models/Positive-only/policy-7000-13998.pkl",
+      "sha256": "d9171066c57a03543ccc5cb6fda05b5f13011400646f986bf0a344b0377aae88",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-8000-15998.pkl",
+      "path": "models/Positive-only/policy-8000-15998.pkl",
+      "sha256": "e08238489cfa2fbf0d4f925ef11b9b92b8f9e6ee0f6d66840f47e53377c1e9f1",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "policy-9000-17998.pkl",
+      "path": "models/Positive-only/policy-9000-17998.pkl",
+      "sha256": "b0d3fccdf3f346bc51b30cae6f1eca829344f939340bdd192bc5a7fb1bc08d3f",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Positive-only",
+      "filename": "stage1b_offline_bc_policy.pkl",
+      "path": "models/Positive-only/stage1b_offline_bc_policy.pkl",
+      "sha256": "ebb5c74ca353c3fd737541fabdfe4de9eb1cf63cc8d32122bcdcf894051e6693",
+      "actor": false,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "final_policy_50000.pkl",
+      "path": "models/ER_wo_CPCal/final_policy_50000.pkl",
+      "sha256": "17f339b2c17a0576b740e13c06a6311258fb68c0f10a93ef1675428ae9d604b7",
+      "actor": false,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-1000-1998.pkl",
+      "path": "models/ER_wo_CPCal/policy-1000-1998.pkl",
+      "sha256": "a0994b1fd34b56c3e0a4d868338b62d0e845c162e32528bbc719cca5836f19c9",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-10000-19998.pkl",
+      "path": "models/ER_wo_CPCal/policy-10000-19998.pkl",
+      "sha256": "b222ba820ef979e534cb435758acf65945ad16553c523218c908e8c67bc78cb6",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-11000-21998.pkl",
+      "path": "models/ER_wo_CPCal/policy-11000-21998.pkl",
+      "sha256": "33b4d0ebaa28659478b99118ad11e5f26a1e41896a8e96976800c65d3d150b17",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-12000-23998.pkl",
+      "path": "models/ER_wo_CPCal/policy-12000-23998.pkl",
+      "sha256": "0f68beb5d894725296ec1204ffc4b93493708cdbb6aec3426f6289b4def48382",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-13000-25998.pkl",
+      "path": "models/ER_wo_CPCal/policy-13000-25998.pkl",
+      "sha256": "58d99bd1f1605591690cdf6a5555b72aad6fb7ad462efe17d8099a437781904d",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-14000-27998.pkl",
+      "path": "models/ER_wo_CPCal/policy-14000-27998.pkl",
+      "sha256": "808a220722a54a9bc58c0d07c5bb8b2d8ef8a2fc750f72a1e375fa2f4ed9bb4e",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-15000-29998.pkl",
+      "path": "models/ER_wo_CPCal/policy-15000-29998.pkl",
+      "sha256": "364d065f1f9a00dbc85a0631bb0ad1859839f1d6a40a4740003b052811a13660",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-16000-31998.pkl",
+      "path": "models/ER_wo_CPCal/policy-16000-31998.pkl",
+      "sha256": "0aab3d467effb2cec0927df5398234b813bff36c6ac5aca47f99a41e9822d281",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-17000-33998.pkl",
+      "path": "models/ER_wo_CPCal/policy-17000-33998.pkl",
+      "sha256": "dd6dfde105dab7ee8778b700bd885bfb59664cca66cdd96d9a4168f6bc70017c",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-18000-35998.pkl",
+      "path": "models/ER_wo_CPCal/policy-18000-35998.pkl",
+      "sha256": "32de8809ff0e2eeeda07827092e539b8f6e31b37e57ff575bc45051df6ce2fcd",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-19000-37998.pkl",
+      "path": "models/ER_wo_CPCal/policy-19000-37998.pkl",
+      "sha256": "bf9edda67e07fac99fd2a24fff485fe3ff98cb43ebbe1d907876a26c2bcabe8d",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-2000-3998.pkl",
+      "path": "models/ER_wo_CPCal/policy-2000-3998.pkl",
+      "sha256": "373584e4a685566cf51543091e5b84fd309f82011ab0e48217f0d342d5276743",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-20000-39998.pkl",
+      "path": "models/ER_wo_CPCal/policy-20000-39998.pkl",
+      "sha256": "6ea59e7b66c818ae380d11bdcacece0b3f18a65758505d7b42867f7682b4a6ea",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-21000-41998.pkl",
+      "path": "models/ER_wo_CPCal/policy-21000-41998.pkl",
+      "sha256": "a0bdcefd2e7f572967de5dc0997d5d871222176c6827e2a473e19ec9dd1b0827",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-22000-43998.pkl",
+      "path": "models/ER_wo_CPCal/policy-22000-43998.pkl",
+      "sha256": "d1ae8a2b4404c0daef51875d458ec24e69c541a1f07905200965dc947d91c473",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-23000-45998.pkl",
+      "path": "models/ER_wo_CPCal/policy-23000-45998.pkl",
+      "sha256": "e4727b5685536e5627df37563cfafe78d5c6f8285f47d964e3cdc46a2d7c6d2e",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-24000-47998.pkl",
+      "path": "models/ER_wo_CPCal/policy-24000-47998.pkl",
+      "sha256": "b3105f76eb79b599e814e574410bb41b8fa0fd158c99d2002460f1dd8c2137ca",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-25000-49998.pkl",
+      "path": "models/ER_wo_CPCal/policy-25000-49998.pkl",
+      "sha256": "db1c7e4ed085a8a8c0bb5f5395980e3a083b8655934321995d843c989705afdd",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-26000-51998.pkl",
+      "path": "models/ER_wo_CPCal/policy-26000-51998.pkl",
+      "sha256": "d0c832ec14696118cd5cbd8a4c516916015eb57454fab3fde64cd5b4cd1aaeea",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-27000-53998.pkl",
+      "path": "models/ER_wo_CPCal/policy-27000-53998.pkl",
+      "sha256": "31931af4fdff8d160bf4fd2b0b585ee323fbd5c661f1abe5afdfc83af2ae6c25",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-28000-55998.pkl",
+      "path": "models/ER_wo_CPCal/policy-28000-55998.pkl",
+      "sha256": "610a4fbb8f289f989e506241c32d180105ab34a2643c59d77f5732ac16c361ca",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-29000-57998.pkl",
+      "path": "models/ER_wo_CPCal/policy-29000-57998.pkl",
+      "sha256": "40595595ec2461bdf016b33e338633203d881d354c7c39c4ec2f03263b8e1473",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-3000-5998.pkl",
+      "path": "models/ER_wo_CPCal/policy-3000-5998.pkl",
+      "sha256": "fc164a82f35618e1f42741306dbff3a9e1a409617b2823b04e52e5ff3c653097",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-30000-59998.pkl",
+      "path": "models/ER_wo_CPCal/policy-30000-59998.pkl",
+      "sha256": "357a4b5991a5a0a3bdd00b409c9d5cde7f7ffb858775c9267afaf573da4e1761",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-31000-61998.pkl",
+      "path": "models/ER_wo_CPCal/policy-31000-61998.pkl",
+      "sha256": "860e7faf0f0adfb57b39c30191b52075543e836e2a65aaf38ab177b9cfed92d6",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-32000-63998.pkl",
+      "path": "models/ER_wo_CPCal/policy-32000-63998.pkl",
+      "sha256": "6c14526056c1f2b8e111fe61a480d9c0ec0e70a7c73d0749bddaaa645430fb75",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-33000-65998.pkl",
+      "path": "models/ER_wo_CPCal/policy-33000-65998.pkl",
+      "sha256": "5fd3bd607a5c66ff2f068128045dc82666f8b5107a5ab613436db62af505e99b",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-34000-67998.pkl",
+      "path": "models/ER_wo_CPCal/policy-34000-67998.pkl",
+      "sha256": "eec826b0c01b748e63169c5be0a7c7ff5718946a40a8f6559ab012035f60e5c3",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-35000-69998.pkl",
+      "path": "models/ER_wo_CPCal/policy-35000-69998.pkl",
+      "sha256": "418b787f32b948ff9271e953fb76e0e068d87da3e390b4a56b8745da5705446d",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-36000-71998.pkl",
+      "path": "models/ER_wo_CPCal/policy-36000-71998.pkl",
+      "sha256": "19efd98c4c5954ec04785c6d3ecbbe5eb58f9cee06540304bc30496f131e5b8e",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-37000-73998.pkl",
+      "path": "models/ER_wo_CPCal/policy-37000-73998.pkl",
+      "sha256": "6d49ffb072a17114d38085067b764748820f62be33f5b346a91589605a67a4e7",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-38000-75998.pkl",
+      "path": "models/ER_wo_CPCal/policy-38000-75998.pkl",
+      "sha256": "ce89c8119c7404c4b448999c94eca7ce087100f7a5cb3773115617c8793a9a9f",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-39000-77998.pkl",
+      "path": "models/ER_wo_CPCal/policy-39000-77998.pkl",
+      "sha256": "2d57b007055d77823022cbc9bc1d99c6342e0413096dad73c84da39e1ba3b648",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-4000-7998.pkl",
+      "path": "models/ER_wo_CPCal/policy-4000-7998.pkl",
+      "sha256": "51c83ad77cebebeb092bc5063a69cf1d3aafa1b3588fba4f0365914be67448da",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-40000-79998.pkl",
+      "path": "models/ER_wo_CPCal/policy-40000-79998.pkl",
+      "sha256": "33b881d546f5264b1243955db5e022da70126e14687c557c0b03f87dab9444eb",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-41000-81998.pkl",
+      "path": "models/ER_wo_CPCal/policy-41000-81998.pkl",
+      "sha256": "6fc28ee904d083221d4616eafd11b64c2d85c1ee6099a2f174f0634bcbbf57b6",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-42000-83998.pkl",
+      "path": "models/ER_wo_CPCal/policy-42000-83998.pkl",
+      "sha256": "1116656804debb2b1c1451ecfc4a309fccdf69b149ab87b15826ae8c58505476",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-43000-85998.pkl",
+      "path": "models/ER_wo_CPCal/policy-43000-85998.pkl",
+      "sha256": "c00a99e13926df0468b1d4cb6e768651113f8173a801a387e803f71bdc0e5745",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-44000-87998.pkl",
+      "path": "models/ER_wo_CPCal/policy-44000-87998.pkl",
+      "sha256": "34282f2d1210f22cd43b5eeb4f4d9968dd7ea3fa2c90777029a7e90345f86cc8",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-45000-89998.pkl",
+      "path": "models/ER_wo_CPCal/policy-45000-89998.pkl",
+      "sha256": "02081485ecd2faa995bbadac70d1d06251a9f25cdaa242d14caf09ff74788922",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-46000-91998.pkl",
+      "path": "models/ER_wo_CPCal/policy-46000-91998.pkl",
+      "sha256": "01da102746d6c6c75eddd14fefd03bd68316b1e7765cf721200fd24eb24eea57",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-47000-93998.pkl",
+      "path": "models/ER_wo_CPCal/policy-47000-93998.pkl",
+      "sha256": "f125135b7d9df21eba96f1c1875c9ff38f5f72f5d75e96e6c3cbff9a0819990f",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-48000-95998.pkl",
+      "path": "models/ER_wo_CPCal/policy-48000-95998.pkl",
+      "sha256": "83617e89138ae8e6f3658d7f3f24269c7e6d0973a377f7e5720817e0f25bd9ae",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-49000-97998.pkl",
+      "path": "models/ER_wo_CPCal/policy-49000-97998.pkl",
+      "sha256": "1a6024520a8a0c4e49bf41a15e85c17285d5d18d7ce0c69a6cd7f009f76725a5",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-5000-9998.pkl",
+      "path": "models/ER_wo_CPCal/policy-5000-9998.pkl",
+      "sha256": "5bfee0a75b8fd2ab6c5de1e136a068c02a381d593985fd4c7464bcf388c93af4",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-50000-99998.pkl",
+      "path": "models/ER_wo_CPCal/policy-50000-99998.pkl",
+      "sha256": "0af2d686ad1d9c7a3989ac82f39912553819f910cadb29595d3a7182f38fa655",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-6000-11998.pkl",
+      "path": "models/ER_wo_CPCal/policy-6000-11998.pkl",
+      "sha256": "d05193d2fa72c33eca72dbd9590fc479f34802cc23f68ff314e5c77533ea4b31",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-7000-13998.pkl",
+      "path": "models/ER_wo_CPCal/policy-7000-13998.pkl",
+      "sha256": "0d30514a466b16c52b6ed039fabe9db904ccef1304323f466df9fe0d571d88fb",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-8000-15998.pkl",
+      "path": "models/ER_wo_CPCal/policy-8000-15998.pkl",
+      "sha256": "c1a59886656261c217b5f032a517a4a82ecde1824a47d40a3cf77ecbe3929311",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-9000-17998.pkl",
+      "path": "models/ER_wo_CPCal/policy-9000-17998.pkl",
+      "sha256": "8459a5be6f3c89cb7a2aea822e1e2341685c91354fd9eaa8ff1a1a8069c2732e",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "stage1b_offline_bc_policy.pkl",
+      "path": "models/ER_wo_CPCal/stage1b_offline_bc_policy.pkl",
+      "sha256": "a80e9067ac298d0f927778b9c240631f17f115dc7190cb8cb31166e0e6bdd9df",
+      "actor": false,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "final_policy_46656.pkl",
+      "path": "models/Full_DOVE/final_policy_46656.pkl",
+      "sha256": "f78355c5c1f1a0771a7e178b74e26a007be7f3936e1fc64aafa528970acb583c",
+      "actor": false,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-1000-1998.pkl",
+      "path": "models/Full_DOVE/policy-1000-1998.pkl",
+      "sha256": "e12fe371a56abfc0c5bc9cddf2829e2b121e44f38aea402d9af1662c4ea232e2",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-10000-19998.pkl",
+      "path": "models/Full_DOVE/policy-10000-19998.pkl",
+      "sha256": "7d19cd48b44ceaad0dbb2c2d767aca4f26c16121208d0b12a91c51ed3ce77a36",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-11000-21998.pkl",
+      "path": "models/Full_DOVE/policy-11000-21998.pkl",
+      "sha256": "08f39ed1d173929de8fe027d851176d40a68cbcbce0bde53ecd03875c5bccace",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-12000-23998.pkl",
+      "path": "models/Full_DOVE/policy-12000-23998.pkl",
+      "sha256": "ab2878acc65d1b514c7c117a3d858e08bb3226d5b66ed2a8d2a7d5ee0a48efc0",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-13000-25998.pkl",
+      "path": "models/Full_DOVE/policy-13000-25998.pkl",
+      "sha256": "753e1ea16d2f7d982f5131d486a7f2a23e2cd0cfe5809a3c09283946551895f8",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-14000-27998.pkl",
+      "path": "models/Full_DOVE/policy-14000-27998.pkl",
+      "sha256": "e4f85809774504b73b6b6476652479f7e3c4d7728dce1810aba98415f1d1a478",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-15000-29998.pkl",
+      "path": "models/Full_DOVE/policy-15000-29998.pkl",
+      "sha256": "3106045fe32c9a8b287ecb4f21f06550badee3909ef0dc7b06b0c6ac033c8e39",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-16000-31998.pkl",
+      "path": "models/Full_DOVE/policy-16000-31998.pkl",
+      "sha256": "84e95ffaedfa828645a0e93220fc48cb800c5a57f76e7a103f1c712ddd4f137c",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-17000-33998.pkl",
+      "path": "models/Full_DOVE/policy-17000-33998.pkl",
+      "sha256": "82000a522540514d937a6d9938496d751408b4899d71633840a7895b8af7d5d5",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-18000-35998.pkl",
+      "path": "models/Full_DOVE/policy-18000-35998.pkl",
+      "sha256": "59a58e6007d07431c2f27878e209fcfc6522ca3d7efa4ce3eed39dd6077c5f86",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-19000-37998.pkl",
+      "path": "models/Full_DOVE/policy-19000-37998.pkl",
+      "sha256": "9931c1f0751c2948b06af3018584e430b678061899f378c2feb8e1badbac907d",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-2000-3998.pkl",
+      "path": "models/Full_DOVE/policy-2000-3998.pkl",
+      "sha256": "0b7c1c70edd5e929447bc3b30754058dc2710ca77c85d910eacd546d072d93ac",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-20000-39998.pkl",
+      "path": "models/Full_DOVE/policy-20000-39998.pkl",
+      "sha256": "fd238c06e2d3e2cb158d42db116d87f41bc583ae7a38a9df448b0e29b95df8c6",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-21000-41998.pkl",
+      "path": "models/Full_DOVE/policy-21000-41998.pkl",
+      "sha256": "3e184e61338e4454582496aa500eb7a5ea50c531a26c2e2c898be66165ba1b74",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-22000-43998.pkl",
+      "path": "models/Full_DOVE/policy-22000-43998.pkl",
+      "sha256": "a97e667d192479f866d057ce5772dd3c3ed1288b22e2e3d212b0714496512512",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-23000-45998.pkl",
+      "path": "models/Full_DOVE/policy-23000-45998.pkl",
+      "sha256": "ab723f019a16e4226b3bafd54cb50bd0fc99c3d3f2379a3994b30dcfb51124c5",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-24000-47998.pkl",
+      "path": "models/Full_DOVE/policy-24000-47998.pkl",
+      "sha256": "ff806fd1aae5b80db7a32cc4caf75c82dd427e3b9e412eb5fe8ce90598497881",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-25000-49998.pkl",
+      "path": "models/Full_DOVE/policy-25000-49998.pkl",
+      "sha256": "09a6ec71e6e2c19b3449123cabb441a829b27242fb556e71dca795e1fb721a02",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-26000-51998.pkl",
+      "path": "models/Full_DOVE/policy-26000-51998.pkl",
+      "sha256": "4f004855dd8a443ffc414f6bc628aae1fbd04dbe091c1969da4df80afea7fe81",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-27000-53998.pkl",
+      "path": "models/Full_DOVE/policy-27000-53998.pkl",
+      "sha256": "a5d93b7b1c0be9c787c908d3f52cbc9ca4ee59cb87dcab47d32cd88b12f349b3",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-28000-55998.pkl",
+      "path": "models/Full_DOVE/policy-28000-55998.pkl",
+      "sha256": "aac0cdd6696292519b10dd39af8f479a9b5320d927da41df19418495509b25e6",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-29000-57998.pkl",
+      "path": "models/Full_DOVE/policy-29000-57998.pkl",
+      "sha256": "ddd7a132199859f345c2b25a919530599208c9cb42ba643ce1def27ded87a643",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-3000-5998.pkl",
+      "path": "models/Full_DOVE/policy-3000-5998.pkl",
+      "sha256": "9c4a543fee33e63d3f3e98acb482304de0e73e306ffb6a62b279b5cb3900b145",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-30000-59998.pkl",
+      "path": "models/Full_DOVE/policy-30000-59998.pkl",
+      "sha256": "27142f40c1cf5cae3004dd872bd1f14476994ae4c94758fdbd334c07d3eafa30",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-31000-61998.pkl",
+      "path": "models/Full_DOVE/policy-31000-61998.pkl",
+      "sha256": "423d6d0e771bddf1cd510d22898567fbfb2e6d9a285a9fb0d30e01b587b2b3db",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-32000-63998.pkl",
+      "path": "models/Full_DOVE/policy-32000-63998.pkl",
+      "sha256": "44c1c9db1a7d0167b2ce02becde61d39856d479f70444067566c2088bb5470c8",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-33000-65998.pkl",
+      "path": "models/Full_DOVE/policy-33000-65998.pkl",
+      "sha256": "51edc95fc7d9858de8aedccd0e4381b65f2a56c827451b24d1e2c15691d3ce75",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-34000-67998.pkl",
+      "path": "models/Full_DOVE/policy-34000-67998.pkl",
+      "sha256": "1b3c01e6d541447f664374dee1f7cded5718a886320638254bcf5aa0d11d95d0",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-35000-69998.pkl",
+      "path": "models/Full_DOVE/policy-35000-69998.pkl",
+      "sha256": "7e41a67fe6d58417f6e3eab8227d81c1067ce127bb31334be88f040732ce64d9",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-36000-71998.pkl",
+      "path": "models/Full_DOVE/policy-36000-71998.pkl",
+      "sha256": "d9b4521b106d57999bb1c947668fa879396ba69aa072aad7c55530c819667c94",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-37000-73998.pkl",
+      "path": "models/Full_DOVE/policy-37000-73998.pkl",
+      "sha256": "a0164e737093df67bc057e6187c57a498d3d9727368998ae989ec7576cb3036b",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-38000-75998.pkl",
+      "path": "models/Full_DOVE/policy-38000-75998.pkl",
+      "sha256": "3cf038e77c8af4f5c1688e883fd1c43b96c9c81fdc7a41252db2f510a43b187a",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-39000-77998.pkl",
+      "path": "models/Full_DOVE/policy-39000-77998.pkl",
+      "sha256": "6c4c3a7c585fa0286b63082461dc127a685e8c3f2099a14c6323420848964a3d",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-4000-7998.pkl",
+      "path": "models/Full_DOVE/policy-4000-7998.pkl",
+      "sha256": "99cdae57e523597295cff10dc977b1fe9f7898593f0ca914ed78411e0fd012dc",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-40000-79998.pkl",
+      "path": "models/Full_DOVE/policy-40000-79998.pkl",
+      "sha256": "74c97241bdb6877ca7cf21ffdd9f2e3c1cb0dc06f3cd2aed9597faca76b88e72",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-41000-81998.pkl",
+      "path": "models/Full_DOVE/policy-41000-81998.pkl",
+      "sha256": "dc9cde2aa9e38812dd2ff8c11aae91cc2feba29840bf465c820bb0f7fa9e22dd",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-42000-83998.pkl",
+      "path": "models/Full_DOVE/policy-42000-83998.pkl",
+      "sha256": "3932850d6a93cb25296141208e961b7db953eae04157a18010adc62a88b16b71",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-43000-85998.pkl",
+      "path": "models/Full_DOVE/policy-43000-85998.pkl",
+      "sha256": "20e65a7e3aa538272455302a7c78d7bcd6450c05734df0bdb432ead8399dcbdb",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-44000-87998.pkl",
+      "path": "models/Full_DOVE/policy-44000-87998.pkl",
+      "sha256": "e17fb2e0e425d63af76db9f748ad6e5f432f42ffeca1dcad8a72e520a9014ff0",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-45000-89998.pkl",
+      "path": "models/Full_DOVE/policy-45000-89998.pkl",
+      "sha256": "d78b81f034f29063be0c9a35e1f485ff55e6446dfe0b0bbd729e9f32340b9a30",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-46000-91998.pkl",
+      "path": "models/Full_DOVE/policy-46000-91998.pkl",
+      "sha256": "940a4798e434d095312ff42483512ddb459cf01206d949f68c3714a742aebc4c",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-5000-9998.pkl",
+      "path": "models/Full_DOVE/policy-5000-9998.pkl",
+      "sha256": "e209566552f6edf2b5eaeaf5e4953fc60e906bf9f68918210a370cee0656a72e",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-6000-11998.pkl",
+      "path": "models/Full_DOVE/policy-6000-11998.pkl",
+      "sha256": "dbb4dfae464c7e4ed79444b8c2ed468fcf15af81dc1e584860fff7d45eb2ab3d",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-7000-13998.pkl",
+      "path": "models/Full_DOVE/policy-7000-13998.pkl",
+      "sha256": "57fc2656a643acc96c29926848e4dd54d8d80fa343ef47a615ca9a41a3306429",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-8000-15998.pkl",
+      "path": "models/Full_DOVE/policy-8000-15998.pkl",
+      "sha256": "01dc8a106b94fd707d7a4029d03f48a93de8726144ad5d0d2049516561f10a4f",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-9000-17998.pkl",
+      "path": "models/Full_DOVE/policy-9000-17998.pkl",
+      "sha256": "78419b76b96ac790766f79b4eef2bfef08f32838d2c16bfe21c274f5e7c978c3",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "stage1b_offline_bc_policy.pkl",
+      "path": "models/Full_DOVE/stage1b_offline_bc_policy.pkl",
+      "sha256": "77a87d9bb00c2ded3b37d564fd681620706aab570765de5f907f1bb6202cb56c",
+      "actor": false,
+      "critic": true,
+      "training_seed": 0
+    }
+  ],
+  "actor_pairs": 256,
+  "critic_pairs": 512,
+  "energy_samples": 8,
+  "action_samples": 32,
+  "margin": 0.05,
+  "rejected_radius": 0.05,
+  "diversity": "mean of Euclidean distances over distinct unordered pairs of 32 sampled actions",
+  "aggregation": "unweighted mean of checkpoint means; checkpoint SE=sample_SD/sqrt(checkpoints)",
+  "pair_file": "inputs/pairs.npz",
+  "pair_sha256": "112d8dd0530b5eaac7ad0e8f85df605380e83ac9acc029e159a76810d259687c"
+}

@@ -1,0 +1,12 @@
+在项目根目录运行：
+
+bash scripts/run_pvp.sh test   # TAB-01，原有流程
+bash scripts/run_tab02.sh test
+bash scripts/run_tab03.sh test
+bash scripts/run_tab04.sh test
+bash scripts/run_tab05.sh test
+bash scripts/run_tab06.sh test
+
+每个 sh 自动运行对应 calculate.py，终端只显示指标，CSV 保存在各 TAB 目录。
+TAB-02/03 执行模型诊断/仿真；TAB-04/06 重算真实轨迹；TAB-05 仅能重算已有场景汇总计数。
+各表 REPRODUCTION.txt 记录精确模型选择、样本数、聚合公式和已确认的历史处理。

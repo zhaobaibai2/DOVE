@@ -1,0 +1,54 @@
+{
+  "TAB-02": {
+    "status": "complete_live_gpu_current_paper_with_reported_discrepancies",
+    "schema": "rq2_vlb_hsr_rmr_v2",
+    "checkpoints": 192,
+    "groups": [
+      50,
+      50,
+      46,
+      46
+    ],
+    "pairs_per_checkpoint": 256,
+    "actor_samples_per_pair": 64,
+    "draws_per_diffusion_step": 64,
+    "paper_cells": 16,
+    "matches_paper_3dp": 10,
+    "mismatches": 6,
+    "run": "evaluations/20261110_145128_416502"
+  },
+  "TAB-03": {
+    "status": "complete_seven_mode_inference",
+    "schema": "inference_seven_modes_v2",
+    "run": "evaluations/20261110_152418_447070",
+    "modes": 7,
+    "model_mode_jobs": 35,
+    "checkpoints": 5,
+    "fresh_episodes": 1500,
+    "reused_live_episodes": 2000,
+    "table_episodes": 3500,
+    "outcome_comparison": "All success, crash and route completion values match the archived 3500 records; unresolved historical Return differences retained without target fitting."
+  },
+  "TAB-04": {
+    "status": "complete_recorded_trace_recalculation",
+    "rows": [
+      7514,
+      22362,
+      2629,
+      8411
+    ]
+  },
+  "TAB-05": {
+    "status": "complete_aggregate_count_recalculation_only",
+    "individual_trial_records": "missing; do not claim trial-level replay"
+  },
+  "TAB-06": {
+    "status": "user_accepted_source_verified_recalculation",
+    "runs": 12,
+    "trace_rows": 22863,
+    "positive_only_alias": "source labelled DACER; unverified",
+    "accepted_protocol": "TAB-06/accepted_protocol.json",
+    "source_files_verified": 12,
+    "aggregation": "equal-weight run means and between-run sample SD"
+  }
+}

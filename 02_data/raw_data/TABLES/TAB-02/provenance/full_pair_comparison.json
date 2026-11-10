@@ -1,0 +1,62 @@
+[
+  {
+    "group": "Positive-only",
+    "kind": "actor",
+    "checkpoints": 50,
+    "pairs": 12800,
+    "maximum_absolute_error": {
+      "pairsat_e": 0.0,
+      "ragr": 0.0,
+      "sample_diversity": 5.21540641784668e-08
+    }
+  },
+  {
+    "group": "Positive-only",
+    "kind": "critic",
+    "checkpoints": 52,
+    "pairs": 26624,
+    "maximum_absolute_error": {
+      "pairacc_c": 0.0
+    }
+  },
+  {
+    "group": "ER_wo_CPCal",
+    "kind": "actor",
+    "checkpoints": 50,
+    "pairs": 12800,
+    "maximum_absolute_error": {
+      "pairsat_e": 0.0,
+      "ragr": 0.0,
+      "sample_diversity": 5.494803190231323e-08
+    }
+  },
+  {
+    "group": "ER_wo_CPCal",
+    "kind": "critic",
+    "checkpoints": 52,
+    "pairs": 26624,
+    "maximum_absolute_error": {
+      "pairacc_c": 0.0
+    }
+  },
+  {
+    "group": "Full_DOVE",
+    "kind": "actor",
+    "checkpoints": 46,
+    "pairs": 11776,
+    "maximum_absolute_error": {
+      "pairsat_e": 0.0,
+      "ragr": 0.0,
+      "sample_diversity": 5.587935447692871e-08
+    }
+  },
+  {
+    "group": "Full_DOVE",
+    "kind": "critic",
+    "checkpoints": 48,
+    "pairs": 24576,
+    "maximum_absolute_error": {
+      "pairacc_c": 0.0
+    }
+  }
+]

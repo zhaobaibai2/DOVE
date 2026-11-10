@@ -1,0 +1,18 @@
+{
+  "created": "2026-11-10T16:23:27.047239",
+  "original_files": 12,
+  "original_rows": 22863,
+  "source_hashes_all_match": true,
+  "projected_values_all_match": true,
+  "arithmetic": "Per-run metric then equal-weight run mean and sample SD (ddof=1); jerk via diff(diff(speed)/dt)/dt[1:] after timestamp deduplication.",
+  "original_processing_script": "/home/aaa/data/real_car/寒假/results_0212/results/summarize_metrics.py",
+  "original_processing_script_sha256": "077adcd6cd896bc149971a69c5ea6e58d3d5ea62443abe6b1a6492e2bc4709f5",
+  "result": "All current printed continuous metrics independently reproduced to display precision from the original 12 raw CSVs.",
+  "limitations": [
+    "Success counts are reported aggregates, not recomputed from 40 individual trials.",
+    "Positive-only source runs identify themselves as DACER; a positive-only-only objective/matched training-stream mapping is not established.",
+    "DOVE source is two Route1 control runs, not a recovered 40-trial/four-scenario ledger.",
+    "Current paper says mean/SD over valid frames; historical script and current printed output aggregate run means instead. pooled_frame_alternative.csv shows the different frame-level results.",
+    "IWR speed is 1.744121259... from source; the current paper prints 1.24. No source processing reproducing 1.24 has been established."
+  ]
+}

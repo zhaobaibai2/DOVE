@@ -1,0 +1,3 @@
+{
+  "reason": "Traffic seed modification was outside requested scope; reverted and explicitly rejected by user. These 12 smoke-test episodes must not be used in final reporting."
+}

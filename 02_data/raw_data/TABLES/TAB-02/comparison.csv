@@ -1,0 +1,17 @@
+setting,metric,recomputed,paper,difference,matches_paper_3dp,explanation
+Positive-only,rho_vlb,0.619921875,0.619,0.0009218749999999609,False,Exact frozen 64-draw/64-sample audit does not round to the manuscript cell; original 64-noise VLB measurements and regenerated actor counts are retained for verification.
+Positive-only,hsr,0.61367919921875,0.615,-0.0013208007812499645,False,Exact frozen 64-draw/64-sample audit does not round to the manuscript cell; original 64-noise VLB measurements and regenerated actor counts are retained for verification.
+Positive-only,rmr_0p5,0.29465576171875,0.295,-0.00034423828124996447,True,
+Positive-only,pairacc_c_mean,0.982734375,0.789,0.19373437500000001,False,Paper value matches legacy 512-pair/52-or-48-checkpoint aggregation; current manuscript requires 256 pairs and 50-or-46 checkpoints.
+ER w/o CPCal,rho_vlb,0.98859375,0.989,-0.0004062499999999414,True,
+ER w/o CPCal,hsr,0.98069091796875,0.981,-0.00030908203125001865,True,
+ER w/o CPCal,rmr_0p5,0.006988525390625,0.007,-1.1474609375000146e-05,True,
+ER w/o CPCal,pairacc_c_mean,0.46203125,0.345,0.11703125000000003,False,Paper value matches legacy 512-pair/52-or-48-checkpoint aggregation; current manuscript requires 256 pairs and 50-or-46 checkpoints.
+CPCal only,rho_vlb,0.7721637228260869,0.772,0.00016372282608689837,True,
+CPCal only,hsr,0.7215536366338315,0.722,-0.0004463633661684341,True,
+CPCal only,rmr_0p5,0.18910018257472827,0.189,0.00010018257472826919,True,
+CPCal only,pairacc_c_mean,0.9868376358695652,0.987,-0.00016236413043480002,True,
+Full DOVE,rho_vlb,0.8199728260869565,0.821,-0.001027173913043411,False,Exact frozen 64-draw/64-sample audit does not round to the manuscript cell; original 64-noise VLB measurements and regenerated actor counts are retained for verification.
+Full DOVE,hsr,0.7720734969429348,0.772,7.349694293479203e-05,True,
+Full DOVE,rmr_0p5,0.15054586659307065,0.151,-0.0004541334069293468,True,
+Full DOVE,pairacc_c_mean,0.9803838315217391,0.891,0.08938383152173912,False,Paper value matches legacy 512-pair/52-or-48-checkpoint aggregation; current manuscript requires 256 pairs and 50-or-46 checkpoints.

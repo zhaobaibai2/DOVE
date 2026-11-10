@@ -1,0 +1,4263 @@
+\documentclass[9pt,journal]{IEEEtran}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{bm}
+\usepackage{graphicx}
+\graphicspath{{./figures/method/}{./figures/real_car/}{./figures/simulation/}}
+\usepackage[caption=false,font=footnotesize]{subfig}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{stfloats}
+\usepackage{flushend}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{color}
+\usepackage{soul}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\interdisplaylinepenalty=2500
+
+\newtheorem{assumption}{Assumption}
+
+\renewcommand{\topfraction}{0.90}
+\renewcommand{\bottomfraction}{0.70}
+\renewcommand{\textfraction}{0.08}
+\renewcommand{\floatpagefraction}{0.80}
+\renewcommand{\dbltopfraction}{0.90}
+\renewcommand{\dblfloatpagefraction}{0.80}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
+\setcounter{dbltopnumber}{2}
+\setlength{\textfloatsep}{7pt plus 2pt minus 2pt}
+\setlength{\floatsep}{6pt plus 2pt minus 2pt}
+\setlength{\intextsep}{7pt plus 2pt minus 2pt}
+\setlength{\dbltextfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\dblfloatsep}{6pt plus 2pt minus 2pt}
+
+% --- macros -------------------------------------------------------------------
+\newcommand{\DOVE}{DOVE}
+\newcommand{\CPCal}{\ensuremath{\mathrm{CPCal}}}
+\newcommand{\Sset}{\mathcal{S}}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\DI}{\mathcal{D}_{\mathrm{I}}}
+\newcommand{\DN}{\mathcal{D}_{\mathrm{N}}}
+\newcommand{\Ddemo}{\mathcal{D}_{\mathrm{demo}}}
+\newcommand{\Avalid}{\mathcal{A}_{\mathrm{valid}}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Eden}{\ensuremath{\mathcal{E}_{\theta}^{\mathrm{den}}}}
+\newcommand{\EdenMC}{\ensuremath{\widehat{\mathcal{E}}_{\theta}^{\mathrm{den}}}}
+\newcommand{\Eelbo}{\ensuremath{\mathcal{E}_{\theta}^{\mathrm{VLB}}}}
+\newcommand{\ER}{\ensuremath{\mathrm{ER}}}
+
+\newcommand{\ind}{\mathbb{I}}
+\newcommand{\va}{\bm{a}}
+\newcommand{\vs}{\bm{s}}
+\newcommand{\veps}{\bm{\epsilon}}
+\newcommand{\vah}{\ensuremath{\va_{\mathrm h}}}      % human action
+\newcommand{\van}{\ensuremath{\va_{\mathrm n}}}      % rejected autonomous action
+\newcommand{\vab}{\ensuremath{\va_{\mathrm b}}}      % executed action
+\newcommand{\vag}{\ensuremath{\va_{\mathrm g}}}      % guided action
+
+\begin{document}
+
+\title{DOVE: Learning Diffusion Policies from Accepted and Rejected Actions in Human-in-the-Loop Driving}
+
+\author{Anonymous Authors}
+
+\markboth{Anonymous Manuscript}%
+{DOVE: Learning Diffusion Policies from Accepted and Rejected Actions}
+
+\maketitle
+
+
+\begin{abstract}
+Human-in-the-loop (HIL) training reduces the cost and risk of learning
+driving policies, but each takeover offers more than a corrective action:
+it also identifies an autonomous proposal rejected at the same state.
+For a multimodal diffusion actor, fitting the correction alone need not
+suppress sampling near the rejected proposal. We propose Diffusion with Observed Vetoes (\DOVE{}), which uses the
+actor's expected noise-prediction loss alongside proxy-risk scores
+learned from intervention data for selective execution.
+Energy-Ranking (ER) compares the per-sample noise-prediction losses
+of the executed human action and rejected proposal under matched
+diffusion noise, penalizing pairs whose loss gap falls below a
+prescribed margin. Critic Pairwise Calibration (\CPCal{}) augments
+temporal-difference learning on executed transitions with a per-head
+same-state margin, supporting risk-oriented actor improvement.
+After training, frozen critics guide bounded local refinements.
+A gate requires a conservative predicted reduction in proxy risk,
+limits the increase in expected noise-prediction loss relative to
+the projected base action, and checks critic disagreement; otherwise,
+the projected base action is retained. Under a matched
+50{,}000-step MetaDrive HIL protocol, \DOVE{} achieves 90\% success, the
+highest mean among the compared learned-HIL methods, while using over
+70\% fewer human-controlled environment steps than H-DSAC and PVP.
+Component diagnostics show reduced sampling near rejected actions and
+improved critic ordering, while inference ablations show complementary benefits from proxy-risk gating and the constraint on expected noise-prediction loss. Following online repair on a physical unmanned ground vehicle, the frozen system
+succeeds in 32 of 40 trials across four scenarios, compared with 16
+successes for the positive-only diffusion baseline.
+Project videos, source code, and additional results are available at
+\url{https://zhaobaibai2.github.io/DOVE/}.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+
+\IEEEPARstart{R}{einforcement} learning (RL) offers a way to improve
+driving policies through interaction, but trial-and-error exploration on
+physical vehicles is costly and unsafe~\cite{li2022haco,li2025hdsac}.
+Human-in-the-loop (HIL) training reduces this burden by allowing a
+supervisor to replace undesirable autonomous actions with corrective
+ones. Its learning objective is to turn limited corrective interaction
+into improved autonomous behavior, rather than relying on repeated
+human overrides.
+
+A takeover provides two complementary pieces of information: the human
+action that is executed and the autonomous proposal that is rejected at
+the same state. The correction indicates what to do, while the veto
+identifies behavior that the supervisor considers less desirable.
+Interactive imitation methods such as HG-DAgger and IWR learn from
+corrective action labels collected during policy execution
+~\cite{kelly2019hgdagger,mandlekar2020iwr}.
+Proxy-value approaches also use the rejected proposal, encoding human
+preferences in a critic that subsequently guides policy improvement
+~\cite{li2022haco,peng2023pvp,huang2024haim,li2025hdsac}.
+These approaches differ in how the intervention reaches the actor:
+through direct fitting of executed actions or through a learned value
+comparison.
+
+This distinction matters for diffusion actors, which represent
+multimodal action distributions through iterative denoising
+~\cite{chi2024diffusionpolicy,wang2024dacer}.
+Such a representation can accommodate several acceptable driving
+responses at the same state. However, fitting the executed correction
+does not explicitly require the rejected proposal to become less
+compatible with the denoiser. Improved reconstruction alone therefore
+need not suppress sampling near previously vetoed behavior. When veto
+supervision reaches the actor only through a critic, its effect also
+depends on the learned value comparison. A direct actor-side comparison
+can complement this route by explicitly shaping the denoiser's relative
+treatment of accepted and rejected actions.
+
+Recent work exploits pairwise supervision in several ways. CLIC and
+Set-Supervised Diffusion Policy (SDP) construct desired action sets from
+corrective and undesired actions~\cite{li2025clic,li2026sdp}, while PACT
+uses intervention-induced preferences for critic credit correction and
+direct actor updates~\cite{liu2026pact}.
+Diffusion-DPO and MaPO also incorporate pairwise preferences into
+diffusion models for image generation
+~\cite{wallace2024diffusiondpo,hong2026mapo}.
+Building on these uses of pairwise feedback, we focus on a coupled
+control problem: how to use one takeover to impose a relative ordering on the
+actor's noise-prediction losses for the executed and rejected actions,
+and to learn proxy-risk ordering from the same intervention, then
+how to reuse both signals when deciding whether a refined action
+should replace the actor's proposal.
+
+The expected noise-prediction loss and the critic's proxy-risk score
+serve different roles. The former measures the denoiser's error in
+predicting injected noise for a queried action under the specified
+corruption distribution, whereas the latter estimates its proxy risk. A takeover also creates an
+asymmetry in the available evidence: the observed cost and successor
+state belong to the executed correction, not to the rejected proposal.
+Temporal-difference (TD) learning can use this factual transition, while
+the same-state preference provides additional supervision for the
+rejected action. The resulting critic influences actor improvement and
+can also guide action refinement~\cite{lu2023cep}. However, optimizing
+an approximate critic can favor actions with misleading value
+estimates~\cite{fujimoto2018td3}, and a lower predicted risk does not rule out a substantial increase in the candidate's expected noise-prediction loss relative to the base action. Generating a refinement and
+approving it for execution should therefore be treated separately.
+
+We propose Diffusion with Observed Vetoes (\DOVE{}), which uses one
+intervention stream to train a diffusion actor and twin proxy-risk
+critics. During online repair under human supervision, executed-action
+fitting retains task-directed behavior, while the same-state preference shapes the relative noise-prediction
+losses of the executed and rejected actions and provides pairwise
+supervision for the proxy-risk critics.
+The critics also support risk-oriented actor improvement at autonomous
+states. After the actor and critics are frozen, bounded local guidance
+proposes a refinement, and a separate gate uses the critic's proxy-risk scores together with
+the expected noise-prediction loss to decide whether the refinement
+replaces the actor's base action The main
+contributions are as follows:
+\begin{itemize}
+   \item We propose \textbf{Energy-Ranking (ER)}, which makes the
+recorded veto an explicit training signal for the diffusion actor.
+Under shared corruption, ER compares the per-sample noise-prediction
+losses of the executed human action and rejected proposal and
+penalizes violations of a prescribed margin. We further derive an
+exact decomposition relating the uniformly averaged loss gap
+induced by ER to the schedule-weighted DDPM variational-energy gap,
+including the schedule-weight interaction and terminal
+prior-matching contribution.
+
+    \item We design \textbf{Critic Pairwise Calibration (\CPCal{})},
+    which supplements TD learning on executed transitions with a minimum
+    intervention-pair margin on each proxy-risk critic head. This
+    directly supervises the rejected proposal and aligns the pairwise
+    objective with the conservative critic scoring used for actor
+    improvement and frozen guidance.
+
+    \item We develop \textbf{bounded guidance with selective execution}.
+    Guidance restricts refinements to a neighborhood of the actor
+    proposal. The gate requires a conservative predicted proxy-risk reduction,
+limits the increase in expected noise-prediction loss relative to
+the projected base action, and checks twin-critic agreement. If any
+    condition fails, the projected base action is retained.
+\end{itemize}
+
+Experiments evaluate both the learned components and closed-loop driving
+performance. Under the matched 50{,}000-step MetaDrive HIL protocol,
+\DOVE{} achieves the highest mean success rate  and return
+among the compared learned-HIL methods. It uses 4.2K human-controlled
+environment steps, more than 70\% fewer than H-DSAC and PVP. Component
+diagnostics show reduced sampling near rejected actions and improved
+critic ordering, while inference ablations show complementary benefits
+from proxy-risk and actor-compatibility checks. Following on-vehicle
+online repair, the frozen system succeeds in 32 of 40 trials across four
+physical scenarios, compared with 16 successes for the positive-only
+diffusion baseline.
+
+% 原版---待修改
+% \section{Introduction}\label{sec:intro}
+% \IEEEPARstart{R}{einforcement} learning (RL) improves a driving policy through closed-loop interaction~\cite{haarnoja2018sac,duan2021dsac}, but trial-and-error exploration on physical vehicles is unsafe and costly~\cite{li2025hdsac}. Human-in-the-loop (HIL) training mitigates this risk by granting a supervisor authority to override undesirable actions and provide corrective supervision at states where the policy fails~\cite{li2022haco,peng2023pvp}.
+
+% Each takeover records two synchronized actions at one observation: the executed human action \(\vah\) and the rejected autonomous action \(\van\). DAgger-style intervention learning~\cite{ross2011dagger} uses the executed action as supervision. HG-DAgger~\cite{kelly2019hgdagger} and IWR~\cite{mandlekar2020iwr} are representative examples. Proxy-value methods retain more of the intervention information in a critic, either through pointwise proxy-value targets or through same-state proxy-value differences~\cite{peng2023pvp,huang2024haim,li2025chac,li2025hdsac}. DAgger-style methods therefore discard the rejected action from policy learning, whereas proxy-value methods retain it but influence the actor through the learned critic.
+
+% This distinction matters for diffusion policies. Driving decisions are often multimodal, for example, more than one collision-free maneuver may be feasible at the same observation, and diffusion policies represent such action distributions through iterative denoising~\cite{chi2024diffusionpolicy,wang2024dacer}. The same flexibility means that positive-only correction need not remove behavior that the supervisor has already rejected, so vetoed actions can remain reachable in the frozen sampler.
+
+% A takeover therefore provides an observed local relation
+% \(\vah\succ_{\vs}\van\), not merely an additional positive label. What
+% remains underexplored is how this relation should be preserved
+% consistently across a multimodal diffusion actor, a proxy-risk model, and
+% the frozen rule that decides which action is finally executed. This leads
+% to three questions. \textbf{Q1}: how should the observed veto reshape
+% what the frozen actor samples? \textbf{Q2}: how should the same ordering
+% be preserved in a proxy-risk score that compares candidate actions?
+% \textbf{Q3}: how should critic refinement be used without moving
+% execution away from the frozen actor or trusting uncertain critic
+% predictions?
+
+% \DOVE{} answers these questions through three connected stages. First, \ER{} enforces \(\vah\succ_{\vs}\van\) by imposing a same-state margin on actor-derived denoising compatibility, discouraging recurrence of vetoed behavior in the diffusion sampler. Second, Critic Pairwise Calibration (\CPCal{}) preserves the same ordering in twin proxy-risk critics through a minimum same-state margin. Finally, the frozen critics guide a local search for lower predicted risk. The deployment gate uses proxy-risk reduction as the primary acceptance signal, while actor compatibility and twin-critic agreement constrain whether the refinement is executed.
+
+
+% The main contributions are summarized as follows:
+% \begin{itemize}
+%     \item \textbf{Encoding the veto in the actor.} Positive-only
+%     correction fits the executed action but leaves the rejected one
+%     unconstrained, so vetoed behavior can recur in the frozen sampler.
+%     \textbf{\ER{}} therefore scores both ends of the intervention
+%     pair with the actor's own denoising residual and separates them by a
+%     same-state margin under matched noise, keeping the rejected action an
+%     explicit actor-side training signal. We further derive an exact
+%     decomposition relating the induced residual ordering to the
+%     schedule-weighted variational ordering.
+
+%     \item \textbf{Calibrating the critics to the same ordering.}
+%     Denoising compatibility is not a task-risk estimate, and pointwise
+%     proxy-value anchors do not keep the pair separated once TD updates
+%     continue on non-intervention data. \textbf{\CPCal{}} imposes a
+%     minimum proxy-risk margin on each critic head separately rather than
+%     on their mean, so the intervention ordering survives joint critic
+%     optimization. This aligns critic learning with the conservative
+%     extremum-based comparison used at deployment.
+
+%     \item \textbf{Bounding refinement at frozen execution.}
+%     Unconstrained critic refinement drifts outside actor support and
+%     over-trusts uncertain predictions. We confine guidance to a bounded
+%     neighborhood of the projected base action and gate execution on
+%     proxy-risk reduction as the primary signal, with actor compatibility
+%     and twin-critic agreement as constraints. We validate the resulting
+%     lifecycle in MetaDrive and onboard a physical UGV, auditing the
+%     frozen sampler and the frozen closed loop separately.
+% \end{itemize}
+
+
+
+
+
+\section{Related Work}
+\label{sec:related}
+
+\subsection{Learning from Human Interventions}
+
+Intervention-based learning differs in how human feedback enters the
+learning objective. DAgger aggregates expert labels at learner-visited
+states, while HG-DAgger and IWR use human corrections collected during
+interactive execution~\cite{ross2011dagger,kelly2019hgdagger,mandlekar2020iwr}.
+Beyond action labels, Expert Intervention Learning treats intervention
+and non-intervention as information about state and action quality
+~\cite{spencer2020interventions}. RLIF derives a reinforcement signal from
+intervention events~\cite{luo2024rlif}, whereas HIL-SERL incorporates
+human demonstrations and corrective transitions into off-policy robotic
+learning~\cite{luo2025hilserl}.
+
+Proxy-value approaches make the comparison between human and autonomous
+actions explicit in value learning. HACO and HAIM-DRL optimize relative
+proxy values~\cite{li2022haco,huang2024haim}; PVP assigns favorable and
+unfavorable proxy-value targets to human actions and rejected proposals,
+respectively~\cite{peng2023pvp}. H-DSAC combines proxy-value propagation
+with a distributional actor--critic~\cite{li2025hdsac}.
+PACT is a particularly close actor--critic comparator: it uses a progress
+model to identify suboptimal pre-intervention segments, corrects their
+Bellman targets using intervention preferences, and directly updates the
+actor through attraction and repulsion in bounded mean-action space
+~\cite{liu2026pact}. In \DOVE{}, \CPCal{} instead supplements TD learning
+on factual executed transitions with a minimum same-state margin on each
+proxy-risk critic head. This supplies relative supervision for the
+unexecuted proposal and supports the conservative scoring used during
+actor improvement and frozen guidance.
+
+\subsection{Diffusion Policies and Corrective Preferences}
+
+Diffusion Policy represents multimodal robot behavior through conditional
+action denoising~\cite{chi2024diffusionpolicy}. Diffusion-QL combines this
+representation with value-based improvement in offline RL, while DACER
+extends diffusion actor--critic learning to an online maximum-entropy
+setting~\cite{wang2023diffusionql,wang2024dacer}. These methods provide the
+policy representation and optimization context for learning from
+interventions.
+
+Preference learning offers several ways to modify this representation.
+FDPP learns a reward from human preferences and uses it to fine-tune a
+pretrained diffusion policy, with KL regularization retaining prior
+competencies~\cite{chen2025fdpp}. In image generation, Diffusion-DPO
+adapts direct preference optimization through a diffusion variational
+objective~\cite{wallace2024diffusiondpo}, while MaPO develops
+reference-free, margin-aware diffusion alignment~\cite{hong2026mapo}.
+For intervention-based control, a central distinction is whether feedback
+supervises a learned reward, a desired action region, or the policy's
+treatment of the observed action pair.
+CLIC and SDP are the closest comparisons in correction-based policy
+learning. CLIC constructs desired action sets from corrective and
+undesired actions and learns an energy-based policy from this set-valued
+supervision~\cite{li2025clic}. SDP extends set supervision to
+action-chunking diffusion policies, using undesired chunks to constrain
+the desired set around a correction~\cite{li2026sdp}.
+
+\ER{} operates directly on the recorded same-state action pair:
+it penalizes violations of a margin between the per-sample
+noise-prediction losses of the executed and rejected actions under
+shared corruption, while executed-action fitting retains
+task-directed behavior. The expected noise-prediction loss is also
+used during frozen execution to limit the increase incurred by
+a guided candidate relative to the projected base action.
+This distinguishes the loss-based actor supervision in \DOVE{}
+from both a separately learned preference reward and set-valued
+action supervision.
+
+\subsection{Guided Sampling and Selective Execution}
+
+Guidance changes generated actions without necessarily updating policy
+parameters. Contrastive Energy Prediction learns the guidance needed for
+energy-tilted diffusion sampling~\cite{lu2023cep}, and classifier-free
+guidance can act as a controllable policy-improvement
+operator~\cite{frans2025guidance}. Test-time gradient guidance of flow
+policies also queries critics on estimated clean
+actions~\cite{zhou2026qgf}.
+\DOVE{} uses critic-guided refinement within a bounded neighborhood of a
+base proposal, but treats the refined action as a candidate rather than
+an automatic replacement. A separate gate requires conservative proxy-risk improvement, limits the increase in expected noise-prediction loss relative to
+the projected base action, and checks critic agreement before
+releasing the candidate.
+
+This execution decision differs from deciding when to request a human.
+ThriftyDAgger uses novelty and risk to allocate assistance under a
+supervision budget~\cite{hoque2021thrifty}, while He et al. derive an
+assistance-request metric from the diffusion generative
+process~\cite{he2026uncertainty}. The \DOVE{} gate instead selects
+between two autonomous actions using the scores learned during repair.
+
+Formal runtime safety mechanisms address a different requirement.
+Control barrier functions and predictive safety filters enforce explicit
+constraints under their respective model and feasibility
+assumptions~\cite{ames2019cbf,wabersich2021predictive}; SafeDiffuser
+incorporates barrier constraints into diffusion-based
+planning~\cite{xiao2025safediffuser}. In contrast, \DOVE{} combines actuator bounds and local refinement with learned
+proxy-risk scores and an expected noise-prediction-loss comparison. Its gate is an intervention-informed action-selection rule,
+rather than a certificate of safe-set invariance.
+
+
+
+
+% 原版-啊修改
+% \section{Related Work}\label{sec:related}
+
+% Intervention-learning methods differ mainly in how they use the accepted and rejected actions recorded at a takeover. DAgger-style intervention methods train on the executed human action~\cite{ross2011dagger,kelly2019hgdagger,mandlekar2020iwr}, whereas robot-gated variants such as ThriftyDAgger instead address when supervision should be requested~\cite{hoque2021thrifty}. Proxy-value methods preserve both actions in a critic: PVP-style methods assign opposite pointwise proxy-value targets~\cite{li2022haco,peng2023pvp,li2025chac,li2025hdsac}, whereas HAIM-DRL directly optimizes a same-state pairwise proxy-value difference without an explicit margin~\cite{huang2024haim}.
+
+% Correction-pair approaches are the closest conceptual comparators. CLIC learns energy-based policies from corrective feedback, SDP extends correction to action-chunking diffusion policies, and PACT uses intervention-induced preferences for actor--critic calibration~\cite{li2025clic,li2026sdp,liu2026pact}. These works establish that the rejected action itself is informative. \DOVE{} does not claim pairwise intervention learning itself as novel. Its focus is the lifecycle use of one observed veto: direct actor-side shaping in a single-step diffusion policy, per-head ordering in the proxy-risk critics, and frozen selective execution that jointly reads actor compatibility and critic risk.
+
+% Diffusion policies represent multimodal action distributions and support sampling-time refinement by external objectives~\cite{ho2020ddpm,chi2024diffusionpolicy}. Guided and value-conditioned variants extend this idea to reinforcement learning~\cite{wang2023diffusionql,wang2024dacer,lu2023cep,frans2025guidance}. Their objectives, however, are not designed around the state-synchronized accepted and rejected pair produced by an HIL takeover.
+
+% \ER{} is also related to preference learning. Pairwise comparisons encode relative preferences in reward learning and direct preference optimization~\cite{christiano2017deep,rafailov2023direct}. Here the comparison is online and state-synchronized: \ER{} imposes a denoising-compatible margin directly on the intervention pair without requiring a frozen reference policy.
+
+% Runtime filters based on control barrier functions, predictive safety filters, or safety-constrained diffusion enforce explicit model- or specification-based constraints~\cite{ames2019cbf,wabersich2021predictive,xiao2025safediffuser}. Intervention logs do not by themselves provide the dynamics model or unsafe set required by these approaches. \DOVE{} instead learns an actor-side denoising-compatibility score and a critic-side proxy-risk ordering from the intervention stream, then combines them in a bounded execution rule. The learned gate can also be paired with a formal safety filter when such a model is available.
+
+
+
+
+
+
+\section{Preliminaries}
+
+\subsection{Human-in-the-Loop Reinforcement Learning }\label{sec:prelim_hitl}
+
+
+An RL task can be generally formulated as a Markov decision process (MDP) with the tuple $\left(\Sset,\A,P,r,\gamma\right)$. 
+$\Sset$ and $\A$ denote the state and action spaces, respectively. $P$ denotes the state transition probability. 
+$r$ stands for the reward function and $\gamma\in\left[0,1\right)$ is the discount factor. 
+The objective is to find the optimal policy $\pi^*$ by maximizing the cumulative discounted return, i.e.,
+\begin{equation}
+    \pi^* =  \underset{\pi}{\arg\max} J(\pi)
+    =  \underset{\pi}{\arg\max} \E_{\pi}\!\left[\sum_{k=0}^{\infty}\gamma^{k}
+    r\!\left(\vs_k,\va_k\right)\right].
+    \label{eq:return}
+\end{equation}
+Here, $r(\vs_k, \va_k)$ is the reward at the $k$-th step under the available state $\vs_k\in\Sset$ and action $\va_k\in\A$. In this work, we adopt $\A=[-1,1]^{d_{\mathrm a}}$ which means that the $d_{\mathrm a}$-dimensional action $\va_k$ is mapped to a normalized space.
+
+
+
+% 【ZCY】修复，，策略输出—人工监督—实际执行—环境反馈—数据记录，
+Human-in-the-loop training extends this formulation by allowing human supervision over action execution~\cite{peng2023pvp,li2025hdsac}. Let $\va_k$ be the action actually executed at each step, which is determined by
+\begin{equation}
+    \va_k
+    =
+    \vab
+    =
+    \ind_{\mathrm{int}}\,\vah
+    +
+    \left(1-\ind_{\mathrm{int}}\right)\van,
+    \label{eq:blend}
+\end{equation}
+where $\van$ stands for the expected policy generated by the autonomous system and
+$\vah$ means the human action provided during intervention. $\ind_{\mathrm{int}}\in\{0,1\}$ is the intervention indicator. If the human driver takes over, there will be $\ind_{\mathrm{int}} = 1$ and $\vab=\vah$; otherwise, 
+$\vab=\van$. In the HIL interaction, the generic action $\va_k$ in the MDP is instantiated by the executed action $\vab$, and the environment transition follows
+\begin{equation}
+    \vs'\sim P\!\left(\cdot\mid\vs,\vab\right).
+    \label{eq:hil_transition}
+\end{equation}
+Each interaction transition is stored in a HIL replay buffer
+\begin{equation}
+    \D=\left\{\left(
+    \vs,\van,\vah,\vab,
+    \ind_{\mathrm{int}},c,\ind_{\mathrm{done}},\vs'
+    \right)\right\},
+    \label{eq:buffer}
+\end{equation}
+where $c\geq0$ is the collision cost,
+$\ind_{\mathrm{done}}\in\{0,1\}$ is the termination indicator, and
+$\vs'$ is the next observation.
+
+
+\subsection{Diffusion for RL}\label{sec:prelim_diff}
+
+Diffusion models provide a flexible way to represent complex and
+multi-modal distributions through a gradual noising and
+denoising process~\cite{ho2020ddpm,chi2024diffusionpolicy,wang2024dacer}.
+Here, we specify an action $\va \in \A$ as the diffusion input, then its
+forward (noising) process can be written as
+\begin{equation}
+    \va_t=
+    \sqrt{\bar\alpha_t}\,\va+
+    \sqrt{1-\bar\alpha_t}\,\veps,
+    \quad
+    t=1,\ldots,T,
+    \label{eq:forward}
+\end{equation}
+where $\va_t$ denotes the noisy action generated at the $t$-th diffusion
+step, and $\veps\sim\mathcal N(\bm0,\bm I)$ follows the standard Gaussian
+distribution. The cumulative coefficient $\bar\alpha_t$ at step $t$ is
+calculated by
+\begin{equation*}
+    \bar\alpha_t=\prod_{j=1}^{t}\alpha_j,
+    \qquad
+    \alpha_t=1-\beta_t,
+    \qquad
+    \bar\alpha_0=1, 
+\end{equation*}
+where $\beta_t\in(0,1)$ is the prescribed noise variance.
+
+Using the forward process in~\eqref{eq:forward}, the final noisy action
+$\va_T$ can be obtained from the specified action $\va$. When the
+diffusion horizon $t\rightarrow\infty$, there is $\bar\alpha_t \rightarrow 0$ and the final noisy
+$\va_T$ approximately follows $\mathcal N(\bm0,\bm I)$.
+In other words, the forward process therefore maps the potentially complex action
+distribution to a tractable Gaussian prior. However, it cannot be used
+directly for policy generation, since the action to be executed is
+unknown at decision time and thus cannot serve as the input to the
+forward process. Instead, the actor can readily sample
+$\va_T\sim\mathcal N(\bm0,\bm I)$ and needs to transform this random
+variable into an action conditioned on the current state $\vs$.
+Therefore, policy generation follows the reverse direction: starting
+from Gaussian noise, a state-conditioned denoising process progressively
+recovers the action structure and eventually produces the clean action
+$\va_0=\va$. Following the standard DDPM
+parameterization~\cite{ho2020ddpm}, one reverse transition is defined as
+\begin{subequations}\label{eq:reverse_ddpm}
+\begin{align}
+    p_\theta\!\left(\va_{t-1}\mid\va_t,\vs\right)
+    &=
+    \mathcal N\!\left(
+    \bm\mu_\theta\!\left(\vs,\va_t,t\right),
+    \sigma_t^2\bm I
+    \right),
+    \label{eq:reverse_transition}
+    \\
+    \bm\mu_\theta\!\left(\vs,\va_t,t\right)
+    &=
+    \frac{1}{\sqrt{\alpha_t}}
+    \left(
+    \va_t-
+    \frac{\beta_t}{\sqrt{1-\bar\alpha_t}}
+    \veps_\theta\!\left(\vs,\va_t,t\right)
+    \right),
+    \label{eq:reverse_mean}
+    \\
+    \sigma_t^2
+    &=
+    \frac{1-\bar\alpha_{t-1}}
+         {1-\bar\alpha_t}\beta_t,
+    \label{eq:reverse_variance}
+\end{align}
+\end{subequations}
+where $\veps_\theta(\vs,\va_t,t)$ is the state-conditioned noise
+predictor parameterized by $\theta$. The variance $\sigma_t^2$ follows the posterior variance of the standard DDPM reverse process~\cite{ho2020ddpm}.
+
+Applying~\eqref{eq:reverse_transition} successively from $t=T$ to
+$t=1$ gives the complete reverse chain
+\begin{equation}
+    p_\theta\!\left(\va_{0:T}\mid\vs\right)
+    =
+    p\left(\va_T\right)
+    \prod_{t=1}^{T}
+    p_\theta\!\left(\va_{t-1}\mid\va_t,\vs\right),
+    \quad
+    p\left(\va_T\right) = \mathcal N(\bm0,\bm I).
+    \label{eq:reverse_chain}
+\end{equation}
+Since the intermediate noisy actions
+$\va_1,\ldots,\va_T$ are latent variables, marginalizing them from
+\eqref{eq:reverse_chain} gives the state-dependent action distribution
+\begin{equation}
+    p_\theta\!\left(\va_0\mid\vs\right)
+    =
+    \int
+    p_\theta\!\left(\va_{0:T}\mid\vs\right)
+    d\va_{1:T}.
+    \label{eq:diffusion_policy}
+\end{equation}
+With $\va_0=\va$, $p_\theta(\va_0\mid\vs)$ therefore defines the
+diffusion policy $p_\theta(\va\mid\vs)$ used for action generation.
+In practice, the reverse process is learned by fitting the noise
+predictor $\veps_\theta(\vs,\va_t,t)$.
+For behavior cloning, the executed action $\vab$ determined by
+\eqref{eq:blend} is used as the clean action $\va$ in the forward
+process of~\eqref{eq:forward}.
+
+The denoising network is trained with the standard diffusion
+behavior-cloning objective presented in \cite{ho2020ddpm,chi2024diffusionpolicy}, that is,
+\begin{equation}
+    \mathcal{L}_{\mathrm{BC}}(\theta)
+    =
+    \E_{\substack{
+        (\vs,\vab)\sim\D,\,
+        t\sim\operatorname{Unif}\{1,\ldots,T\},\\
+        \veps\sim\mathcal N(\bm0,\bm I)
+    }}
+    \left[
+    \frac{1}{d_{\mathrm a}}
+    \left\|
+    \veps-
+    \veps_\theta\!\left(\vs,\va_t,t\right)
+    \right\|_2^2
+    \right].
+    \label{eq:bc}
+\end{equation}
+Minimizing~\eqref{eq:bc} trains the conditional diffusion actor to
+reproduce the distribution of the executed actions stored in the HIL
+replay buffer.
+
+
+\section{Methodology}
+\label{sec:method}
+
+As illustrated in Fig.~\ref{fig:pipeline}, \DOVE{} consists of three
+stages: intervention collection, veto-aware repair, and frozen guided
+execution. The first stage records factual executed transitions and the
+same-state human--autonomous action pair exposed by a takeover. The second stage uses \ER{} to impose a same-state margin on the actor's noise-prediction loss and \CPCal{} to train twin proxy-risk critics with per-head pairwise margins. The trained critics provide risk-oriented supervision for actor updates at non-intervention states and support local refinement during frozen execution. After online repair, all learned parameters and
+thresholds are frozen. 
+During deployment, the frozen critics guide a bounded local
+refinement, which is executed only if it passes the selective gate.
+
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=\textwidth]{figures/method/framework.pdf}
+\caption{\DOVE{} framework with three stages: intervention collection,
+veto-aware repair, and frozen guided execution. A takeover exposes the
+same-state pair $\vah$ and $\van$. \ER{} applies a pairwise margin to
+the actor's noise-prediction losses for the executed and rejected
+actions, while \CPCal{} trains twin proxy-risk critics with per-head
+pairwise margins. The critics provide risk-oriented supervision for
+actor updates and are reused for bounded guidance after freezing. The
+selective gate determines whether the guided candidate $\vag$ or the
+projected fallback $\bar{\va}^{\mathrm{base}}$ is executed.}
+\label{fig:pipeline}
+\end{figure*}
+
+
+\subsection{Intervention Collection}
+\label{sec:collection}
+
+The first stage is designed to collect factual executed transitions and
+same-state intervention pairs for subsequent actor and critic repair.
+A retained intervention pair is written as tuple
+$(\vs,\vah,\van)$, which is extracted
+from $\D$ as follows
+\begin{equation}
+    \DI
+    =
+    \left\{
+    (\vs,\vah,\van):
+    \text{intervention},\
+    \|\vah-\van\|_2\geq\tau_{\mathrm{pair}}
+    \right\}.
+    \label{eq:intervention_pairs}
+\end{equation}
+
+Inspired by the discussion on intervention in ~\cite{peng2023pvp,huang2024haim}, we support that human takeover yields a more favorable proxy value. And in this case, there is
+\begin{equation}
+    \vah
+    \succ_{\vs}
+    \van,
+    \label{eq:local_preference}
+\end{equation}
+which enforces that for each intervention pair, the executed action $\vah$ is locally preferred over the rejected one $\van$.
+
+For ease of exposition, we define the following sets:
+$\DN\subseteq\D$ denotes the subset of non-intervention
+transitions, for which $\ind_{\mathrm{int}}=0$ and hence
+$\vab=\van$; $\D_0$ denotes the initial HIL collection log;
+and $\Ddemo\subseteq\D_0$ denotes the retained initial
+demonstration subset. The complete replay buffer $\D$ is
+initialized as $\D_0$ and continuously expanded with transitions that are executed during online repair. 
+Newly retained takeover pairs are appended to $\DI$ and utilized for Diffusion behavior cloning.
+
+\subsection{Veto-Aware Repair}
+\label{sec:repair}
+
+Based on the collected intervention pairs, the repair stage uses ER to encode the observed veto and uses CPCal to construct proxy-risk critics with a pairwise margin. The resulting critics also
+provide risk-oriented supervision for actor updates at
+non-intervention states and support bounded local guidance during
+frozen execution.
+
+\subsubsection{Actor Repair with Energy-Ranking}
+\label{sec:energyrank}
+% \paragraph{Noise-prediction loss}
+To compare two actions without introducing another scoring network, we use the diffusion actor's noise-prediction residual. For a queried clean action $\va$, we construct its noisy version $\va_t$ using~\eqref{eq:forward} and define the corresponding per-sample noise-prediction loss as
+\begin{equation}
+    e_\theta\!\left(\vs,\va;t,\veps\right)
+    =
+    \frac{1}{d_{\mathrm a}}
+    \left\|
+    \veps-
+    \veps_\theta\!\left(\vs,\va_t,t\right)
+    \right\|_2^2 .
+    \label{eq:noise_prediction_loss}
+\end{equation}
+Here, $t$ denote the diffusion step and $\veps$ stands for the
+injected Gaussian noise, respectively. The corresponding
+clean-action estimate is
+\begin{equation}
+    \widehat{\va}_{t\rightarrow0}
+    =
+    \frac{
+    \va_t-
+    \sqrt{1-\bar\alpha_t}\,
+    \veps_\theta\!\left(\vs,\va_t,t\right)
+    }{
+    \sqrt{\bar\alpha_t}
+    }.
+    \label{eq:clean_estimate}
+\end{equation}
+Combining \eqref{eq:forward} and
+\eqref{eq:clean_estimate} yields
+\begin{equation}
+    \frac{1}{d_{\mathrm a}}
+    \left\|
+    \widehat{\va}_{t\rightarrow0}-\va
+    \right\|_2^2
+    =
+    \underbrace{
+    \frac{1-\bar\alpha_t}{\bar\alpha_t}
+    }_{c_t}
+    e_\theta\!\left(\vs,\va;t,\veps\right).
+    \label{eq:residual_reconstruction}
+\end{equation}
+Since $0<\bar\alpha_t<1$, $c_t$ is positive and independent of
+the queried action. 
+Furthermore, this indicates that the noise-prediction loss and the error between predicted action and the truth have same ranking.
+
+
+Given an action under the same corruption
+distribution used for behavior cloning, we average its
+per-sample noise-prediction loss over diffusion steps
+and injected Gaussian noise:
+\begin{equation}
+    \Eden(\vs,\va)
+    =
+    \mathbb{E}_{\substack{
+        t\sim\operatorname{Unif}\{1,\ldots,T\}\\
+        \veps\sim\mathcal{N}(\mathbf{0},\mathbf{I}_{d_{\mathrm a}})
+    }}
+    \left[
+        e_\theta\!\left(\vs,\va;t,\veps\right)
+    \right].
+    \label{eq:eden}
+\end{equation}
+A lower $\Eden(\vs,\va)$ indicates a lower expected
+noise-prediction loss under this corruption distribution.
+It is noted that \eqref{eq:residual_reconstruction} is valid for each fixed
+diffusion step and does not imply the same ranking for step-averaged reconstruction errors due to time-varying coefficients.
+
+
+%【ZL@1109】------ 这里往上已完成修改 ----------
+
+
+% \paragraph{Same-state veto ordering}
+To compare $\vah$ and $\van$ under a unified diffusion condition, we use the same diffusion step $t$ and Gaussian noise $\veps$ for both actions, and define their loss gap as
+\begin{equation*}
+    \Delta e_\theta
+    =
+    e_\theta\!\left(\vs,\van;t,\veps\right)
+    -
+    e_\theta\!\left(\vs,\vah;t,\veps\right).
+\end{equation*}
+Here $e_\theta$ is the noise-prediction loss calculated in \eqref{eq:noise_prediction_loss} and $\Delta e_\theta>0$ means that a rejected action incurs a larger loss than an executed human action. We impose a margin $m_{\mathrm{rank}}>0$ to penalize the pairwise violation, i.e.,
+\begin{equation}
+    \mathcal V_{\mathrm E}(\theta)
+    =
+    \E_{\DI,t,\veps}
+    \left[
+    \left[
+    m_{\mathrm{rank}}-\Delta e_\theta
+    \right]_+
+    \right],
+    \label{eq:energyrank}
+\end{equation}
+where $[\cdot]_+$ stands for the positive operator, i.e., $[x]_+=\max(x,0)$.
+When $\Delta e_\theta<m_{\mathrm{rank}}$, the hinge penalty is active and encourages a larger
+rejected-minus-human noise-prediction loss gap. Once the margin is satisfied, the penalty vanishes.
+Therefore, \ER{} uses the rejected proposal as a direct actor-side training signal without assigning either action an absolute cost.
+
+
+In terms of a fixed intervention pair, the expected noise-prediction loss gap is
+\begin{equation*}
+    \Delta\Eden
+    :=
+    \Eden(\vs,\van)
+    -
+    \Eden(\vs,\vah)
+    =
+    \E_{t,\veps}
+    \left[
+    \Delta e_\theta
+    \right].
+\end{equation*}
+According to Jensen's inequality~\cite{jensen1906convex}, since $[\cdot]_+$ is convex, we have
+\begin{equation}
+    \begin{aligned}
+        \left[
+        m_{\mathrm{rank}}-\E_{t,\veps}[\Delta e_\theta]
+        \right]_+
+        \leq
+        \E_{t,\veps}
+        \left[
+        \left[
+        m_{\mathrm{rank}}-\Delta e_\theta
+        \right]_+
+        \right].
+    \end{aligned}
+    \label{eq:energyrank_jensen}
+\end{equation}
+
+%【ZL@1101】下面的这一段的逻辑需要检查一下，有一个关键问题：就是如果带入的是（16），那形成的条件里面应该得有 V_E(\theta)这个数，要么就是这个 \varepsilon_{\mathrm{pair}} 和 V_E(\theta) 有某种关系，应该是下确界？这个不然这个式子就会独立于前面的。
+% Hence, if the expected hinge loss for this fixed intervention pair
+% is no larger than $\varepsilon_{\mathrm{pair}}$, then
+% \begin{equation*}
+%     \Delta\Eden
+%     \geq
+%     m_{\mathrm{rank}}-\varepsilon_{\mathrm{pair}}.
+% \end{equation*}
+% The bound applies to each fixed intervention pair; a minibatch-average
+% violation does not imply the same margin for every individual pair.
+
+% 【ZCY1102】师兄说的对，\(\varepsilon_{\mathrm{pair}}\) 没有出现在 ER 训练目标中，不应该在这里额外引入，我直接删除吧，不然太突兀了
+
+
+
+
+
+
+
+
+% \paragraph{Relation to the DDPM variational objective}
+%【ZL@1101】下面这段可以更直接点，不用解释缘由，直接说：
+% 考虑公式(X)中描述的DDPM变分过程，the actual policy sampled at the final reverse step is adopted as the deterministic value, that is. 公式（18）
+% To relate the uniform noise-prediction-loss ordering induced by
+% \ER{} to the DDPM variational objective, we express the latter in
+% terms of the same per-sample noise-prediction loss. This separates the ordering
+% directly encouraged by \ER{} from the schedule-dependent and
+% terminal prior-matching contributions.
+% At the final reverse step, the actual policy sampler uses the
+% deterministic reverse mean,
+% \begin{equation}
+%     \va_0
+%     =
+%     \bm\mu_\theta\!\left(\vs,\va_1,1\right).
+%     \label{eq:reverse_final}
+% \end{equation}
+% For a given action $\va$, the variational analysis is developed with using the following Gaussian decoder
+% \begin{equation}
+%     p_\theta^{\mathrm{dec}}
+%     \!\left(\va\mid\va_1,\vs\right)
+%     =
+%     \mathcal N\!\left(
+%     \bm\mu_\theta\!\left(\vs,\va_1,1\right),
+%     \sigma_{\mathrm{dec}}^2\bm I
+%     \right),
+%     \quad
+%     \sigma_{\mathrm{dec}}^2=\beta_1,
+%     \label{eq:decoder}
+% \end{equation}
+% and the negative variational lower bound is written as
+% \begin{equation}
+% \begin{aligned}
+% -\mathcal B_\theta(\va\mid\vs)
+% ={}&
+% D_{\mathrm{KL}}\!\left(
+% q(\va_T\mid\va)\,\|\,p(\va_T)
+% \right)
+% \\
+% &+
+% \sum_{t=2}^{T}
+% \E_{q(\va_t\mid\va)}
+% \Bigl[
+% D_{\mathrm{KL}}\!\Bigl(
+% q(\va_{t-1}\mid\va_t,\va)\,\|\, 
+% \\[-0.2em]
+% &\hspace{7em}
+% p_\theta(\va_{t-1}\mid\va_t,\vs)
+% \Bigr)
+% \Bigr]
+% \\
+% &+
+% \E_{q(\va_1\mid\va)}
+% \Bigl[
+% -\log p_\theta^{\mathrm{dec}}\!\left(
+% \va\mid\va_1,\vs
+% \right)
+% \Bigr].
+% \end{aligned}
+% \label{eq:vlb_decomposition_start}
+% \end{equation}
+% It can be found that there are three terms in \eqref{eq:vlb_decomposition_start}, which measure terminal prior matching, intermediate reverse-transition matching and final-step reconstruction, respectively.
+
+% To express the intermediate KL terms through the per-sample
+% noise-prediction loss defined above, we first write the forward
+% posterior in closed form.
+% The one-step forward kernel is
+% \begin{equation*}
+%     q\!\left(\va_t\mid\va_{t-1}\right)
+%     =
+%     \mathcal N\!\left(
+%     \sqrt{\alpha_t}\,\va_{t-1},
+%     \beta_t\bm I
+%     \right),
+% \end{equation*}
+% and the marginal at step $t-1$ is
+% \begin{equation*}
+%     q\!\left(\va_{t-1}\mid\va\right)
+%     =
+%     \mathcal N\!\left(
+%     \sqrt{\bar\alpha_{t-1}}\,\va,
+%     (1-\bar\alpha_{t-1})\bm I
+%     \right).
+% \end{equation*}
+% Their Gaussian product gives, for $t>1$,
+% \begin{equation}
+%     q\!\left(\va_{t-1}\mid\va_t,\va\right)
+%     =
+%     \mathcal N\!\left(
+%     \tilde{\bm\mu}_t,
+%     \tilde\beta_t\bm I
+%     \right),
+%     \label{eq:forward_posterior}
+% \end{equation}
+% where
+% \begin{equation}
+%     \begin{aligned}
+%         \tilde{\bm\mu}_t
+%         ={}&
+%         \frac{\sqrt{\bar\alpha_{t-1}}\beta_t}
+%         {1-\bar\alpha_t}\va
+%         \\
+%         &+
+%         \frac{\sqrt{\alpha_t}(1-\bar\alpha_{t-1})}
+%         {1-\bar\alpha_t}\va_t,
+%         \\
+%         \tilde\beta_t
+%         ={}&
+%         \frac{1-\bar\alpha_{t-1}}
+%         {1-\bar\alpha_t}\beta_t .
+%     \end{aligned}
+%     \label{eq:posterior_params}
+% \end{equation}
+% Substituting~\eqref{eq:forward} into~\eqref{eq:posterior_params} gives
+% \begin{equation}
+%     \tilde{\bm\mu}_t
+%     =
+%     \frac{1}{\sqrt{\alpha_t}}
+%     \left(
+%     \va_t-
+%     \frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\veps
+%     \right).
+%     \label{eq:true_posterior_noise}
+% \end{equation}
+% Comparing this expression with~\eqref{eq:reverse_mean} yields
+% \begin{equation}
+%     \tilde{\bm\mu}_t-\bm\mu_\theta
+%     =
+%     \frac{\beta_t}
+%     {\sqrt{\alpha_t(1-\bar\alpha_t)}}
+%     \left(
+%     \veps_\theta\!\left(\vs,\va_t,t\right)-\veps
+%     \right).
+%     \label{eq:posterior_mean_gap}
+% \end{equation}
+% Therefore, for $t=2,\ldots,T$, the action-dependent part of the Gaussian
+% KL is
+% \begin{equation}
+%     \begin{aligned}
+%         \frac{
+%         \left\|
+%         \tilde{\bm\mu}_t-\bm\mu_\theta
+%         \right\|_2^2
+%         }{2\sigma_t^2}
+%         ={}&
+%         \frac{\beta_t^2}
+%         {2\sigma_t^2\alpha_t(1-\bar\alpha_t)}
+%         \\
+%         &\times
+%         \left\|
+%         \veps-
+%         \veps_\theta\!\left(\vs,\va_t,t\right)
+%         \right\|_2^2 .
+%     \end{aligned}
+%     \label{eq:kl_residual}
+% \end{equation}
+% Using~\eqref{eq:noise_prediction_loss}, this term equals
+% $d_{\mathrm a}w_t e_\theta(\vs,\va;t,\veps)$ with
+% \begin{equation}
+%     w_t
+%     =
+%     \frac{\beta_t^2}
+%     {2\sigma_t^2\alpha_t(1-\bar\alpha_t)},
+%     \qquad
+%     t=2,\ldots,T.
+%     \label{eq:vlb_weight}
+% \end{equation}
+
+% The decoder term provides the missing $t=1$ coefficient. Since
+% $\bar\alpha_1=\alpha_1$ and $1-\alpha_1=\beta_1$,
+% \eqref{eq:forward} and~\eqref{eq:reverse_mean} give
+% \begin{equation}
+%     \left\|
+%     \va-
+%     \bm\mu_\theta\!\left(\vs,\va_1,1\right)
+%     \right\|_2^2
+%     =
+%     \frac{\beta_1}{\alpha_1}
+%     \left\|
+%     \veps-
+%     \veps_\theta\!\left(\vs,\va_1,1\right)
+%     \right\|_2^2 .
+%     \label{eq:decoder_residual}
+% \end{equation}
+% Hence, up to a term independent of the queried action, there is
+% \begin{equation}
+%     -\log
+%     p_\theta^{\mathrm{dec}}
+%     \!\left(\va\mid\va_1,\vs\right)
+%     =
+%     d_{\mathrm a}w_1
+%     e_\theta\!\left(\vs,\va;1,\veps\right)
+%     +c_\mathrm{const},
+%     \label{eq:decoder_energy}
+% \end{equation}
+% where $c_\mathrm{const}$ is a constant and
+% \begin{equation}
+%     w_1
+%     =
+%     \frac{\beta_1}
+%     {2\sigma_{\mathrm{dec}}^2\alpha_1}
+%     =
+%     \frac{1}{2\alpha_1}.
+%     \label{eq:vlb_weight_t1}
+% \end{equation}
+% This separates the Gaussian decoder used by the variational analysis
+% from the deterministic final mean used by the actual sampler.
+
+% The terminal prior-matching term follows from
+% \begin{equation*}
+%     q\!\left(\va_T\mid\va\right)
+%     =
+%     \mathcal N\!\left(
+%     \sqrt{\bar\alpha_T}\va,
+%     (1-\bar\alpha_T)\bm I
+%     \right),
+% \end{equation*}
+% with $p(\va_T)=\mathcal N(\bm0,\bm I)$. Its action-dependent part is
+% \begin{equation}
+%     D_{\mathrm{KL}}
+%     \left(
+%     q\!\left(\va_T\mid\va\right)
+%     \,\|\,
+%     p(\va_T)
+%     \right)
+%     =
+%     \frac{\bar\alpha_T}{2}\|\va\|_2^2+c_T,
+%     \label{eq:terminal_kl}
+% \end{equation}
+% where $c_T$ is independent of $\va$. Define
+% $\lambda_T=\bar\alpha_T/2$ and
+% \begin{equation*}
+%     \ell_t(\vs,\va)
+%     =
+%     \E_{\veps}
+%     \left[
+%     e_\theta\!\left(\vs,\va;t,\veps\right)
+%     \right].
+% \end{equation*}
+% Collecting the action-dependent terms yields the normalized variational
+% energy
+% \begin{equation}
+%     \Eelbo(\vs,\va)
+%     =
+%     \sum_{t=1}^{T}
+%     w_t\,\ell_t(\vs,\va)
+%     +
+%     \frac{\lambda_T}{d_{\mathrm a}}
+%     \|\va\|_2^2.
+%     \label{eq:eelbo}
+% \end{equation}
+% Up to terms independent of the queried action,
+% \begin{equation}
+%     \mathcal B_\theta(\va\mid\vs)
+%     =
+%     -d_{\mathrm a}\Eelbo(\vs,\va)
+%     -
+%     b_{\mathrm{VLB}}(\vs),
+%     \label{eq:vlb_energy_relation}
+% \end{equation}
+% where $b_{\mathrm{VLB}}(\vs)$ does not depend on $\va$.
+
+% For an intervention pair at step $t$, the expected
+% noise-prediction loss gap is defined as
+% \begin{equation*}
+%     \rho_t
+%     =
+%     \ell_t(\vs,\van)
+%     -
+%     \ell_t(\vs,\vah).
+% \end{equation*}
+% The variational-energy gap is calulated by
+% \begin{equation}
+%     \Delta\Eelbo
+%     =
+%     \sum_{t=1}^{T}w_t\rho_t
+%     +
+%     \frac{\lambda_T}{d_{\mathrm a}}
+%     \left(
+%     \|\van\|_2^2-\|\vah\|_2^2
+%     \right).
+%     \label{eq:vlb_gap_basic}
+% \end{equation}
+% %【ZL@1101】检查下面的写法是否合适
+% We emphasize that $\Delta\Eelbo > 0$ means that a human action achieves a lower
+% variational energy and a larger variational lower bound.
+% Furthermore, given
+% \begin{equation*}
+%     \Delta\Eden
+%     =
+%     \frac{1}{T}
+%     \sum_{t=1}^{T}\rho_t,
+%     \quad
+%     \bar w
+%     =
+%     \frac{1}{T}
+%     \sum_{t=1}^{T}w_t,
+% \end{equation*}
+% $\Delta\Eelbo$ can be re-written as
+% \begin{equation}
+%     \begin{aligned}
+%         \Delta\Eelbo
+%         ={}&
+%         T\bar w\,\Delta\Eden
+%         \\
+%         &+
+%         \sum_{t=1}^{T}
+%         (w_t-\bar w)
+%         (\rho_t-\Delta\Eden)
+%         \\
+%         &+
+%         \frac{\lambda_T}{d_{\mathrm a}}
+%         \left(
+%         \|\van\|_2^2-\|\vah\|_2^2
+%         \right).
+%     \end{aligned}
+%     \label{eq:vlb_decomposition}
+% \end{equation}
+% The first term scales the uniformly averaged noise-prediction loss gap directly encouraged by $\ER{}$. The second one captures its interaction with the nonuniform schedule weights. The last one is the terminal prior-matching contribution. In this case, xxxxxxxxx %【ZL@1101】最后in this case后面，用一两句话可以解释一下在这一部分一开你提到的那个要建立 ER loss 和 DDPM 关系的话，参考你原来的第一段：To relate the uniform noise-prediction-loss ordering induced by \ER{} to the DDPM variational objective, we express the latter in terms of the same per-sample noise-prediction loss. This separates the ordering directly encouraged by \ER{} from the schedule-dependent and terminal prior-matching contributions.
+
+% 我重新简化修正了一下
+Following the DDPM reverse parameterization in
+\eqref{eq:reverse_mean}, the actual policy sampler uses
+the deterministic reverse mean at the final step
+\begin{equation}
+    \va_0
+    =
+    \bm\mu_\theta\!\left(\vs,\va_1,1\right).
+    \label{eq:reverse_final}
+\end{equation}
+Then a Gaussian decoder is adopted, that is,
+\begin{equation}
+    p_\theta^{\mathrm{dec}}
+    \!\left(\va\mid\va_1,\vs\right)
+    =
+    \mathcal N\!\left(
+    \bm\mu_\theta\!\left(\vs,\va_1,1\right),
+    \sigma_{\mathrm{dec}}^2\bm I
+    \right),
+    \quad
+    \sigma_{\mathrm{dec}}^2=\beta_1.
+    \label{eq:decoder}
+\end{equation}
+It is noted that the above equation is only used for the variational analysis, while the actual policy sampler retains the deterministic
+final-step mean. Its negative variational lower bound is
+\begin{equation}
+\begin{aligned}
+-\mathcal B_\theta(\va\mid\vs)
+={}&
+D_{\mathrm{KL}}\!\left(
+q(\va_T\mid\va)\,\|\,p(\va_T)
+\right)
+\\
+&+
+\sum_{t=2}^{T}
+\E_{q(\va_t\mid\va)}
+\Bigl[
+D_{\mathrm{KL}}\!\Bigl(
+q(\va_{t-1}\mid\va_t,\va)\,\|\, 
+\\[-0.2em]
+&\hspace{7em}
+p_\theta(\va_{t-1}\mid\va_t,\vs)
+\Bigr)
+\Bigr]
+\\
+&+
+\E_{q(\va_1\mid\va)}
+\Bigl[
+-\log p_\theta^{\mathrm{dec}}\!\left(
+\va\mid\va_1,\vs
+\right)
+\Bigr].
+\end{aligned}
+\label{eq:vlb_decomposition_start}
+\end{equation}
+Here, the three terms represent terminal prior matching, intermediate reverse-transition matching, and final-step reconstruction, respectively.
+
+Given the standard DDPM forward posterior~\cite{ho2020ddpm}, for $t>1$ we have
+\begin{equation}
+    q\!\left(\va_{t-1}\mid\va_t,\va\right)
+    =
+    \mathcal N\!\left(
+    \tilde{\bm\mu}_t,
+    \tilde\beta_t\bm I
+    \right),
+    \label{eq:forward_posterior}
+\end{equation}
+where
+\begin{equation}
+    \begin{aligned}
+        \tilde{\bm\mu}_t
+        ={}&
+        \frac{\sqrt{\bar\alpha_{t-1}}\beta_t}
+        {1-\bar\alpha_t}\va
+        \\
+        &+
+        \frac{\sqrt{\alpha_t}(1-\bar\alpha_{t-1})}
+        {1-\bar\alpha_t}\va_t,
+        \\
+        \tilde\beta_t
+        ={}&
+        \frac{1-\bar\alpha_{t-1}}
+        {1-\bar\alpha_t}\beta_t .
+    \end{aligned}
+    \label{eq:posterior_params}
+\end{equation}
+Substituting~\eqref{eq:forward} into the posterior mean and comparing it with~\eqref{eq:reverse_mean} yields
+\begin{equation}
+    \tilde{\bm\mu}_t-\bm\mu_\theta
+    =
+    \frac{\beta_t}
+    {\sqrt{\alpha_t(1-\bar\alpha_t)}}
+    \left(
+    \veps_\theta\!\left(\vs,\va_t,t\right)-\veps
+    \right).
+    \label{eq:posterior_mean_gap}
+\end{equation}
+Therefore, for $t=2,\ldots,T$, the action-dependent part of the Gaussian KL divergence can be expressed as
+\begin{equation}
+    \begin{aligned}
+        \frac{
+        \left\|
+        \tilde{\bm\mu}_t-\bm\mu_\theta
+        \right\|_2^2
+        }{2\sigma_t^2}
+        &=
+        d_{\mathrm a}w_t
+        e_\theta(\vs,\va;t,\veps),
+        \\
+        w_t
+        &=
+        \frac{\beta_t^2}
+        {2\sigma_t^2\alpha_t(1-\bar\alpha_t)}.
+    \end{aligned}
+    \label{eq:kl_residual}
+\end{equation}
+Similarly, using~\eqref{eq:forward} and~\eqref{eq:reverse_mean}, the decoder contribution can be expressed as
+%【ZL@1109】下面的w_1除了这里好像并未在其他地方使用，不必多引入一个符号。
+\begin{equation}
+    -\log
+    p_\theta^{\mathrm{dec}}
+    \!\left(\va\mid\va_1,\vs\right)
+    =
+    d_{\mathrm a}w_1
+    e_\theta(\vs,\va;1,\veps)
+    +c_{\mathrm{dec}},
+    \quad
+    w_1=\frac{1}{2\alpha_1},
+    \label{eq:decoder_energy}
+\end{equation}
+where $c_{\mathrm{dec}}$ is independent of the queried action.
+
+The terminal prior-matching term follows from
+$q(\va_T\mid\va)=
+\mathcal N(\sqrt{\bar\alpha_T}\va,
+(1-\bar\alpha_T)\bm I)$ and
+$p(\va_T)=\mathcal N(\bm0,\bm I)$.
+Its action-dependent part is
+\begin{equation}
+    D_{\mathrm{KL}}
+    \left(
+    q\!\left(\va_T\mid\va\right)
+    \,\|\,
+    p(\va_T)
+    \right)
+    =
+    \frac{\bar\alpha_T}{2}\|\va\|_2^2+c_T,
+    \label{eq:terminal_kl}
+\end{equation}
+where $c_T$ is independent of $\va$. Define
+$\lambda_T=\bar\alpha_T/2$ and
+\begin{equation*}
+    \ell_t(\vs,\va)
+    =
+    \E_{\veps}
+    \left[
+    e_\theta\!\left(\vs,\va;t,\veps\right)
+    \right].
+\end{equation*}
+Collecting the action-dependent terms yields the normalized variational energy
+\begin{equation}
+    \Eelbo(\vs,\va)
+    =
+    \sum_{t=1}^{T}
+    w_t\,\ell_t(\vs,\va)
+    +
+    \frac{\lambda_T}{d_{\mathrm a}}
+    \|\va\|_2^2.
+    \label{eq:eelbo}
+\end{equation}
+Up to terms independent of the queried action,
+\begin{equation}
+    \mathcal B_\theta(\va\mid\vs)
+    =
+    -d_{\mathrm a}\Eelbo(\vs,\va)
+    -
+    b_{\mathrm{VLB}}(\vs),
+    \label{eq:vlb_energy_relation}
+\end{equation}
+where $b_{\mathrm{VLB}}(\vs)$ does not depend on $\va$.
+
+For a fixed intervention pair, define the timestep-specific expected noise-prediction loss gap as
+\begin{equation*}
+    \rho_t
+    =
+    \ell_t(\vs,\van)
+    -
+    \ell_t(\vs,\vah).
+\end{equation*}
+The corresponding variational-energy gap between the rejected proposal and the executed human action is
+\begin{equation}
+    \Delta\Eelbo
+    =
+    \sum_{t=1}^{T}w_t\rho_t
+    +
+    \frac{\lambda_T}{d_{\mathrm a}}
+    \left(
+    \|\van\|_2^2-\|\vah\|_2^2
+    \right).
+    \label{eq:vlb_gap_basic}
+\end{equation}
+A positive $\Delta\Eelbo$ indicates that the executed human action $\vah$ has a lower variational energy and
+a larger variational lower bound than the rejected proposal $\van$.
+
+Under the uniform timestep distribution used by \ER{}, define
+\begin{equation*}
+    \Delta\Eden
+    =
+    \frac{1}{T}
+    \sum_{t=1}^{T}\rho_t,
+    \quad
+    \bar w
+    =
+    \frac{1}{T}
+    \sum_{t=1}^{T}w_t.
+\end{equation*}
+Substituting these definitions into~\eqref{eq:vlb_gap_basic} gives the following exact decomposition:
+\begin{equation}
+    \begin{aligned}
+        \Delta\Eelbo
+        ={}&
+        T\bar w\,\Delta\Eden
+        \\
+        &+
+        \sum_{t=1}^{T}
+        (w_t-\bar w)
+        (\rho_t-\Delta\Eden)
+        \\
+        &+
+        \frac{\lambda_T}{d_{\mathrm a}}
+        \left(
+        \|\van\|_2^2-\|\vah\|_2^2
+        \right).
+    \end{aligned}
+    \label{eq:vlb_decomposition}
+\end{equation}
+Here, the first term scales the uniformly averaged noise-prediction loss gap directly encouraged by \ER{}. The second term captures its interaction with the nonuniform schedule weights, while the last term accounts for terminal prior matching. Thus, the uniform loss ordering encouraged by \ER{} and the schedule-weighted DDPM variational-energy ordering are related but need not coincide.
+
+
+
+% 原文：A positive $\Delta\Eelbo$ means that the human action has lower
+% variational energy and therefore a larger variational lower bound.
+% The uniform \ER{} gap is
+% \begin{equation*}
+%     \Delta\Eden
+%     =
+%     \frac{1}{T}
+%     \sum_{t=1}^{T}\rho_t .
+% \end{equation*}
+% Define
+% \begin{equation*}
+%     \bar w
+%     =
+%     \frac{1}{T}
+%     \sum_{t=1}^{T}w_t .
+% \end{equation*}
+% Using
+% \begin{equation*}
+%     \sum_{t=1}^{T}(w_t-\bar w)=0,
+%     \qquad
+%     \sum_{t=1}^{T}(\rho_t-\Delta\Eden)=0,
+% \end{equation*}
+% we obtain
+% \begin{equation}
+%     \begin{aligned}
+%         \Delta\Eelbo
+%         ={}&
+%         T\bar w\,\Delta\Eden
+%         \\
+%         &+
+%         \sum_{t=1}^{T}
+%         (w_t-\bar w)
+%         (\rho_t-\Delta\Eden)
+%         \\
+%         &+
+%         \frac{\lambda_T}{d_{\mathrm a}}
+%         \left(
+%         \|\van\|_2^2-\|\vah\|_2^2
+%         \right).
+%     \end{aligned}
+%     \label{eq:vlb_decomposition}
+% \end{equation}
+% The first term scales the uniformly averaged noise-prediction loss gap directly encouraged by $\ER{}$. The second captures its interaction with the nonuniform schedule weights, and the third is the terminal prior-matching contribution. Thus, the uniform loss ordering encouraged by $\ER{}$ and the schedule-weighted DDPM variational-energy ordering are related but need not coincide.
+
+
+\subsubsection{Critic Repair with \CPCal{}}
+\label{sec:cpcal}
+
+%【ZL@1109】第一句话很突兀，和后面没有直接关联，删掉
+% \ER{} supervises the actor through noise-prediction loss rather than task risk. 
+CPCal uses same-state
+intervention pairs to rank rejected proposals relative
+to executed human actions, and TD learning uses
+factual transitions to incorporate observed costs and
+successor states. The resulting critics support actor
+improvement and frozen guidance.
+
+% \paragraph{Twin proxy-risk critics}
+%【ZL@1109】下面这个写法不好，下面的公式实际上是定义，所以应该用定义的方式写:
+% 原文： We use two separately parameterized and independently initialized
+% critics, $C_{\psi_1}$ and $C_{\psi_2}$, with
+% \begin{equation*}
+%     C_{\psi_i}:\Sset\times\A\rightarrow\mathbb R,
+%     \qquad
+%     i\in\{1,2\}.
+% \end{equation*}
+% Their outputs are real-valued proxy-risk scores rather than calibrated
+% collision probabilities, and a smaller value indicates lower predicted
+% proxy risk. Whenever a conservative critic score is required, we use
+A critic is formulated as a mapping operator from the united state-action space to the predicted proxy risk, i.e., $C_{\psi}:\Sset\times\A\rightarrow\mathbb R$. In this work, we adopt two critics $C_{\psi_i},i\in\{1,2\}$. % 应该直接解释为什么是2个，或者这两个有什么区别。
+Then the maximum proxy risk is 
+\begin{equation}
+    C_{\max}\!\left(\vs,\va\right)
+    =
+    \max_{i\in\{1,2\}}
+    C_{\psi_i}\!\left(\vs,\va\right).
+    \label{eq:cmax}
+\end{equation}
+%【ZL@1109】修改，conservative 保守只能形容策略、行为、动作，对于 risk，value，score这些分数指标不能说保守或不保守。
+%【ZL@1109】另外检查全文：比如 proxy risk 如果和 proxy-risk score 是表达的一个意思，没必要加那么多帽子，最后落在risk这个词就行。
+% We use the larger prediction as a conservative proxy-risk
+% score for actor improvement and guidance, following the
+% cost-side analogue of double-critic evaluation
+% ~\cite{fujimoto2018td3}.
+Note that a larger $C_{\max}$ indicates a more conservative actor guidance, following the cost-side analogue of double-critic evaluation~\cite{fujimoto2018td3}.
+
+
+%【ZL@1109】\paragraph这个小标题都不要了，层级太多了，就到subsubsection就行
+% \paragraph{Veto-based pairwise calibration}
+
+%【ZL@1109】修改,另外注意后面proposal 和 action，尽量一致
+% Under the local intervention preference in~\eqref{eq:local_preference},
+% the rejected proposal should be assigned a higher proxy-risk score than
+% the executed human action at the same state. Since larger critic values denote larger predicted proxy risk, \CPCal{} imposes
+Under the condition~\eqref{eq:local_preference},
+the rejected action is assigned a higher proxy risk than
+the executed one, that is,
+\begin{equation}
+    \mathcal L_{\mathrm{pair}}
+    =
+    \sum_{i=1}^{2}
+    \E_{\DI}
+    \left[
+    \left[
+    m_{\mathrm C}
+    -
+    \left(
+    C_{\psi_i}\!\left(\vs,\van\right)
+    -
+    C_{\psi_i}\!\left(\vs,\vah\right)
+    \right)
+    \right]_+
+    \right].
+    \label{eq:pairloss}
+\end{equation}
+%【ZL@1109】修改
+% Here $m_{\mathrm C}>0$ is the required same-state
+% proxy-risk margin. The hinge penalty is active whenever
+% a critic fails to separate the rejected proposal
+% from the executed human action by this margin.
+Here $m_{\mathrm C}>0$ is the required same-state
+proxy-risk margin. The hinge penalty is active whenever
+the condition \eqref{eq:local_preference} is violated.
+%【ZL@1109】下面这一段里面不用写单独 C_\psi_i的结论，直接写 max 的就可以
+% Because the margin is imposed on each critic head,
+% satisfying both head-wise constraints implies the same
+% ordering for the conservative score:
+% \begin{equation*}
+%     C_{\psi_i}(\vs,\van)
+%     \geq
+%     C_{\psi_i}(\vs,\vah)+m_{\mathrm C},
+%     \qquad i\in\{1,2\},
+% \end{equation*}
+% then the conservative extremum score used by actor improvement and
+% guidance inherits the same direction:
+% \begin{equation}
+%     C_{\max}(\vs,\van)
+%     \geq
+%     C_{\max}(\vs,\vah)+m_{\mathrm C}.
+%     \label{eq:extremum_pair_order}
+% \end{equation}
+Furthermore, since the margin is imposed on each critic,
+it imposes a consistent condition on the maximum risk where
+\begin{equation}
+    C_{\max}(\vs,\van)
+    \geq
+    C_{\max}(\vs,\vah)+m_{\mathrm C}.
+    \label{eq:extremum_pair_order}
+\end{equation}
+
+
+% \paragraph{TD grounding and critic objective}
+Although pairwise calibration provides relative action ordering, it does not anchor critic predictions to observed
+transition costs. We therefore use TD learning on
+factual executed transitions. In the
+normalized action coordinates used here, the actuator-valid set is
+\begin{equation*}
+    \Avalid=[-1,1]^{d_{\mathrm a}}.
+\end{equation*}
+All actions are normalized by component-wise Euclidean projection. The instantaneous cost is
+\begin{equation*}
+    \bar c
+    =
+    \min\!\left(c,c_{\mathrm{clip}}\right),
+\end{equation*}
+where $c_{\mathrm{clip}}>0$. Let $\bar\theta$ and $\bar\psi_i$ denote
+Polyak-averaged target parameters. The expected action first produces a
+deterministic reverse-diffusion output
+$\tilde{\va}^{\mathrm{det}}_{\bar\theta}(\vs')$ following by normalization:
+\begin{equation*}
+    \widehat{\va}_{\bar\theta}(\vs')
+    =
+    \Pi_{[-1,1]^{d_{\mathrm a}}}
+    \left(
+    \tilde{\va}^{\mathrm{det}}_{\bar\theta}(\vs')
+    \right)
+    \in\Avalid.
+\end{equation*}
+%【ZL@1109】如果是想映射到-1到1区间，用normalize标准化这个词，另外标准化那个符号 \Pi_[-1,1] 前面有解释过么？没有在这里补一下
+The TD target is
+\begin{equation}
+    y_{\mathrm C}
+    =
+    \bar c
+    +
+    \gamma
+    \left(1-\ind_{\mathrm{done}}\right)
+    \max_{i\in\{1,2\}}
+    C_{\bar\psi_i}
+    \left(
+    \vs',
+    \widehat{\va}_{\bar\theta}\!\left(\vs'\right)
+    \right).
+    \label{eq:tdtarget}
+\end{equation}
+The termination indicator removes bootstrapping at terminal
+transitions. Each critic head is trained with
+\begin{equation}
+    \mathcal{L}_{\mathrm{TD}}
+    =
+    \sum_{i=1}^{2}
+    \E_{\D}
+    \left[
+    \left(
+    C_{\psi_i}\!\left(\vs,\vab\right)
+    -
+    \operatorname{stopgrad}\!\left(y_{\mathrm C}\right)
+    \right)^2
+    \right].
+    \label{eq:tdloss}
+\end{equation}
+The TD loss uses only factual transitions in $\D$.
+For non-intervention transitions, we have $\vab=\van$;
+otherwise, $\vab=\vah$.
+Therefore, the observed cost and successor state supervise
+the executed action, whereas the rejected proposal has
+no observed successor in that interaction and is
+supervised through $\mathcal L_{\mathrm{pair}}$. 
+We combine these two sources of
+supervision as
+\begin{equation}
+    \mathcal{L}_{\mathrm C}
+    \left(\psi_1,\psi_2\right)
+    =
+    \mathcal{L}_{\mathrm{TD}}
+    +
+    \lambda_{\mathrm{cal}}
+    \mathcal{L}_{\mathrm{pair}},
+    \label{eq:criticloss}
+\end{equation}
+where $\lambda_{\mathrm{cal}}\geq0$ weights the pairwise calibration
+term. 
+%【ZL@1109】下面这句话没明白想表达什么？和前面的关系是什么？
+The combined critic values remain learned proxy-risk scores; they
+are neither calibrated collision probabilities nor exact discounted
+collision costs.
+
+% Once actor and critic repair is complete, all learned parameters and
+% deployment thresholds are frozen before execution.
+
+
+\subsubsection{Joint Actor Objective and Adaptive \ER{} Weighting}
+\label{sec:actor_objective}
+%【ZL@1109】下面这一段写得不太好，应该直接点出来使用的comprehensive cost综合代价是什么，然后再解释里面每一项是由前面的公式（X）计算得到的，另外不要 向后引用
+% During online repair, the actor combines executed-action fitting,
+% the \ER{} penalty, critic-mediated risk-oriented improvement at
+% autonomous states, and a pointwise deterministic-path anchor.
+% The resulting actor objective is
+% \begin{equation}
+%     \begin{aligned}
+%         \mathcal{L}_{\pi}(\theta)
+%         ={}&
+%         \lambda_{\mathrm{BC}}
+%         \mathcal{L}_{\mathrm{BC}}(\theta)
+%         +
+%         \eta_{\mathrm{E}}
+%         \mathcal{V}_{\mathrm{E}}(\theta)
+%         \\
+%         &+
+%         \lambda_{\mathrm{RL}}
+%         \mathcal{L}_{\mathrm{RL}}(\theta)
+%         +
+%         \lambda_{\mathrm{reg}}
+%         \mathcal{L}_{\mathrm{reg}}(\theta).
+%     \end{aligned}
+%     \label{eq:actorloss}
+% \end{equation}
+% Here $\lambda_{\mathrm{BC}}$ and $\lambda_{\mathrm{reg}}$
+% are fixed weights, $\lambda_{\mathrm{RL}}$ follows the
+% schedule in Section~\ref{sec:impl}, and
+% $\eta_{\mathrm E}$ is the adaptive multiplier for
+% $\mathcal V_{\mathrm E}$. ER is the only actor-loss term
+% that directly compares the executed human action with
+% the rejected proposal.
+
+During online repair, a comprehensive objective is calculated, that is,
+\begin{equation}
+    \begin{aligned}
+        \mathcal{L}_{\pi}(\theta)
+        ={}&
+        \lambda_{\mathrm{BC}}
+        \mathcal{L}_{\mathrm{BC}}(\theta)
+        +
+        \eta_{\mathrm{E}}
+        \mathcal{V}_{\mathrm{E}}(\theta)
+        \\
+        &+
+        \lambda_{\mathrm{RL}}
+        \mathcal{L}_{\mathrm{RL}}(\theta)
+        +
+        \lambda_{\mathrm{reg}}
+        \mathcal{L}_{\mathrm{reg}}(\theta).
+    \end{aligned}
+    \label{eq:actorloss}
+\end{equation}
+Here $\lambda_{\mathrm{BC}}$, $\lambda_{\mathrm{reg}}$ and $\lambda_{\mathrm{RL}}$ are weights.
+$\eta_{\mathrm E}$ is the adaptive multiplier for
+$\mathcal V_{\mathrm E}$ in \eqref{}.%【ZL@1109】给出公式编号 
+$\mathcal{L}_{\mathrm{BC}}$ is calculated by \eqref{eq:bc}.
+$\mathcal{L}_{\mathrm{RL}}$ stands for xxxxx and $\mathcal{L}_{\mathrm{reg}}$ represents xxxx, respectively.
+Their detailed explanations are given as follows.
+
+% To carry the learned risk structure to states at which the policy
+% remains in control, let $\DN\subset\D$ denote valid non-intervention
+% transitions, for which $\vab=\van$. We minimize the conservative critic
+% score of actor samples:
+Let $\DN\subset\D$ denote valid non-intervention
+transitions where $\vab=\van$. $\mathcal{L}_{\mathrm{RL}}$ is calculated as
+\begin{equation}
+    \mathcal{L}_{\mathrm{RL}}(\theta)
+    =
+    \E_{\DN,\bm\xi}
+    \left[
+    C_{\max}
+    \left(
+    \vs,
+    \va_\theta\!\left(\vs;\bm\xi\right)
+    \right)
+    \right],
+    \label{eq:actor_rl}
+\end{equation}
+where $\bm\xi$ indicates the random variable used by the complete
+reverse sampler and the normalized action $\va_\theta$ is determined by the raw reverse-diffusion output $\tilde{\va}_\theta$. Specifically,
+%【ZL@1109】这里其实有一个小问题：就是带波浪线的 $\tilde{\va}_\theta$ 这个变量似乎前面没有提到过，这个量应该是某一个模块的输出才对，这里直接用，最合适的写法应该是 by the raw reverse-diffusion output in (X)，然后编号公式里面直接就有相同的变量，而不是这里解释。
+\begin{equation}
+    \va_\theta\!\left(\vs;\bm\xi\right)
+    =
+    \Pi_{[-1,1]^{d_{\mathrm a}}}
+    \left(
+    \tilde{\va}_\theta\!\left(\vs;\bm\xi\right)
+    \right).
+    \label{eq:actor_clip}
+\end{equation}
+The critic parameters are fixed during the actor update,
+while gradients are propagated through the clipped action
+to $\theta$. Since lower $C_{\max}$ indicates lower
+predicted proxy risk, minimizing $\mathcal L_{\mathrm{RL}}$
+encourages lower critic scores at non-intervention states.
+
+$\mathcal{L}_{\mathrm{reg}}$ stands for the auxiliary deterministic-path term, which is formulated as 
+\begin{equation}
+    \mathcal{L}_{\mathrm{reg}}(\theta)
+    =
+    \E_{\DN}
+    \left[
+    \left\|
+    \va^{\mathrm{det}}_{\theta}\!\left(\vs\right)
+    -
+    \vab
+    \right\|_2^2
+    \right],
+    \label{eq:detanchor}
+\end{equation}
+where $\va^{\mathrm{det}}_\theta(\vs)$ is obtained by
+setting the terminal Gaussian sample and all reverse-step
+sampling noises to zero. Such a loss describes this deterministic
+path to executed actions at non-intervention states.
+
+We adapt the ER multiplier using projected dual ascent
+to keep the estimated average hinge violation near the
+tolerance $\varepsilon_{\mathrm E}$.
+Using a minibatch estimate of the violation and projected dual ascent
+gives
+\begin{equation}
+    \eta_{\mathrm{E}}^{(j+1)}
+    =
+    \left[
+    \eta_{\mathrm{E}}^{(j)}
+    +
+    \zeta_{\mathrm E}
+    \left(
+    \widehat{\mathcal V}_{\mathrm E}^{(j)}
+    -
+    \varepsilon_{\mathrm E}
+    \right)
+    \right]_+ .
+    \label{eq:dualupdate}
+\end{equation}
+where $j$ indexes multiplier updates and
+$\zeta_{\mathrm E}>0$ is the dual step size.
+The multiplier increases when the estimated violation
+exceeds $\varepsilon_{\mathrm E}$ and decreases when it
+falls below the tolerance, subject to the nonnegative
+projection.
+
+%【ZL@1109】下面这句想说什么？
+Once actor and critic repair is complete, all learned parameters and
+deployment thresholds are frozen before execution.
+
+%【ZL@1109】---------- 修改到这里 --------------
+
+\subsection{Frozen Guided Execution}
+\label{sec:frozen_execution}
+
+At each control step, the frozen actor generates a base
+action, and a second reverse chain uses the frozen critics
+to refine its clean-action estimates within a bounded
+neighborhood. All model parameters remain fixed, and
+a separate gate determines whether the guided candidate
+is executed.
+
+\subsubsection{Bounded Guidance}
+\label{sec:bounded_guidance}
+
+At each control step, the frozen diffusion actor first generates
+$\va^{\mathrm{base}}$. Its feasible fallback is
+\begin{equation*}
+    \bar{\va}^{\mathrm{base}}
+    =
+    \Pi_{\Avalid}
+    \left(
+    \va^{\mathrm{base}}
+    \right),
+\end{equation*}
+where $\Pi_{\mathcal X}$ denotes the Euclidean projection used by the
+implementation on set $\mathcal X$.
+
+Because the critics are learned from finite data, directly minimizing a
+critic over the entire action space may exploit extrapolation error. We
+therefore use the projected actor proposal as the reference and constrain
+the queried and corrected clean-action estimates to the local region
+\begin{equation}
+    \mathcal R
+    \left(
+    \bar{\va}^{\mathrm{base}}
+    \right)
+    =
+    \left\{
+    \va\in\Avalid:
+    \left\|
+    \va-\bar{\va}^{\mathrm{base}}
+    \right\|_2
+    \leq d_{\max}
+    \right\},
+    \label{eq:query_region}
+\end{equation}
+where $d_{\max}>0$ bounds the Euclidean distance from
+the projected fallback in the normalized action space.
+This locality constraint is not a formal safety guarantee.
+
+The terminal Gaussian sample and the per-step reverse noises used by
+the base chain are retained and reused by the guided chain. At reverse
+step $t$, the current clean-action estimate from
+\eqref{eq:clean_estimate} is first restricted to the local region:
+\begin{equation*}
+    \bar{\va}_{t\rightarrow0}
+    =
+    \Pi_{\mathcal R(\bar{\va}^{\mathrm{base}})}
+    \left(
+    \widehat{\va}_{t\rightarrow0}
+    \right).
+\end{equation*}
+The critic is therefore queried on a feasible clean-action estimate
+rather than directly on the noisy diffusion state $\va_t$.
+
+The conservative critic gradient is then computed on the feasible clean
+estimate and norm-clipped:
+\begin{equation}
+    \bm g_t
+    =
+    \Gamma_{g_{\max}}
+    \left(
+    \left.
+    \nabla_{\va}C_{\max}(\vs,\va)
+    \right|_{\va=\bar{\va}_{t\rightarrow0}}
+    \right),
+    \label{eq:guidance_grad}
+\end{equation}
+where
+\begin{equation*}
+    \Gamma_{g_{\max}}(\bm v)
+    =
+    \frac{\bm v}
+    {\max\{1,\|\bm v\|_2/g_{\max}\}}.
+\end{equation*}
+
+At a tie between critic heads, the gradient of $C_{\max}$ is interpreted
+as a valid subgradient returned by automatic differentiation.
+
+Using this direction, the clean estimate is updated and projected back
+to the same local region:
+\begin{equation}
+    \tilde{\va}_{t\rightarrow0}
+    =
+    \Pi_{\mathcal R(\bar{\va}^{\mathrm{base}})}
+    \left(
+    \bar{\va}_{t\rightarrow0}
+    -
+    \phi_t\lambda_{\mathrm g}\bm g_t
+    \right),
+    \qquad
+    \phi_t=\frac{t}{T}.
+    \label{eq:guided_estimate}
+\end{equation}
+Here $\lambda_{\mathrm g}>0$ is the base guidance step
+size, and $\phi_t=t/T$ scales the update down as reverse
+denoising approaches the final action. The radius
+$d_{\max}$ bounds the local region, while $g_{\max}$
+limits the critic-gradient norm.
+
+
+The corrected $\tilde{\va}_{t\rightarrow0}$ is still a clean-action
+estimate rather than the next noisy state. Reinserting it into the
+reverse mean allows subsequent denoising steps to evolve from the
+refined trajectory. Using the forward posterior in
+\eqref{eq:forward_posterior}, for $t>1$ we set
+\begin{equation}
+    \begin{aligned}
+        \bm\mu_t^{\mathrm g}
+        ={}&
+        \frac{\sqrt{\bar\alpha_{t-1}}\beta_t}
+        {1-\bar\alpha_t}
+        \tilde{\va}_{t\rightarrow0}
+        \\
+        &+
+        \frac{\sqrt{\alpha_t}(1-\bar\alpha_{t-1})}
+        {1-\bar\alpha_t}
+        \va_t,
+        \\
+        \va_{t-1}
+        ={}&
+        \bm\mu_t^{\mathrm g}
+        +
+        \sigma_t\bm z_t .
+    \end{aligned}
+    \label{eq:guided_reverse}
+\end{equation}
+Here $\bm z_t\sim\mathcal N(\bm0,\bm I)$ is the same reverse-chain noise
+used by the corresponding base-chain step. At $t=1$, no final sampling
+noise is added and the guided candidate is
+\begin{equation*}
+    \vag
+    =
+    \tilde{\va}_{1\rightarrow0}.
+\end{equation*}
+
+The guided action remains a candidate rather than an
+automatic replacement because the local correction may
+increase noise-prediction loss and the critic predictions
+may be inconsistent. A separate execution gate determines
+whether the candidate is released.
+
+
+\subsubsection{Selective Gate}
+\label{sec:selective_gate}
+
+The gate accepts the guided candidate only if it
+satisfies three conditions: conservative proxy-risk
+improvement, a bounded increase in the estimated expected
+noise-prediction loss, and limited disagreement between
+the two critic heads. The loss estimate uses one Gaussian
+noise sample per diffusion timestep:
+\begin{equation}
+    \EdenMC(\vs,\va)
+    =
+    \frac{1}{T}
+    \sum_{t=1}^{T}
+    e_\theta\!\left(
+    \vs,\va;t,\veps_t^{\mathrm{cmp}}
+    \right),
+    \qquad
+    \veps_t^{\mathrm{cmp}}
+    \sim\mathcal N(\bm0,\bm I).
+    \label{eq:compat_estimate}
+\end{equation}
+For each $t$, the same comparison-noise sample
+$\veps_t^{\mathrm{cmp}}$ is used for the base and guided actions. These
+query corruptions serve a different role from the reverse-chain noises
+$\bm z_t$ in~\eqref{eq:guided_reverse}.
+
+Define
+\begin{equation*}
+    C_{\min}(\vs,\va)
+    =
+    \min_{i\in\{1,2\}}C_{\psi_i}(\vs,\va),
+\end{equation*}
+and the critic disagreement
+\begin{equation*}
+    D_\psi(\vs,\va)
+    =
+    \left|
+    C_{\psi_1}(\vs,\va)
+    -
+    C_{\psi_2}(\vs,\va)
+    \right|.
+\end{equation*}
+The guided candidate is released only when
+\begin{equation}
+    \begin{aligned}
+        C_{\min}
+        \left(
+        \vs,\bar{\va}^{\mathrm{base}}
+        \right)
+        -
+        C_{\max}(\vs,\vag)
+        &\geq
+        \kappa_{\mathrm C},
+        \\
+        \EdenMC(\vs,\vag)
+        -
+        \EdenMC
+        \left(
+        \vs,\bar{\va}^{\mathrm{base}}
+        \right)
+        &\leq
+        \tau_{\mathrm{comp}},
+        \\
+        D_\psi(\vs,\vag)
+        &\leq
+        \tau_{\mathrm D}.
+    \end{aligned}
+    \label{eq:execution_gate}
+\end{equation}
+If all three conditions hold, \DOVE{} executes $\vag$; otherwise it
+executes the projected fallback $\bar{\va}^{\mathrm{base}}$.
+
+The first condition requires the candidate's larger
+critic score to be at least $\kappa_{\mathrm C}>0$
+lower than the fallback's smaller critic score.
+Equivalently, for all $i,i'\in\{1,2\}$,
+\begin{equation*}
+    C_{\psi_i}(\vs,\vag)
+    \leq
+    C_{\psi_{i'}}
+    \left(
+    \vs,\bar{\va}^{\mathrm{base}}
+    \right)
+    -
+    \kappa_{\mathrm C}.
+\end{equation*}
+Thus, the predicted improvement must hold across
+all critic-head comparisons, rather than only for
+their average.
+
+The second condition limits the increase in estimated
+expected noise-prediction loss to $\tau_{\mathrm{comp}}$,
+while the third rejects candidates whose critic
+disagreement exceeds $\tau_{\mathrm D}$. CPCal shapes
+the critics during training, whereas the gate evaluates
+each guided candidate at inference and selects either
+the candidate or the projected fallback.
+
+
+\subsection{Implementation Details}
+\label{sec:impl}
+
+Actions are normalized as
+\begin{equation*}
+    \va
+    =
+    [\delta\ \ u]^\top
+    \in[-1,1]^2,
+\end{equation*}
+where $\delta$ denotes steering and $u$ denotes
+longitudinal control. Component-wise clipping to
+$\Avalid$ is applied to actor-update actions, target
+actions, and deployment commands. The environment
+interface applies the same bounds before execution .
+
+Intervention pairs satisfying
+\begin{equation*}
+    \|\vah-\van\|_2
+    <
+    \tau_{\mathrm{pair}}
+\end{equation*}
+are discarded before insertion into $\DI$, where
+$\tau_{\mathrm{pair}}>0$ is the pair-distance threshold. The mixed
+sampler draws from the non-intervention transition view $\DN$, the
+intervention-pair view $\DI$, and the initial demonstration view
+$\Ddemo$. TD regression, however, always obtains factual cost and
+successor information from the corresponding full transition in $\D$.
+
+The diffusion variance follows the VP schedule used by the implementation,
+\begin{equation}
+    \beta_t
+    =
+    1-
+    \exp\!\left[
+    -\frac{b_{\min}}{T}
+    -
+    \frac{b_{\max}-b_{\min}}{2T^2}(2t-1)
+    \right],
+    \qquad
+    t=1,\ldots,T,
+    \label{eq:vp_schedule}
+\end{equation}
+The schedule parameters are reported in
+Table~\ref{tab:impl_hparams}.
+
+\begin{table}[!t]
+\centering
+\caption{{\normalfont Implementation and training hyperparameters of \DOVE{}.}}
+\label{tab:impl_hparams}
+\footnotesize
+\renewcommand{\arraystretch}{1.08}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}p{0.56\columnwidth}p{0.37\columnwidth}@{}}
+\toprule
+\textbf{Setting} & \textbf{Value}\\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Architecture and replay}}\\
+Action dimension / diffusion steps & $2$ / $20$\\
+Denoiser / critic hidden width & $128$ / $256$\\
+Denoiser / critic Adam learning rate & $1.5\times10^{-4}$ / $3\times10^{-4}$\\
+Batch size & $256$\\
+Sampling mix $\DN:\DI:\Ddemo$ & $75:15:10$\\
+Pair-distance threshold $\tau_{\mathrm{pair}}$ & $0.03$\\
+Noise schedule & VP ($b_{\min}=0.1$, $b_{\max}=10$)\\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Actor learning}}\\
+$m_{\mathrm{rank}}$ & $0.05$\\
+Final $\lambda_{\mathrm{BC}},\lambda_{\mathrm{RL}},\lambda_{\mathrm{reg}}$
+& $12,\ 0.1,\ 2.0$\\
+$\zeta_{\mathrm E},\varepsilon_{\mathrm E},\eta_{\mathrm E}^{\mathrm{init}}$
+& $10^{-3},\ 0.01,\ 1.0$\\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Critic learning}}\\
+Discount factor / Polyak coefficient & $0.99$ / $5\times10^{-3}$\\
+$m_{\mathrm C},\lambda_{\mathrm{cal}},c_{\mathrm{clip}}$
+& $0.1,\ 1.0,\ 1$\\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Guidance and gate}}\\
+$\lambda_{\mathrm g},\phi_t,g_{\max}$ & $0.5,\ t/T,\ 1.0$\\
+$d_{\max},\kappa_{\mathrm C}$ & $0.2,\ 0.02$\\
+$\tau_{\mathrm{comp}},\tau_{\mathrm D}$ & $0.02,\ 1.0$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Training follows the same lifecycle as the method. The diffusion actor
+is first pretrained for $10{,}000$ gradient updates using collected
+executed actions, after which the critics receive a $1{,}000$-update
+warm-up. During online repair, each environment interaction triggers two
+optimizer updates. The critics are updated at each optimizer step, while
+the actor and $\eta_{\mathrm E}$ follow the delayed actor schedule and
+are updated every third optimizer step.
+
+The reported value of $\lambda_{\mathrm{RL}}$ is its final value. It is
+kept at zero during the first $1{,}000$ online updates and then annealed
+to that value by online update $3{,}000$. This delays critic-mediated
+actor improvement until the proxy-risk surface has received sufficient
+training.
+
+
+Algorithm~\ref{alg:dove} summarizes the overall
+training and deployment procedure.
+\begin{algorithm}[!t]
+\caption{\DOVE{} Training and Deployment}
+\label{alg:dove}
+\begin{algorithmic}[1]
+\Require Initial HIL data $\D_0$, training hyperparameters,
+and gate thresholds
+
+\State Initialize replay data and intervention pairs from $\D_0$
+\State Pretrain the diffusion actor using~\eqref{eq:bc}
+\State Initialize and warm up the twin critics
+
+\For{each online-repair interaction}
+    \State Collect the executed transition and update replay data
+    \State Update the actor and critics using
+    \eqref{eq:actorloss} and~\eqref{eq:criticloss}
+    \State Update the adaptive ER weight using~\eqref{eq:dualupdate}
+    \State Update target networks
+\EndFor
+
+\State Freeze the actor, critics, and gate thresholds
+
+\For{each deployment step}
+    \State Generate a base action and its projected fallback
+    \State Generate a guided candidate using the frozen critics
+    \If{the candidate satisfies the gate in~\eqref{eq:execution_gate}}
+        \State Execute the guided candidate
+    \Else
+        \State Execute the projected fallback
+    \EndIf
+\EndFor
+
+\end{algorithmic}
+\end{algorithm}
+
+% \section{Methodology}
+% \label{sec:method}
+
+% As illustrated in Fig.~\ref{fig:pipeline}, \DOVE{} carries the intervention relation $\vah\succ_{\vs}\van$ through three stages. \ER{} incorporates it into the diffusion actor, \CPCal{} preserves it in the proxy-risk critics, and the frozen guidance-and-gating rule uses the resulting scores at execution. These stages are described in order below.
+
+% A short HIL collection first provides executed actions for diffusion behavior cloning and takeover pairs for veto-aware learning. This initial collection log is denoted by $\D_0$. During online repair under supervisor authority, the actor and critics are updated from the same intervention stream. All parameters and thresholds are then frozen before deployment.
+
+% Data are organized by stage. The collected executed actions form
+% $\DBCdata=\{\left(\vs,\vab\right)\}$ for behavior cloning. The subset of
+% initial human-demonstration transitions is denoted by
+% $\Ddemo\subset\D_0$. The intervention-pair set
+% $\DI=\{\left(\vs,\vah,\van\right)\}$ is initialized from takeover pairs
+% in $\D_0$ and grows during online repair. It supplies both \ER{}
+% and \CPCal{}. During online repair, $\DN\subset\D$ stores valid
+% non-intervention transitions, for which $\vab=\van$, and is used by the
+% actor objectives defined on autonomous states. Critic TD learning uses
+% valid transitions in $\D$ for which the executed action $\vab$ and its
+% resulting transition are observed, irrespective of whether an
+% intervention occurred.
+
+% \begin{figure*}[!t]
+% \centering
+% \includegraphics[width=0.74\textwidth]{figures/method/framework.pdf}
+
+% \caption{\DOVE{} veto-aware diffusion-control framework. A takeover yields a same-state pair $\vah$ and $\van$. \ER{} transfers the ordering to the actor, \CPCal{} transfers it to the twin critics, and the gate executes the guided action $\vag$ or the projected fallback $\bar\va^{\mathrm{base}}$.}
+% \label{fig:pipeline}
+% \end{figure*}
+
+% \subsection{\ER{}: Encoding Observed Vetoes in the Diffusion Actor}
+% \label{sec:energyrank}
+
+% Behavior cloning tells the diffusion actor which action is executed,
+% but a human takeover provides more information than an additional
+% positive example. At the same observation, the supervisor executes
+% $\vah$ and explicitly rejects the autonomous proposal $\van$.
+% The BC objective in~\eqref{eq:bc} fits the executed action but does not
+% directly constrain the rejected one. For a multimodal diffusion actor,
+% improving the fit around $\vah$ therefore does not necessarily
+% suppress sampling near $\van$.
+% \ER{} uses this missing same-state relation directly and encodes
+% $\vah\succ_{\vs}\van$ in the actor's own denoising residuals.
+
+% \subsubsection{Denoising compatibility}
+
+% To compare the two actions without introducing another scoring network,
+% the noise-prediction residual already optimized by the diffusion actor is
+% reused. For a queried clean action $\va$, the noisy action $\va_t$ is
+% constructed using~\eqref{eq:forward}, and the residual is defined as
+% \begin{equation}
+%     e_\theta\!\left(\vs,\va;t,\veps\right)
+%     =
+%     \frac{1}{d_{\mathrm a}}
+%     \left\|
+%     \veps-
+%     \veps_\theta\!\left(\vs,\va_t,t\right)
+%     \right\|_2^2 .
+%     \label{eq:residual}
+% \end{equation}
+% Here $t$ and $\veps$ are the diffusion step and Gaussian corruption
+% used to query the action, respectively. A smaller value means that the
+% denoiser explains the injected noise more accurately for that queried
+% action.
+
+% This residual also has a direct action-space interpretation.
+% From the forward relation~\eqref{eq:forward}, the original clean action
+% can be recovered as
+% \begin{equation*}
+%     \va
+%     =
+%     \frac{
+%     \va_t-\sqrt{1-\bar\alpha_t}\,\veps
+%     }{
+%     \sqrt{\bar\alpha_t}
+%     }.
+% \end{equation*}
+% Replacing the injected noise $\veps$ with the denoiser prediction gives
+% the reconstructed clean action
+% \begin{equation}
+%     \widehat{\va}_{t\rightarrow0}
+%     =
+%     \frac{
+%     \va_t-
+%     \sqrt{1-\bar\alpha_t}\,
+%     \veps_\theta\!\left(\vs,\va_t,t\right)
+%     }{
+%     \sqrt{\bar\alpha_t}
+%     }.
+%     \label{eq:clean_estimate}
+% \end{equation}
+% Subtracting the true action from this estimate gives
+% \begin{equation*}
+%     \widehat{\va}_{t\rightarrow0}-\va
+%     =
+%     \sqrt{
+%     \frac{1-\bar\alpha_t}{\bar\alpha_t}
+%     }
+%     \left[
+%     \veps-\veps_\theta\!\left(\vs,\va_t,t\right)
+%     \right].
+% \end{equation*}
+% Taking the squared norm and using~\eqref{eq:residual} therefore yields
+% \begin{equation}
+%     \frac{1}{d_{\mathrm a}}
+%     \left\|
+%     \widehat{\va}_{t\rightarrow0}-\va
+%     \right\|_2^2
+%     =
+%     \frac{1-\bar\alpha_t}{\bar\alpha_t}
+%     e_\theta\!\left(\vs,\va;t,\veps\right).
+%     \label{eq:residual_reconstruction}
+% \end{equation}
+% The multiplicative factor is positive at every nondegenerate diffusion
+% step. Hence, for a fixed $t$, a smaller denoising residual corresponds
+% to a smaller clean-action reconstruction error.
+% This relation is used only to interpret the residual as actor
+% compatibility. It is not treated as a calibrated likelihood or as a
+% task-risk estimate.
+
+% Because BC samples diffusion steps uniformly, this compatibility is
+% summarized over the same noise-level distribution by
+% \begin{equation}
+%     \Eden(\vs,\va)
+%     =
+%     \E_{t,\veps}
+%     \left[
+%     e_\theta\!\left(\vs,\va;t,\veps\right)
+%     \right].
+%     \label{eq:eden}
+% \end{equation}
+% Thus, a lower $\Eden(\vs,\va)$ means that the queried action is, on
+% average, reconstructed more consistently by the current denoiser across
+% diffusion levels. Averaging this quantity over the executed-action
+% distribution recovers the residual form of~\eqref{eq:bc}.
+% \ER{} therefore reuses the actor's own training signal rather than
+% introducing a separate energy model.
+
+% \subsubsection{Same-state veto ordering}
+
+% A takeover does not provide an absolute energy target for either action.
+% Instead, it provides a relative statement: at the same state, the
+% executed human action should be preferred to the rejected autonomous
+% proposal. \ER{} therefore compares the two actions under the same
+% diffusion corruption. Using the same $t$ and the same $\veps$ for
+% both actions, define
+% \begin{equation*}
+%     \Delta e_\theta
+%     =
+%     e_\theta\!\left(\vs,\van;t,\veps\right)
+%     -
+%     e_\theta\!\left(\vs,\vah;t,\veps\right).
+% \end{equation*}
+% The shared corruption removes variation caused only by different
+% diffusion samples, so the gap reflects how the same denoiser treats the
+% two queried actions. Since lower residual means greater denoising
+% compatibility, $\Delta e_\theta>0$ favors the executed human action.
+
+% Rather than merely requiring the sign of this difference to be positive,
+% a finite separation $m_{\mathrm{rank}}>0$ is imposed, and only
+% the amount by which the sampled pair violates that margin:
+% \begin{equation}
+%     \mathcal V_{\mathrm E}(\theta)
+%     =
+%     \E_{\DI,t,\veps}
+%     \left[
+%     \left[
+%     m_{\mathrm{rank}}-\Delta e_\theta
+%     \right]_+
+%     \right],
+%     \qquad
+%     [x]_+=\max(x,0).
+%     \label{eq:energyrank}
+% \end{equation}
+% When $\Delta e_\theta<m_{\mathrm{rank}}$, the pair contributes a
+% positive loss and the update increases the rejected-side residual
+% relative to the human-side residual. Once the prescribed separation is
+% reached, the hinge becomes inactive and introduces no further ranking
+% pressure. \ER{} therefore writes the observed veto into the actor
+% as a relative compatibility ordering without assigning either action an
+% absolute cost.
+
+% The loss in~\eqref{eq:energyrank} is evaluated on sampled diffusion
+% steps and Gaussian noise, whereas $\Eden$ averages over both.
+% For a fixed intervention pair, the corresponding mean compatibility gap
+% is
+% \begin{equation*}
+%     \Delta\Eden
+%     :=
+%     \Eden(\vs,\van)
+%     -
+%     \Eden(\vs,\vah)
+%     =
+%     \E_{t,\veps}
+%     \left[
+%     \Delta e_\theta
+%     \right].
+% \end{equation*}
+% The connection between the sampled hinge and this mean gap follows
+% directly from convexity. Let
+% $f(x)=[m_{\mathrm{rank}}-x]_+$.
+% Since $f$ is convex, Jensen's inequality gives
+% \begin{equation}
+%     \begin{aligned}
+%         \left[
+%         m_{\mathrm{rank}}-\Delta\Eden
+%         \right]_+
+%         &=
+%         f\!\left(
+%         \E_{t,\veps}[\Delta e_\theta]
+%         \right)
+%         \\
+%         &\leq
+%         \E_{t,\veps}
+%         \left[
+%         f\!\left(\Delta e_\theta\right)
+%         \right]
+%         \\
+%         &=
+%         \E_{t,\veps}
+%         \left[
+%         \left[
+%         m_{\mathrm{rank}}-\Delta e_\theta
+%         \right]_+
+%         \right].
+%     \end{aligned}
+%     \label{eq:energyrank_jensen}
+% \end{equation}
+% Hence, if the expected hinge violation of this fixed pair vanishes,
+% then
+% $\Delta\Eden\geq m_{\mathrm{rank}}$.
+% More generally, if the expected violation is no larger than
+% $\varepsilon_{\mathrm{pair}}$, then
+% $$
+%     \Delta\Eden
+%     \geq
+%     m_{\mathrm{rank}}-\varepsilon_{\mathrm{pair}},
+% $$
+% where $\varepsilon_{\mathrm{pair}}\geq0$ denotes an upper bound on the
+% expected hinge violation of the fixed intervention pair. This conclusion
+% concerns the expectation of one fixed intervention
+% pair. A small average violation over a minibatch does not imply that
+% every individual pair satisfies the same margin.
+
+% \subsubsection{Relation to the DDPM variational objective}
+% \label{sec:energyrank_derivation}
+
+% \ER{} averages denoising residuals uniformly over diffusion steps
+% because it follows the same sampling convention as the BC objective.
+% The standard DDPM variational objective is built from the same
+% noise-prediction errors, but it does not weight all diffusion steps
+% equally and also contains a terminal action-dependent term.
+% Their relation is therefore derived to make clear which part of the
+% variational ordering is directly controlled by \ER{} and which
+% part is not.
+
+% For this derivation, the Gaussian transitions that underlie the
+% closed-form forward relation in~\eqref{eq:forward} are first recovered.
+% The one-step forward kernel is
+
+% \begin{equation*}
+%     q\!\left(\va_t\mid\va_{t-1}\right)
+%     =
+%     \mathcal N
+%     \left(
+%     \sqrt{\alpha_t}\,\va_{t-1},
+%     \beta_t\bm I
+%     \right),
+% \end{equation*}
+
+% while the corresponding marginal at step $t-1$ is
+
+% \begin{equation*}
+%     q\!\left(\va_{t-1}\mid\va\right)
+%     =
+%     \mathcal N
+%     \left(
+%     \sqrt{\bar\alpha_{t-1}}\,\va,
+%     \left(1-\bar\alpha_{t-1}\right)\bm I
+%     \right).
+% \end{equation*}
+
+% Multiplying these two Gaussian factors and completing the square gives
+% the forward posterior, for $t>1$,
+
+% \begin{equation}
+%     q\!\left(\va_{t-1}\mid\va_t,\va\right)
+%     =
+%     \mathcal N
+%     \left(
+%     \tilde{\bm\mu}_t,
+%     \tilde\beta_t\bm I
+%     \right),
+%     \label{eq:forward_posterior}
+% \end{equation}
+
+% where
+
+% \begin{equation}
+%     \begin{aligned}
+%         \tilde{\bm\mu}_t
+%         ={}&
+%         \frac{
+%         \sqrt{\bar\alpha_{t-1}}\beta_t
+%         }{
+%         1-\bar\alpha_t
+%         }\va
+%         \\
+%         &+
+%         \frac{
+%         \sqrt{\alpha_t}\left(1-\bar\alpha_{t-1}\right)
+%         }{
+%         1-\bar\alpha_t
+%         }\va_t,
+%         \\
+%         \tilde\beta_t
+%         ={}&
+%         \frac{
+%         1-\bar\alpha_{t-1}
+%         }{
+%         1-\bar\alpha_t
+%         }\beta_t .
+%     \end{aligned}
+%     \label{eq:posterior_params}
+% \end{equation}
+
+% The connection to the \ER{} residual becomes clearer when the
+% posterior mean is written in terms of the forward noise.
+% Substituting~\eqref{eq:forward} into~\eqref{eq:posterior_params} gives
+% \begin{equation}
+%     \tilde{\bm\mu}_t
+%     =
+%     \frac{1}{\sqrt{\alpha_t}}
+%     \left(
+%     \va_t-
+%     \frac{\beta_t}{\sqrt{1-\bar\alpha_t}}
+%     \veps
+%     \right).
+%     \label{eq:true_posterior_noise}
+% \end{equation}
+% The learned reverse mean in~\eqref{eq:reverse_mean} has the same form,
+% except that the true noise $\veps$ is replaced by the denoiser
+% prediction $\veps_\theta$. Their difference is therefore
+% \begin{equation}
+%     \tilde{\bm\mu}_t-\bm\mu_\theta
+%     =
+%     \frac{\beta_t}
+%     {\sqrt{\alpha_t\left(1-\bar\alpha_t\right)}}
+%     \left(
+%     \veps_\theta\!\left(\vs,\va_t,t\right)-\veps
+%     \right).
+%     \label{eq:posterior_mean_gap}
+% \end{equation}
+% This identity is the bridge between the noise residual used by
+% \ER{} and the Gaussian mean-matching term appearing in the DDPM
+% variational objective.
+
+% Indeed, because the posterior and reverse covariances are fixed with
+% respect to the queried action, the action-dependent part of their
+% Gaussian KL divergence is
+% \begin{equation*}
+%     \frac{1}{2\sigma_t^2}
+%     \left\|
+%     \tilde{\bm\mu}_t-\bm\mu_\theta
+%     \right\|_2^2.
+% \end{equation*}
+% Using~\eqref{eq:posterior_mean_gap}, this becomes
+% \begin{equation}
+%     \begin{aligned}
+%         \frac{
+%         \left\|
+%         \tilde{\bm\mu}_t-\bm\mu_\theta
+%         \right\|_2^2
+%         }{
+%         2\sigma_t^2
+%         }
+%         ={}&
+%         \frac{\beta_t^2}
+%         {2\sigma_t^2\alpha_t\left(1-\bar\alpha_t\right)}
+%         \\
+%         &\times
+%         \left\|
+%         \veps-
+%         \veps_\theta\!\left(\vs,\va_t,t\right)
+%         \right\|_2^2 .
+%     \end{aligned}
+%     \label{eq:kl_residual}
+% \end{equation}
+% Using the residual definition in~\eqref{eq:residual}, the same term can
+% be written as
+% \begin{equation*}
+%     d_{\mathrm a}w_t
+%     e_\theta\!\left(\vs,\va;t,\veps\right),
+% \end{equation*}
+% with
+% \begin{equation}
+%     w_t
+%     =
+%     \frac{\beta_t^2}
+%     {2\sigma_t^2\alpha_t\left(1-\bar\alpha_t\right)}.
+%     \label{eq:vlb_weight}
+% \end{equation}
+% Thus, the same denoising residual used by \ER{} also appears in the
+% variational objective, but with the schedule-dependent coefficient
+% $w_t$. For $t>1$, the reverse variance is fixed as
+% $\sigma_t^2=\tilde\beta_t$. The $t=1$ term is treated separately as
+% the terminal decoder term. For the variational derivation, we use the
+% fixed decoder variance $\sigma_1^2=\beta_1$, whereas no additional
+% sampling noise is injected at the final reverse step during action
+% generation.
+% The variational objective also contains a terminal KL term that is not
+% part of the uniform \ER{} average. From~\eqref{eq:forward},
+% \begin{equation*}
+%     q\!\left(\va_T\mid\va\right)
+%     =
+%     \mathcal N
+%     \left(
+%     \sqrt{\bar\alpha_T}\va,
+%     \left(1-\bar\alpha_T\right)\bm I
+%     \right),
+% \end{equation*}
+% whereas the diffusion prior is
+% $p\!\left(\va_T\right)=\mathcal N(\bm0,\bm I)$.
+% Applying the Gaussian KL formula gives
+% \begin{equation}
+%     D_{\mathrm{KL}}
+%     \left(
+%     q\!\left(\va_T\mid\va\right)
+%     \,\|\,p\!\left(\va_T\right)
+%     \right)
+%     =
+%     \frac{\bar\alpha_T}{2}
+%     \|\va\|_2^2
+%     +
+%     c_T,
+%     \label{eq:terminal_kl}
+% \end{equation}
+% where $c_T$ contains only terms independent of the queried action.
+% The action-dependent coefficient is therefore denoted by
+% \begin{equation*}
+%     \lambda_T
+%     =
+%     \frac{\bar\alpha_T}{2}.
+% \end{equation*}
+
+% Collecting the weighted denoising terms and the action-dependent part of
+% the terminal KL yields the normalized variational energy
+% \begin{equation}
+%     \Eelbo(\vs,\va)
+%     =
+%     \sum_{t=1}^{T}
+%     w_t\,\ell_t\!\left(\vs,\va\right)
+%     +
+%     \frac{\lambda_T}{d_{\mathrm a}}
+%     \|\va\|_2^2,
+%     \label{eq:eelbo}
+% \end{equation}
+% where
+% \begin{equation*}
+%     \ell_t\!\left(\vs,\va\right)
+%     =
+%     \E_{\veps}
+%     \left[
+%     e_\theta\!\left(\vs,\va;t,\veps\right)
+%     \right].
+% \end{equation*}
+% Up to terms independent of the queried action, the corresponding
+% variational lower bound satisfies
+% \begin{equation}
+%     \mathcal B_\theta(\va\mid\vs)
+%     =
+%     -d_{\mathrm a}\Eelbo(\vs,\va)
+%     -
+%     b_{\mathrm{VLB}}(\vs),
+%     \label{eq:vlb_energy_relation}
+% \end{equation}
+% where $b_{\mathrm{VLB}}(\vs)$ does not depend on $\va$.
+
+% This schedule-weighted quantity can now be compared with the uniform
+% \ER{} gap. For an intervention pair, define
+% \begin{equation*}
+%     \rho_t
+%     =
+%     \ell_t\!\left(\vs,\van\right)
+%     -
+%     \ell_t\!\left(\vs,\vah\right),
+% \end{equation*}
+% where $\rho_t$ denotes the stepwise expected residual gap for the intervention pair.
+% The variational-energy difference is then
+% \begin{equation}
+%     \Delta\Eelbo
+%     =
+%     \sum_{t=1}^{T}
+%     w_t\rho_t
+%     +
+%     \frac{\lambda_T}{d_{\mathrm a}}
+%     \left(
+%     \|\van\|_2^2-\|\vah\|_2^2
+%     \right).
+%     \label{eq:vlb_gap_basic}
+% \end{equation}
+% A positive $\Delta\Eelbo$ means that the human action has lower
+% variational energy and therefore a larger variational lower bound.
+
+% The corresponding \ER{} gap is the uniform average
+% \begin{equation*}
+%     \Delta\Eden
+%     =
+%     \frac{1}{T}
+%     \sum_{t=1}^{T}\rho_t .
+% \end{equation*}
+% To separate this mean ordering from the effect of the nonuniform
+% schedule, define
+% \begin{equation*}
+%     \bar w
+%     =
+%     \frac{1}{T}
+%     \sum_{t=1}^{T}w_t .
+% \end{equation*}
+% Writing
+% $$
+%     w_t=\bar w+\left(w_t-\bar w\right),
+%     \qquad
+%     \rho_t=\Delta\Eden+\left(\rho_t-\Delta\Eden\right),
+% $$
+% and using
+% $$
+%     \sum_{t=1}^{T}\left(w_t-\bar w\right)=0,
+%     \qquad
+%     \sum_{t=1}^{T}\left(\rho_t-\Delta\Eden\right)=0,
+% $$
+% gives
+% \begin{equation*}
+%     \begin{aligned}
+%         \sum_{t=1}^{T}w_t\rho_t
+%         ={}&
+%         T\bar w\,\Delta\Eden
+%         \\
+%         &+
+%         \sum_{t=1}^{T}
+%         \left(w_t-\bar w\right)
+%         \left(\rho_t-\Delta\Eden\right).
+%     \end{aligned}
+% \end{equation*}
+% Substituting this identity into~\eqref{eq:vlb_gap_basic} yields
+% \begin{equation}
+%     \begin{aligned}
+%         \Delta\Eelbo
+%         ={}&
+%         T\bar w\,\Delta\Eden
+%         \\
+%         &+
+%         \sum_{t=1}^{T}
+%         \left(w_t-\bar w\right)
+%         \left(\rho_t-\Delta\Eden\right)
+%         \\
+%         &+
+%         \frac{\lambda_T}{d_{\mathrm a}}
+%         \left(
+%         \|\van\|_2^2-\|\vah\|_2^2
+%         \right).
+%     \end{aligned}
+%     \label{eq:vlb_decomposition}
+% \end{equation}
+% The first term carries the mean residual ordering directly encouraged by
+% \ER{}. The second captures how the step-dependent residual gaps
+% interact with the nonuniform diffusion schedule, while the third is the
+% terminal action-norm contribution. The latter two terms can either
+% reinforce or oppose the first. \ER{} therefore does not assume that
+% a positive uniform residual gap automatically produces the same
+% variational ordering.
+
+% This decomposition concerns the variational ordering rather than the
+% exact action likelihood. A positive $\Delta\Eelbo$ is therefore not
+% interpreted as a formal guarantee of exact density ordering.
+
+
+% \subsection{\CPCal{}: Veto-Calibrated Critics and Guided Deployment}
+% \label{sec:cpcal}
+
+% \ER{} writes the observed veto into the diffusion actor, but its
+% denoising energy measures compatibility with the actor rather than
+% driving risk. Deployment therefore requires a second score that can
+% compare the predicted risk of candidate actions. Two proxy-risk critics
+% are introduced for this purpose. \CPCal{} uses the same intervention
+% pair to calibrate their relative ordering, while the frozen critics are
+% subsequently used for bounded local refinement and selective execution.
+
+% Two separately parameterized and independently initialized critics,
+% $C_{\psi_1}$ and $C_{\psi_2}$, are used, with
+
+% \begin{equation*}
+%     C_{\psi_i}:\Sset\times\A\rightarrow\mathbb R,
+%     \qquad
+%     i\in\{1,2\},
+% \end{equation*}
+% where $\psi_i$ denotes the parameters of critic head $i$.
+
+% Their outputs are real-valued proxy-risk scores rather than calibrated
+% collision probabilities, and a smaller value indicates lower predicted
+% proxy risk. When a conservative score is required, the following
+% extremum is used:
+
+% \begin{equation*}
+%     C_{\max}\!\left(\vs,\va\right)
+%     =
+%     \max_{i\in\{1,2\}}
+%     C_{\psi_i}\!\left(\vs,\va\right).
+% \end{equation*}
+
+% Taking the larger of the two predictions reduces the chance that an
+% action appears favorable only because one critic underestimates its
+% risk, following the cost-side analogue of double-critic evaluation~\cite{fujimoto2018td3}.
+
+% \subsubsection{Veto-based pairwise critic calibration}
+
+% A takeover provides relative rather than absolute risk supervision.
+% At the same state $\vs$, the autonomous proposal $\van$ is rejected
+% while the human action $\vah$ is executed. The critic-side information
+% contained in this observation is therefore that $\van$ should receive a
+% higher proxy-risk score than $\vah$. \CPCal{} encodes this relation with
+% a finite margin:
+
+% \begin{equation}
+%     \mathcal L_{\mathrm{pair}}
+%     =
+%     \sum_{i=1}^{2}
+%     \E_{\DI}
+%     \left[
+%     \left[
+%     m_{\mathrm C}
+%     -
+%     \left(
+%     C_{\psi_i}\!\left(\vs,\van\right)
+%     -
+%     C_{\psi_i}\!\left(\vs,\vah\right)
+%     \right)
+%     \right]_+
+%     \right].
+%     \label{eq:pairloss}
+% \end{equation}
+
+% Here $m_{\mathrm C}>0$ is the required same-state proxy-risk
+% separation. The loss is active when
+
+% $$
+%     C_{\psi_i}\!\left(\vs,\van\right)
+%     -
+%     C_{\psi_i}\!\left(\vs,\vah\right)
+%     <
+%     m_{\mathrm C},
+% $$
+
+% and therefore pushes the rejected action upward relative to the
+% executed human action. Once the prescribed separation is reached, the
+% hinge becomes inactive and introduces no additional ranking pressure.
+% Thus, \CPCal{} transfers the observed veto to the critic without
+% inventing an absolute numerical risk label for either action.
+
+% The margin is imposed on each critic head separately. This prevents the
+% desired ordering from being hidden by averaging two heads with different
+% predictions. In particular, if both heads satisfy the margin, each critic
+% individually preserves the same intervention relation.
+% The pairwise objective therefore determines relative ordering rather
+% than the absolute critic scale.
+
+% The calibrated critics now provide a risk-oriented comparison between
+% actions, but calibration alone does not change the action generated by
+% the diffusion policy. After online repair, the actor and critics are
+% frozen. The critics are therefore used only to search locally around an
+% action already produced by the frozen actor.
+
+% \subsubsection{Bounded critic-guided refinement}
+
+% At each control step, the frozen diffusion actor first generates a base
+% action $\va^{\mathrm{base}}$. Let $\Avalid\subseteq\A$ denote the
+% actuator-valid action set, and let $\Pi_{\mathcal X}$ denote Euclidean
+% projection onto a closed set $\mathcal X$. The feasible fallback action
+% is first formed as
+
+% \begin{equation*}
+%     \bar{\va}^{\mathrm{base}}
+%     =
+%     \Pi_{\Avalid}
+%     \left(
+%     \va^{\mathrm{base}}
+%     \right).
+% \end{equation*}
+
+% The critics are learned from finite data and may therefore become
+% unreliable when queried far from the action distribution represented in
+% the training data. Directly minimizing a learned critic over the entire
+% action space may consequently exploit such extrapolation errors and
+% produce actions that appear favorable only under inaccurate critic
+% predictions. To avoid using the critics as globally reliable
+% optimization objectives, the frozen actor proposal is instead used as a
+% policy-supported reference, and critic guidance is restricted to a
+% bounded neighborhood around its feasible fallback:
+% \begin{equation}
+%     \mathcal R
+%     \left(
+%     \bar{\va}^{\mathrm{base}}
+%     \right)
+%     =
+%     \left\{
+%     \va\in\Avalid:
+%     \left\|
+%     \va-\bar{\va}^{\mathrm{base}}
+%     \right\|_2
+%     \leq d_{\max}
+%     \right\},
+%     \label{eq:query_region}
+% \end{equation}
+% where $d_{\max}>0$ is the maximum permitted displacement from
+% $\bar{\va}^{\mathrm{base}}$. This restriction prevents critic guidance
+% from moving arbitrarily far from the frozen actor proposal and serves as
+% a trust-region-style constraint on local refinement. It does not assume
+% that the critic is necessarily accurate throughout this neighborhood,
+% nor does membership in the region itself provide a safety guarantee.
+
+% The Gaussian variables used to generate the base action are retained
+% and reused by a second guided reverse chain. The two chains therefore
+% share the same terminal Gaussian sample and the same per-step Gaussian
+% noises, while their intermediate states may differ after guidance is
+% applied.
+
+% At reverse step $t$, \eqref{eq:clean_estimate} provides the current
+% clean-action estimate $\widehat{\va}_{t\rightarrow0}$. Before the critic is
+% evaluated, this estimate is restricted to the local region:
+
+% \begin{equation*}
+%     \bar{\va}_{t\rightarrow0}
+%     =
+%     \Pi_{\mathcal R\!\left(\bar{\va}^{\mathrm{base}}\right)}
+%     \left(
+%     \widehat{\va}_{t\rightarrow0}
+%     \right).
+% \end{equation*}
+
+% The critic is therefore queried on a feasible clean-action estimate
+% rather than directly on the noisy diffusion variable $\va_t$.
+
+% To move this estimate toward lower predicted proxy risk, the gradient of
+% the conservative critic score is computed. Because an unusually large
+% gradient could create an excessive single-step correction, its norm is
+% clipped before the update:
+
+% \begin{equation}
+%     \bm g_t
+%     =
+%     \Gamma_{g_{\max}}
+%     \left(
+%     \left.
+%     \nabla_{\va}C_{\max}\!\left(\vs,\va\right)
+%     \right|_{\va=\bar{\va}_{t\rightarrow0}}
+%     \right),
+%     \label{eq:guidance_grad}
+% \end{equation}
+
+% where $g_{\max}>0$ is the gradient-norm clipping threshold and the
+% clipping operator is
+
+% \begin{equation*}
+%     \Gamma_{g_{\max}}\!\left(\bm v\right)
+%     =
+%     \frac{\bm v}
+%     {\max\left\{
+%     1,
+%     \|\bm v\|_2/g_{\max}
+%     \right\}},
+% \end{equation*}
+% where $\bm v$ denotes the input vector of the clipping operator. The
+% operator leaves a gradient unchanged when its norm does not exceed
+% $g_{\max}$ and otherwise rescales only its magnitude. At a tie between
+% the two critic heads, the gradient of $C_{\max}$ is interpreted as a
+% valid subgradient returned by automatic differentiation.
+
+% Using this direction, the clean estimate is moved toward lower
+% predicted proxy risk and projected back into the same local region:
+
+% \begin{equation}
+%     \tilde{\va}_{t\rightarrow0}
+%     =
+%     \Pi_{\mathcal R\!\left(\bar{\va}^{\mathrm{base}}\right)}
+%     \left(
+%     \bar{\va}_{t\rightarrow0}
+%     -
+%     \phi_t\lambda_{\mathrm g}\bm g_t
+%     \right),
+%     \qquad
+%     \phi_t=\frac{t}{T}.
+%     \label{eq:guided_estimate}
+% \end{equation}
+
+% Here $\lambda_{\mathrm g}>0$ controls the basic guidance step size.
+% Because reverse diffusion proceeds from $t=T$ to $t=1$,
+% $\phi_t=t/T$ makes the correction stronger early in the reverse process
+% and gradually weaker as the final action is approached.
+
+% The form of~\eqref{eq:guided_estimate} can be understood as a
+% projected descent surrogate. For the clipped direction $\bm g_t$, consider
+
+% \begin{equation*}
+%     \begin{aligned}
+%         \min_{\bm u\in\mathcal R\!\left(\bar{\va}^{\mathrm{base}}\right)}
+%         \quad&
+%         \bm g_t^\top
+%         \left(
+%         \bm u-\bar{\va}_{t\rightarrow0}
+%         \right)
+%         \\
+%         &+
+%         \frac{
+%         \left\|
+%         \bm u-\bar{\va}_{t\rightarrow0}
+%         \right\|_2^2
+%         }{
+%         2\phi_t\lambda_{\mathrm g}
+%         },
+%     \end{aligned}
+% \end{equation*}
+% where $\bm u$ denotes the local action optimization variable.
+
+% The first term uses the clipped first-order descent direction of the
+% critic score, while the second penalizes a large displacement from the
+% current clean estimate. Completing the square gives
+
+% \begin{equation*}
+%     \arg\min_{\bm u\in\mathcal R\!\left(\bar{\va}^{\mathrm{base}}\right)}
+%     \left\{
+%     \cdots
+%     \right\}
+%     =
+%     \Pi_{\mathcal R\!\left(\bar{\va}^{\mathrm{base}}\right)}
+%     \left(
+%     \bar{\va}_{t\rightarrow0}
+%     -
+%     \phi_t\lambda_{\mathrm g}\bm g_t
+%     \right),
+% \end{equation*}
+
+% which is exactly the update in~\eqref{eq:guided_estimate}. Thus, the guided step
+% balances descent along the clipped critic direction against the size of
+% the local action correction.
+
+% The quantity $\tilde{\va}_{t\rightarrow0}$ is still a clean-action
+% estimate rather than the next noisy state of the reverse chain.
+% To continue DDPM sampling, it must be reinserted into the Gaussian
+% posterior already derived in~\eqref{eq:forward_posterior}.
+% Replacing the clean action in that posterior by
+% $\tilde{\va}_{t\rightarrow0}$ gives, for $t>1$,
+
+% \begin{equation}
+%     \begin{aligned}
+%         \bm\mu_t^{\mathrm g}
+%         ={}&
+%         \frac{
+%         \sqrt{\bar\alpha_{t-1}}\beta_t
+%         }{
+%         1-\bar\alpha_t
+%         }
+%         \tilde{\va}_{t\rightarrow0}
+%         \\
+%         &+
+%         \frac{
+%         \sqrt{\alpha_t}
+%         \left(1-\bar\alpha_{t-1}\right)
+%         }{
+%         1-\bar\alpha_t
+%         }
+%         \va_t,
+%         \\
+%         \va_{t-1}
+%         ={}&
+%         \bm\mu_t^{\mathrm g}
+%         +
+%         \sigma_t\bm z_t .
+%     \end{aligned}
+%     \label{eq:guided_reverse}
+% \end{equation}
+
+% Here $\bm z_t\sim\mathcal N(\bm0,\bm I)$ is the same per-step noise
+% used by the corresponding base-chain step. At $t=1$, no final sampling
+% noise is added, and the guided candidate is
+
+% $$
+%     \vag
+%     =
+%     \tilde{\va}_{1\rightarrow0}.
+% $$
+
+% The guided reverse chain therefore adds a bounded critic correction to
+% the frozen diffusion process while keeping the diffusion schedule and
+% paired random draws unchanged.
+
+% The resulting $\vag$ is still only a candidate. A bounded correction
+% does not guarantee that it remains sufficiently compatible with the
+% frozen actor, and a low critic score is not sufficient when the two
+% critic heads strongly disagree. Candidate generation is therefore
+% separated from the final execution decision.
+
+% \subsubsection{Selective execution gate}
+% \label{sec:cpcal_derivation}
+
+% The execution gate checks the guided candidate from three complementary
+% perspectives: proxy-risk improvement, compatibility with the frozen
+% actor, and consistency between the two critics.
+
+% Actor compatibility is measured using the denoising energy already
+% defined in~\eqref{eq:eden}. At deployment, its expectation is
+% approximated by a finite sweep over the diffusion schedule:
+
+% \begin{equation}
+%     \widehat{\mathcal E}_{\theta}^{\mathrm{den}}(\vs,\va)
+%     =
+%     \frac{1}{T}
+%     \sum_{t=1}^{T}
+%     e_\theta\!\left(\vs,\va;t,\veps_t\right),
+%     \qquad
+%     \veps_t\sim\mathcal N(\bm0,\bm I).
+%     \label{eq:compat_estimate}
+% \end{equation}
+
+% The same $\veps_t$ is used when evaluating the base and guided actions
+% at diffusion step $t$, so their compatibility difference is computed
+% under matched corruption realizations.
+
+% For the risk comparison, define
+
+% \begin{equation*}
+%     C_{\min}\!\left(\vs,\va\right)
+%     =
+%     \min_{i\in\{1,2\}}
+%     C_{\psi_i}\!\left(\vs,\va\right),
+% \end{equation*}
+
+% and use
+
+% \begin{equation*}
+%     D_\psi\!\left(\vs,\va\right)
+%     =
+%     \left|
+%     C_{\psi_1}\!\left(\vs,\va\right)
+%     -
+%     C_{\psi_2}\!\left(\vs,\va\right)
+%     \right|,
+% \end{equation*}
+
+% to measure disagreement between the two critic scores. The guided
+% candidate is released only when all three conditions hold:
+
+% \begin{equation}
+%     \begin{aligned}
+%         C_{\min}
+%         \left(
+%         \vs,\bar{\va}^{\mathrm{base}}
+%         \right)
+%         -
+%         C_{\max}\!\left(\vs,\vag\right)
+%         &\geq
+%         \kappa_{\mathrm C},
+%         \\
+%         \widehat{\mathcal E}_{\theta}^{\mathrm{den}}\!\left(\vs,\vag\right)
+%         -
+%         \widehat{\mathcal E}_{\theta}^{\mathrm{den}}
+%         \left(
+%         \vs,\bar{\va}^{\mathrm{base}}
+%         \right)
+%         &\leq
+%         \tau_{\mathrm{comp}},
+%         \\
+%         D_\psi\!\left(\vs,\vag\right)
+%         &\leq
+%         \tau_{\mathrm D}.
+%     \end{aligned}
+%     \label{eq:execution_gate}
+% \end{equation}
+
+% The first condition is the primary risk test. It requires the guided
+% candidate's larger critic score to be at least
+% $\kappa_{\mathrm C}>0$ lower than the fallback's smaller critic score.
+% Indeed, if this condition holds, then for any
+% $i,i'\in\{1,2\}$,
+
+% \begin{equation*}
+%     \begin{aligned}
+%         C_{\psi_i}\!\left(\vs,\vag\right)
+%         &\leq
+%         C_{\max}\!\left(\vs,\vag\right)
+%         \\
+%         &\leq
+%         C_{\min}
+%         \left(
+%         \vs,\bar{\va}^{\mathrm{base}}
+%         \right)
+%         -
+%         \kappa_{\mathrm C}
+%         \\
+%         &\leq
+%         C_{\psi_{i'}}\!\left(
+%         \vs,\bar{\va}^{\mathrm{base}}
+%         \right)
+%         -
+%         \kappa_{\mathrm C}.
+%     \end{aligned}
+% \end{equation*}
+
+% Thus, the predicted improvement must survive every cross-head
+% comparison rather than only an average-score comparison. This
+% conservatism refers to the two learned proxy-risk scores. It is not a
+% theoretical bound on the true collision risk.
+
+% The second condition permits only a limited increase in denoising
+% energy, with $\tau_{\mathrm{comp}}\geq0$ controlling the allowed loss of
+% actor compatibility. The third requires
+% $D_\psi\!\left(\vs,\vag\right)\leq\tau_{\mathrm D}$ and therefore rejects candidates
+% for which the two critics disagree excessively. This disagreement is
+% used only as a consistency check and is not interpreted as a calibrated
+% uncertainty estimate.
+
+% If all three conditions in~\eqref{eq:execution_gate} are satisfied,
+% DOVE executes $\vag$. Otherwise, it executes the fallback
+% $\bar{\va}^{\mathrm{base}}$. The training-time CPCal margin and the
+% deployment-time gate therefore serve different roles: the former
+% preserves the observed veto ordering within each critic head, whereas
+% the latter decides whether a newly generated local correction is
+% sufficiently supported for execution.
+
+
+
+% \subsection{Updates and Implementation Details}
+% \label{sec:impl}
+
+% The preceding sections specify how the observed veto is represented in
+% the diffusion actor and the proxy-risk critics. Their combination during
+% online repair is described below. Actor and critic
+% updates are constructed from the same mixed replay stream, while each
+% loss is evaluated on the subset of data for which its supervision is
+% defined.
+
+% \subsubsection{Actor update}
+
+% The actor must retain executed behavior, incorporate the same-state veto,
+% extend risk-sensitive improvement to autonomous states, and avoid
+% unnecessary drift during online repair. These four roles are combined in
+
+% \begin{equation}
+%     \begin{aligned}
+%         \mathcal{L}_{\pi}(\theta)
+%         ={}&
+%         \lambda_{\mathrm{BC}}
+%         \mathcal{L}_{\mathrm{BC}}(\theta)
+%         +
+%         \eta_{\mathrm{E}}
+%         \mathcal{V}_{\mathrm{E}}(\theta)
+%         \\
+%         &+
+%         \lambda_{\mathrm{RL}}
+%         \mathcal{L}_{\mathrm{RL}}(\theta)
+%         +
+%         \lambda_{\mathrm{reg}}
+%         \mathcal{L}_{\mathrm{reg}}(\theta),
+%     \end{aligned}
+%     \label{eq:actorloss}
+% \end{equation}
+% where $\lambda_{\mathrm{BC}},\lambda_{\mathrm{RL}},\lambda_{\mathrm{reg}}\geq0$
+% are the fixed weights of the corresponding actor objectives and
+% $\eta_{\mathrm E}\geq0$ is the adaptive \ER{} multiplier, initialized
+% by $\eta_{\mathrm E}^{\mathrm{init}}$.
+
+% The four terms have different responsibilities.
+% $\mathcal L_{\mathrm{BC}}$ is evaluated on the executed-action field of
+% the mixed minibatch and therefore retains behavior that is actually
+% applied to the environment.
+% $\mathcal V_{\mathrm E}$ is the only actor-side term that directly
+% compares the executed human action $\vah$ with the rejected autonomous
+% proposal $\van$.
+% The remaining two terms extend this repair beyond the intervention
+% pairs: $\mathcal L_{\mathrm{RL}}$ uses the learned proxy-risk critics to
+% improve autonomous samples, while $\mathcal L_{\mathrm{reg}}$ limits
+% unnecessary changes to a deterministic reference output.
+
+% \ER{} already provides the direct actor correction in intervention
+% states. To carry risk-sensitive improvement to states at which the
+% policy remains in control, the conservative critic score of actor samples
+% drawn from $\DN$ is minimized:
+
+% \begin{equation}
+%     \mathcal{L}_{\mathrm{RL}}(\theta)
+%     =
+%     \E_{\DN,\bm{\xi}}
+%     \left[
+%     C_{\max}
+%     \left(
+%     \vs,
+%     \va_{\theta}\!\left(\vs;\bm{\xi}\right)
+%     \right)
+%     \right].
+%     \label{eq:actor_rl}
+% \end{equation}
+
+% Here $\bm{\xi}$ collects the terminal Gaussian variable and the
+% reverse-process sampling noises, so the complete diffusion sampler can
+% be written as the reparameterized mapping
+% $\va_{\theta}\!\left(\vs;\bm{\xi}\right)$.
+% The critic parameters are kept fixed during this actor update, while
+% the gradients pass through the sampled action to $\theta$.
+% Because lower critic values indicate lower predicted proxy risk,
+% minimizing~\eqref{eq:actor_rl} moves actor samples toward regions that
+% the critics regard as less risky.
+% Restricting this term to $\DN$ also separates its role from \ER{}:
+% \ER{} directly corrects observed takeover pairs, whereas
+% $\mathcal L_{\mathrm{RL}}$ transfers the learned risk structure to
+% ordinary autonomous states.
+
+% Both \ER{} and the critic-mediated term deliberately modify the
+% actor. Repeated online repair could therefore also move an already useful
+% reference behavior even when such movement is unnecessary.
+% This drift is limited by anchoring a deterministic reverse-chain output
+% to the logged executed action:
+
+% \begin{equation}
+%     \mathcal{L}_{\mathrm{reg}}(\theta)
+%     =
+%     \E_{\DN}
+%     \left[
+%     \left\|
+%     \va^{\mathrm{det}}_{\theta}\!\left(\vs\right)
+%     -
+%     \vab
+%     \right\|_2^2
+%     \right].
+%     \label{eq:detanchor}
+% \end{equation}
+
+% The reference action $\va^{\mathrm{det}}_{\theta}\!\left(\vs\right)$ is obtained by
+% running the reverse chain with the terminal Gaussian variable and all
+% reverse-step sampling noises fixed to zero.
+% Unlike the BC objective, which supervises denoising over the stochastic
+% diffusion process, \eqref{eq:detanchor} constrains only this
+% deterministic reference path. It therefore limits unnecessary drift
+% without forcing the entire stochastic policy to collapse toward one
+% action.
+
+% The appropriate strength of \ER{} also changes during repair.
+% When the current intervention pairs still violate the desired margin,
+% the ranking objective should receive greater emphasis. Once the average
+% violation is sufficiently small, the same pressure need not remain fixed.
+% This requirement is expressed as the soft constraint
+
+% $$
+%     \mathcal V_{\mathrm E}\!\left(\theta\right)
+%     \leq
+%     \varepsilon_{\mathrm E},
+% $$
+% where $\varepsilon_{\mathrm E}\geq0$ is the allowable average \ER{}
+% violation tolerance.
+
+% Let the remaining actor objective be
+
+% \begin{equation*}
+%     F(\theta)
+%     =
+%     \lambda_{\mathrm{BC}}\mathcal L_{\mathrm{BC}}(\theta)
+%     +
+%     \lambda_{\mathrm{RL}}\mathcal L_{\mathrm{RL}}(\theta)
+%     +
+%     \lambda_{\mathrm{reg}}\mathcal L_{\mathrm{reg}}(\theta).
+% \end{equation*}
+
+% The corresponding Lagrangian is
+
+% \begin{equation*}
+%     \mathcal J(\theta,\eta_{\mathrm E})
+%     =
+%     F(\theta)
+%     +
+%     \eta_{\mathrm E}
+%     \left(
+%     \mathcal V_{\mathrm E}(\theta)
+%     -
+%     \varepsilon_{\mathrm E}
+%     \right),
+%     \qquad
+%     \eta_{\mathrm E}\geq0,
+% \end{equation*}
+
+% whose derivative with respect to the multiplier is
+
+% \begin{equation*}
+%     \frac{\partial\mathcal J}
+%     {\partial\eta_{\mathrm E}}
+%     =
+%     \mathcal V_{\mathrm E}(\theta)
+%     -
+%     \varepsilon_{\mathrm E}.
+% \end{equation*}
+
+% For a fixed multiplier,
+% $-\eta_{\mathrm E}\varepsilon_{\mathrm E}$ is independent of $\theta$,
+% so minimizing this Lagrangian with respect to the actor gives the same
+% actor gradient as~\eqref{eq:actorloss}.
+% Replacing the exact violation by its current minibatch estimate and
+% projecting the multiplier onto the nonnegative domain gives
+
+% \begin{equation}
+%     \eta_{\mathrm{E}}^{(k+1)}
+%     =
+%     \left[
+%     \eta_{\mathrm{E}}^{(k)}
+%     +
+%     \zeta_{\mathrm E}
+%     \left(
+%     \widehat{\mathcal V}_{\mathrm E}^{(k)}
+%     -
+%     \varepsilon_{\mathrm E}
+%     \right)
+%     \right]_+ .
+%     \label{eq:dualupdate}
+% \end{equation}
+
+% Here $k$ indexes successive multiplier updates,
+% $\widehat{\mathcal V}_{\mathrm E}^{(k)}$ is the \ER{} violation
+% measured on the current intervention minibatch, and
+% $\zeta_{\mathrm E}>0$ is the dual-ascent step size.
+% The multiplier increases when the observed violation exceeds the
+% tolerance and decreases toward zero when the average ranking violation
+% is below it. This update controls the average sampled violation. It does
+% not imply that every individual intervention pair satisfies the margin.
+
+% \subsubsection{Critic update}
+
+% The actor update above requires a proxy-risk surface that is informative
+% beyond the observed intervention pairs, while \CPCal{} requires the same
+% critics to retain the observed same-state veto ordering. The critic
+% update therefore combines two complementary sources of supervision.
+% Temporal-difference learning propagates observed collision cost through
+% actions that are actually executed in the environment, whereas the
+% pairwise objective supplies relative supervision for rejected
+% autonomous proposals that do not have observed counterfactual
+% transitions.
+
+% Observed collision cost is first propagated through valid executed
+% transitions. 
+% The instantaneous cost is capped as
+
+% $$
+%     \bar c
+%     =
+%     \min\!\left(c,c_{\mathrm{clip}}\right),
+% $$
+% where $c_{\mathrm{clip}}>0$ is the collision-cost clipping bound. The target
+% actor provides a projected sample $\widehat{\va}_{\bar\theta}\!\left(\vs'\right)\in\Avalid$.
+% Here $\bar\theta$ and $\bar\psi_i$ denote the Polyak-averaged target actor
+% and target critic parameters, respectively. The TD target is
+
+% \begin{equation}
+%     y_{\mathrm C}
+%     =
+%     \bar c
+%     +
+%     \gamma
+%     \left(
+%     1-\ind_{\mathrm{done}}
+%     \right)
+%     \max_{i\in\{1,2\}}
+%     C_{\bar\psi_i}
+%     \left(
+%     \vs',
+%     \widehat{\va}_{\bar\theta}\!\left(\vs'\right)
+%     \right).
+%     \label{eq:tdtarget}
+% \end{equation}
+
+% The termination indicator removes bootstrapping at terminal transitions.
+% Because larger critic values represent greater predicted proxy risk, the
+% maximum over the two target critics provides the conservative
+% continuation estimate.
+
+% Each critic head is trained toward this target through
+
+% \begin{equation}
+%     \mathcal{L}_{\mathrm{TD}}
+%     =
+%     \sum_{i=1}^{2}
+%     \E_{\D}
+%     \left[
+%     \ind_{\mathrm{TD}}
+%     \left(
+%     C_{\psi_i}\!\left(\vs,\vab\right)
+%     -
+%     \operatorname{stopgrad}
+%     \left(
+%     y_{\mathrm C}
+%     \right)
+%     \right)^2
+%     \right].
+%     \label{eq:tdloss}
+% \end{equation}
+
+% The operator $\operatorname{stopgrad}(\cdot)$ keeps the numerical target
+% unchanged in the forward pass but blocks gradients through its target
+% network computation.
+% The mask $\ind_{\mathrm{TD}}$ equals one whenever the replay entry
+% contains a valid transition generated by the actually executed action
+% $\vab$, including intervention transitions. Thus, for a
+% non-intervention transition, $\vab=\van$, whereas for an intervention
+% transition, $\vab=\vah$. In the latter case, the observed cost and next
+% state provide valid TD supervision for
+% $C_{\psi_i}(\vs,\vah)$. The rejected autonomous proposal $\van$ is not
+% used as a TD action because its counterfactual next state was not
+% observed.
+
+% The TD and pairwise objectives provide complementary supervision.
+% TD regression assigns temporal supervision only to actions that were
+% actually executed in the environment. In an intervention transition,
+% this means that $C_{\psi_i}(\vs,\vah)$ can be trained from the observed
+% cost and successor state because $\vah=\vab$ was executed. In contrast,
+% the rejected proposal $\van$ has no observed counterfactual successor
+% and therefore cannot receive a valid TD target.
+
+% The intervention nevertheless provides relative information between
+% these two same-state actions. The pairwise objective in
+% \eqref{eq:pairloss} uses this additional supervision to require the
+% rejected proposal to receive a larger proxy-risk score than the
+% executed human action. The critic objective is therefore
+% \begin{equation}
+%     \mathcal{L}_{\mathrm C}
+%     \left(
+%     \psi_1,\psi_2
+%     \right)
+%     =
+%     \mathcal{L}_{\mathrm{TD}}
+%     +
+%     \lambda_{\mathrm{cal}}
+%     \mathcal{L}_{\mathrm{pair}}.
+%     \label{eq:criticloss}
+% \end{equation}
+% Here $\lambda_{\mathrm{cal}}\geq0$ is the fixed weight of the pairwise
+% calibration objective. Both terms constrain the two critic heads
+% separately. TD learning establishes and propagates the numerical
+% proxy-risk scale from observed costs and transitions, while
+% $\mathcal L_{\mathrm{pair}}$ injects the same-state veto relation for
+% the rejected action without assigning it an artificial absolute risk
+% target.
+
+% The resulting $C_{\psi_i}$ values remain learned proxy-risk scores.
+% They are neither calibrated collision probabilities nor exact
+% discounted collision costs. Accordingly,
+% $m_{\mathrm C}$, $\kappa_{\mathrm C}$, and $\tau_{\mathrm D}$ are
+% interpreted on the learned critic scale:
+% $m_{\mathrm C}$ specifies the required training-time pair separation,
+% whereas $\kappa_{\mathrm C}$ and $\tau_{\mathrm D}$ are deployment
+% thresholds applied to the same learned score space.
+
+% \subsubsection{Implementation and training schedule}
+
+% Actions are represented as
+
+% $$
+%     \va
+%     =
+%     [\delta\ \ u]^\top
+%     \in
+%     [-1,1]^2,
+% $$
+
+% where $\delta$ is steering and $u$ is longitudinal control.
+% Pairs satisfying
+
+% $$
+%     \|\vah-\van\|_2
+%     <
+%     \tau_{\mathrm{pair}},
+% $$
+% where $\tau_{\mathrm{pair}}>0$ is the pair-distance threshold. Such pairs
+% are discarded before insertion into $\DI$ because nearly identical
+% actions provide little meaningful pairwise supervision.
+% The remaining implementation settings are summarized in
+% Table~\ref{tab:impl_hparams}.
+
+% \begin{table}[!t]
+% \centering
+% \caption{{\normalfont Implementation and training hyperparameters of \DOVE{}.}}
+% \label{tab:impl_hparams}
+% \footnotesize
+% \renewcommand{\arraystretch}{1.08}
+% \setlength{\tabcolsep}{3pt}
+% \begin{tabular}{@{}p{0.56\columnwidth}p{0.37\columnwidth}@{}}
+% \toprule
+% \textbf{Setting} & \textbf{Value}\\
+% \midrule
+
+% \multicolumn{2}{@{}l}{\textit{Architecture and replay}}\\
+% Action dimension / diffusion steps
+% & $2$ / $20$\\
+% Denoiser / critic hidden width
+% & $128$ / $256$\\
+% Denoiser / critic Adam learning rate
+% & $1.5\times10^{-4}$ / $3\times10^{-4}$\\
+% Batch size
+% & $256$\\
+% Replay mix $\DN:\DI:\Ddemo$
+% & $75:15:10$\\
+% Pair-distance threshold $\tau_{\mathrm{pair}}$
+% & $0.03$\\
+
+% \midrule
+% \multicolumn{2}{@{}l}{\textit{Actor learning}}\\
+% $m_{\mathrm{rank}}$
+% & $0.05$\\
+% $\lambda_{\mathrm{BC}},\lambda_{\mathrm{RL}},\lambda_{\mathrm{reg}}$
+% & $12,\ 0.1,\ 2.0$\\
+% $\zeta_{\mathrm E},\varepsilon_{\mathrm E},
+% \eta_{\mathrm E}^{\mathrm{init}}$
+% & $10^{-3},\ 0.01,\ 1.0$\\
+
+% \midrule
+% \multicolumn{2}{@{}l}{\textit{Critic learning}}\\
+% Discount factor / Polyak coefficient
+% & $0.99$ / $5\times10^{-3}$\\
+% $m_{\mathrm C},\lambda_{\mathrm{cal}},c_{\mathrm{clip}}$
+% & $0.1,\ 1.0,\ 1$\\
+
+% \midrule
+% \multicolumn{2}{@{}l}{\textit{Guidance and gate}}\\
+% $\lambda_{\mathrm g},\phi_t,g_{\max}$
+% & $0.5,\ t/T,\ 1.0$\\
+% $d_{\max},\kappa_{\mathrm C}$
+% & $0.2,\ 0.02$\\
+% $\tau_{\mathrm{comp}},\tau_{\mathrm D}$
+% & $0.02,\ 1.0$\\
+
+% \bottomrule
+% \end{tabular}
+% \end{table}
+
+% Training follows the same lifecycle used by the method.
+% The diffusion actor is first pretrained for $10{,}000$ gradient updates
+% using the collected executed actions, after which the critics receive a
+% $1{,}000$-update warm-up.
+% During online repair, each environment interaction triggers two
+% optimization updates from mixed replay.
+% The critics are updated at each such update, while the actor and
+% $\eta_{\mathrm E}$ follow the delayed actor schedule and are updated
+% every third optimizer step.
+
+% In the current implementation,
+% $\lambda_{\mathrm{RL}}$ is kept at zero during the first
+% $1{,}000$ online updates and is then annealed to its final value by
+% online update $3{,}000$.
+% This delay prevents critic-mediated policy improvement from dominating
+% before the proxy-risk surface has received sufficient training.
+% After the annealing stage, all terms in~\eqref{eq:actorloss} participate
+% in each scheduled actor update.
+
+% For numerical centering, the implementation may subtract the
+% logged-action critic score from~\eqref{eq:actor_rl}.
+% With the replay sample and critic parameters fixed,
+
+% $$
+%     \nabla_{\theta}
+%     C_{\max}\!\left(\vs,\vab\right)
+%     =
+%     0,
+% $$
+
+% so this subtraction changes the reported loss value but does not change
+% the actor gradient.
+
+% Algorithm~\ref{alg:dove} summarizes the complete transition from data
+% collection and online repair to frozen deployment.
+
+% \begin{algorithm}[!t]
+% \caption{\DOVE{} online repair and frozen deployment}
+% \label{alg:dove}
+% \begin{algorithmic}[1]
+
+% \Require Initial HIL log $\D_0$, training hyperparameters,
+% guidance parameters, and gate thresholds
+
+% \State Build $\DBCdata$, $\DI$, and $\Ddemo$ from $\D_0$
+% \State Remove intervention pairs with
+% $\|\vah-\van\|_2<\tau_{\mathrm{pair}}$
+% \State Pretrain the diffusion actor using~\eqref{eq:bc}
+% \State Warm up the twin critics
+
+% \For{each online-repair environment interaction}
+%     \State Act under supervisor authority and append the transition to $\D$
+
+%     \If{$\ind_{\mathrm{int}}=1$ and
+%     $\|\vah-\van\|_2\geq\tau_{\mathrm{pair}}$}
+%         \State Append $(\vs,\vah,\van)$ to $\DI$
+%     \EndIf
+
+%     \For{each of the two optimizer updates}
+%         \State Update the critics using~\eqref{eq:criticloss}
+
+%         \If{the delayed actor schedule is active}
+%             \State Update the actor using~\eqref{eq:actorloss}
+%             \State Update $\eta_{\mathrm E}$ using~\eqref{eq:dualupdate}
+%         \EndIf
+%     \EndFor
+% \EndFor
+
+% \State Freeze the actor, critics, and all deployment thresholds
+
+% \For{each deployment control step}
+%     \State Sample $\va^{\mathrm{base}}$ and project it to
+%     $\bar{\va}^{\mathrm{base}}$
+%     \State Construct $\vag$ using
+%     \eqref{eq:guidance_grad}--\eqref{eq:guided_reverse}
+
+%     \If{all conditions in~\eqref{eq:execution_gate} hold}
+%         \State Execute $\vag$
+%     \Else
+%         \State Execute $\bar{\va}^{\mathrm{base}}$
+%     \EndIf
+% \EndFor
+
+% \end{algorithmic}
+% \end{algorithm}
+
+
+
+
+\section{Experiments}
+\label{sec:experiments}
+
+The experiments evaluate \DOVE{} from three complementary perspectives.
+\textbf{RQ1} compares closed-loop performance and human-data efficiency
+under a matched HIL protocol. \textbf{RQ2} isolates how veto supervision
+is reflected in the diffusion actor, the proxy-risk critics, and the
+inference rule under a shared backbone. \textbf{RQ3} evaluates the frozen
+system on a physical UGV.
+
+
+All comparison methods follow the same MetaDrive benchmark configuration,
+including 20 training maps, 10 held-out maps, the same observation and
+action spaces, environment settings, and evaluation protocol. Learned-HIL
+methods additionally share the steering-wheel and pedal interface,
+supervisor protocol, interaction accounting, and a 0.05M environment-step
+budget including the initial human-controlled collection. All deployment
+thresholds are fixed before evaluation and are not retuned on the held-out
+maps or on the physical vehicle.
+
+CLIC, SDP, and PACT are not included in the matched numerical comparison because their original formulations change the policy backbone, action horizon, or data regime. Transplanting only a pairwise objective into the present single-step diffusion backbone would no longer reproduce the original method and would mix pair utilization with architectural changes. RQ2 therefore uses a controlled same-backbone ablation to isolate veto-aware actor training, critic calibration, guidance, and gated execution.
+
+For the matched learned-HIL benchmark, each method is trained under the fixed
+0.05M-step interaction budget and evaluated on the same held-out benchmark.
+\DOVE{} is independently trained three times, with the final checkpoint of
+each run evaluated over 20 held-out episodes. Mean~\(\pm\) standard error is
+reported for results with independent-run statistics, while scalar entries
+denote the corresponding aggregate result recorded under the same benchmark
+protocol. Human Data counts human-controlled environment steps, Training
+Safety Cost is cumulative collision cost during training, and Test Cost is
+the mean accumulated collision cost per held-out episode. Return is episodic
+return, Succ.\ is the fraction of episodes that reach the destination without
+collision, Route is the mean completed-route fraction, Coll.\ is the collision
+fraction, and Ep.\ Reward is the mean episode reward used in the fixed
+inference ablation.
+
+\subsection{Experimental Platforms}
+
+\subsubsection{Simulation platform}
+MetaDrive generates closed-loop driving scenes with moving traffic and
+static obstacles~\cite{li2023metadrive,li2025chac,li2025hdsac}. The
+policy observes the ego state, a 240-dimensional surrounding-distance
+vector, and navigation information. It outputs continuous steering and
+longitudinal-control actions, as shown in Fig.~\ref{fig:sim_setup}.
+Two trained operators supervise all HIL runs. They intervene when the
+current trajectory would lead to a collision, road departure, or
+incorrect routing, producing the synchronized pairs used by \DOVE{}.
+
+\begin{figure}[!t]
+\centering
+\subfloat[Simulation HIL setup.\label{fig:sim_setup}]{%
+\includegraphics[width=\linewidth,pagebox=cropbox]{figures/simulation/fig_metadrive_hitl_setup.pdf}}\\[-1pt]
+\subfloat[Physical UGV and HIL interface.\label{fig:ugv_platform}]{%
+\includegraphics[width=\linewidth]{figures/real_car/fig_real_platform.pdf}}
+\caption{Simulation and physical HIL platforms. Both log synchronized autonomous, supervisor, and executed actions.}
+\label{fig:platforms}
+\end{figure}
+
+\subsubsection{Physical UGV platform}
+The physical study uses a UGV on a logged Route~1 course. The
+vehicle localizes through an integrated navigation system and converts
+LiDAR, camera, and radar detections into a MetaDrive-style surrounding
+representation. Onboard computation runs on an NVIDIA Jetson AGX Orin,
+with low-level commands sent over the controller area network (CAN) bus. The
+onboard logger records autonomous, supervisor, and executed actions
+with synchronized timestamps. These records form the intervention
+pairs of Sec.~\ref{sec:prelim_hitl}. The platform and its HIL interface
+are shown in Fig.~\ref{fig:ugv_platform}.
+
+\subsection{RQ1: Closed-Loop MetaDrive Results}
+\label{sec:rq1}
+
+Table~\ref{tab:main} summarizes several protocol groups, and direct comparisons are made within the matched learned-HIL group.
+
+\begin{table*}[!t]
+\centering
+\caption{{\normalfont MetaDrive closed-loop comparison under different training protocols. }}
+\label{tab:main}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular*}{0.98\textwidth}{@{\extracolsep{\fill}}lcccccc@{}}
+\toprule
+Method & Human Data$\downarrow$ & Online Env.\ Steps & Train Safety Cost$\downarrow$ & Return$\uparrow$ & Test Cost$\downarrow$ & Succ.$\uparrow$\\
+\midrule
+\multicolumn{7}{l}{\textit{Human reference}}\\
+Human Demo. & 50K & \text{N/A} & 23 & 377.52 & 0.39 & 0.97\\
+\midrule
+\multicolumn{7}{l}{\textit{Standard online RL baselines}}\\
+SAC~\cite{haarnoja2018sac} & \text{N/A} & 1M & $7.94\mathrm{K}{\pm}3.24\mathrm{K}$ & $350.18{\pm}16.21$ & $1.00{\pm}0.28$ & $0.73{\pm}0.13$\\
+PPO~\cite{schulman2017ppo} & \text{N/A} & 1M & $45.12\mathrm{K}{\pm}21.11\mathrm{K}$ & $278.65{\pm}35.07$ & $3.92{\pm}1.91$ & $0.44{\pm}0.14$\\
+DSAC~\cite{duan2021dsac} & \text{N/A} & 1M & $7.44\mathrm{K}{\pm}3.59\mathrm{K}$ & $349.35{\pm}22.15$ & $0.47{\pm}0.08$ & $0.77{\pm}0.09$\\
+\midrule
+\multicolumn{7}{l}{\textit{Offline, imitation, and diffusion-RL baselines}}\\
+CQL~\cite{kumar2020cql} & 50K  & \text{N/A} & \text{N/A} & $93.12{\pm}16.31$ & $1.45{\pm}0.15$ & $0.09{\pm}0.05$\\
+BC & 50K  & \text{N/A} & \text{N/A} & $59.13{\pm}8.92$ & $0.12{\pm}0.03$ & $0.00{\pm}0.00$\\
+Diffusion-QL~\cite{wang2023diffusionql}  & \text{N/A} & 1M & 5{,}634 & $366.79{\pm}16.78$ & $0.11{\pm}0.07$ & $0.88{\pm}0.03$\\
+DACER~\cite{wang2024dacer}  & \text{N/A} & 1M & 1{,}092 & $369.78{\pm}15.38$ & $0.10{\pm}0.04$ & $0.89{\pm}0.01$\\
+\midrule
+\multicolumn{7}{l}{\textit{Learned-HIL methods under the matched 0.05M protocol}}\\
+HG-DAgger~\cite{kelly2019hgdagger} & 34.9K  & 0.05M & 56.13 & 142.35 & 2.10 & 0.30\\
+IWR~\cite{mandlekar2020iwr} & 37.1K  & 0.05M & 48.78 & 329.97 & 4.00 & 0.70\\
+PVP~\cite{peng2023pvp} & 15.7K & 0.05M & $33.67{\pm}3.46$ & $338.28{\pm}10.21$ & $0.65{\pm}0.12$ & $0.80{\pm}0.03$\\
+H-DSAC~\cite{li2025hdsac} & 14.8K & 0.05M & $32.12{\pm}4.68$ & $353.39{\pm}12.34$ & $0.31{\pm}0.03$ & $0.83{\pm}0.05$\\
+\DOVE{} & \textbf{4.2K} (\textbf{--71.6\% vs. H-DSAC})  & 0.05M & \textbf{23.18} & $\bm{368.16}{\pm}6.88$ & $\bm{0.03}{\pm}0.03$ & $\bm{0.95}{\pm}0.03$\\
+\bottomrule
+\end{tabular*}
+\end{table*}
+
+Among the matched learned-HIL methods, \DOVE{} achieves
+a mean success rate of $0.95$ and a mean episodic return
+of $368.16$. It also records a mean test cost of $0.03$
+and uses 4.2K human-controlled environment steps.
+The latter corresponds to a 71.6\% reduction relative
+to H-DSAC and a 73.2\% reduction relative to PVP.
+These results indicate improved closed-loop performance
+with fewer human-controlled steps under the matched
+training protocol.
+
+The reduction in human intervention is also reflected in the training
+dynamics. As online repair progresses, \DOVE{}'s takeover rate decreases
+rapidly, consistent with the lower cumulative human-control count reported
+in Table~\ref{tab:main}.
+
+\begin{figure}[!t]
+\centering
+\subfloat[Training reward]{%
+\includegraphics[width=0.48\linewidth]{figures/simulation/fig_sim_reward_curve_hdsac_compare.pdf}}
+\hfil
+\subfloat[Takeover rate]{%
+\includegraphics[width=0.48\linewidth]{figures/simulation/fig_sim_takeover_hdsac_pvp_dove.pdf}}
+\caption{MetaDrive training dynamics over each method's logged horizon. (a) Training reward. (b) Takeover rate. The matched 0.05M held-out comparison is in Table~\ref{tab:main}.}
+\label{fig:sim_curves}
+\end{figure}
+
+
+
+
+
+
+\subsection{RQ2: Component Diagnostics and Inference Ablation}
+\label{sec:rq2}
+
+Building on the closed-loop benchmark of Table~\ref{tab:main}, RQ2
+examines how veto supervision is represented in the actor, the critics,
+and the inference rule under a shared diffusion backbone.
+The training ablation considers all four combinations of \ER{}
+and \CPCal{}.
+The \emph{Positive-only actor} configuration disables both components
+($\eta_{\mathrm E}=0$, $\lambda_{\mathrm{cal}}=0$) and uses TD-only
+critics.
+\emph{ER w/o \CPCal{}} activates \ER{} while retaining TD-only
+critics ($\lambda_{\mathrm{cal}}=0 $).
+\emph{\CPCal{} only} disables \ER{} ($\eta_{\mathrm E}=0$) while
+retaining the pairwise critic loss in~\eqref{eq:pairloss}.
+Full \DOVE{} enables both components.
+All remaining actor objectives and the common training protocol are
+kept unchanged, including critic-mediated actor improvement.
+The four configurations therefore examine the contribution of each
+component both with and without the other.
+
+All pair-based diagnostics use 256 intervention pairs.
+For the longitudinal actor audit, we evaluate 50, 50, 46, and 46 saved
+checkpoints for the Positive-only actor, ER w/o \CPCal{},
+\CPCal{} only, and Full \DOVE{}, respectively.
+These yield $N_{\mathrm{audit}}=12{,}800$, $12{,}800$, $11{,}776$,
+and $11{,}776$ pair--checkpoint observations.
+The actor-side rates pool the corresponding observations across the
+saved checkpoints.
+PairAcc$_{\mathrm C}^{\mathrm{mean}}$ is computed over the same
+256 intervention pairs and reports the fraction for which the mean
+twin-critic score orders $\van$ above $\vah$.
+It summarizes mean-critic ordering and complements the per-head margin
+objective in~\eqref{eq:pairloss}.
+
+Actor-side diagnostics are evaluated at the intervention states.
+Across the audited pair--checkpoint observations, the schedule-weighted
+variational diagnostic is the empirical ordering frequency
+\[
+\rho_{\mathrm{VLB}}
+=
+\frac{1}{N_{\mathrm{audit}}}
+\sum_{n=1}^{N_{\mathrm{audit}}}
+\ind\!\left[
+\left(\Delta\Eelbo\right)^{(n)}>0
+\right].
+\]
+To measure the frozen sampler rather than only its residual score, let
+\[
+\va_{\mathrm{mid}}
+=
+\frac{\vah+\van}{2},
+\qquad
+z(\va)
+=
+\frac{
+\left(\va-\va_{\mathrm{mid}}\right)^\top
+\left(\vah-\van\right)
+}{
+\left\lVert\vah-\van\right\rVert_2^2
+}.
+\]
+Let $N_{\mathrm{samp}}$ denote the total number of unguided actor
+samples pooled over the audited pair--checkpoint observations.
+HSR measures the fraction on the accepted-action side of the pair
+midpoint:
+\[
+\mathrm{HSR}
+=
+\frac{1}{N_{\mathrm{samp}}}
+\sum_{k=1}^{N_{\mathrm{samp}}}
+\ind\!\left[
+z\!\left(\va^{(k)}\right)>0
+\right].
+\]
+Rejected-neighborhood recurrence is measured by
+\[
+\mathrm{RMR}_{0.5}
+=
+\frac{1}{N_{\mathrm{samp}}}
+\sum_{k=1}^{N_{\mathrm{samp}}}
+\ind\!\left[
+\left\lVert\va^{(k)}-\van\right\rVert_2
+<
+0.5\,
+\left\lVert\vah-\van\right\rVert_2
+\right].
+\]
+Both sampling diagnostics are computed in the normalized policy-action
+space, with each checkpoint held fixed during evaluation.
+The VLB diagnostic uses the training VP noise schedule
+($b_{\min}=0.1$, $b_{\max}=10$, and $T=20$), with 64 shared-noise
+draws per diffusion step.
+At $t=1$, it uses the Gaussian decoder variance
+$\sigma_{\mathrm{dec}}^2=\beta_1$ defined in the variational analysis;
+for $t>1$, it uses the posterior reverse variance.
+HSR and RMR$_{0.5}$ use 64 unguided frozen-actor samples per audited
+pair--checkpoint observation.
+
+\begin{table}[!t]
+\centering
+\caption{{\normalfont
+Actor- and critic-side diagnostics with \ER{} and \CPCal{}
+enabled ($\checkmark$) or disabled ($\times$).
+The last row corresponds to Full \DOVE{}.}}
+\label{tab:rq2_audit}
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\renewcommand{\arraystretch}{1.08}
+
+\begin{tabularx}{\columnwidth}{
+@{}cc*{3}{>{\centering\arraybackslash}X}c@{}
+}
+\toprule
+\multicolumn{2}{c}{Components} &
+\multicolumn{3}{c}{Actor diagnostics} &
+Critic \\
+\cmidrule(lr){1-2}
+\cmidrule(lr){3-5}
+\cmidrule(l){6-6}
+
+\ER{} &
+\CPCal{} &
+$\rho_{\mathrm{VLB}}\uparrow$ &
+HSR$\uparrow$ &
+RMR$_{0.5}\downarrow$ &
+$\mathrm{PairAcc}_{\mathrm C}^{\mathrm{mean}}\uparrow$ \\
+\midrule
+
+$\times$ & $\times$
+& 0.619 & 0.615 & 0.295 & 0.789 \\
+
+$\checkmark$ & $\times$
+& \textbf{0.989} & \textbf{0.981} & \textbf{0.007} & 0.345 \\
+
+$\times$ & $\checkmark$
+& 0.772 & 0.722 & 0.189 & \textbf{0.987} \\
+
+$\checkmark$ & $\checkmark$
+& 0.821 & 0.772 & 0.151 & 0.891 \\
+
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Table~\ref{tab:rq2_audit} shows distinct effects of actor- and
+critic-side veto supervision.
+ER w/o \CPCal{} reduces RMR$_{0.5}$ from $0.295$ to $0.007$ and
+achieves the strongest VLB ordering and HSR, while its mean-critic
+pair accuracy is $0.345$.
+\CPCal{} only achieves the highest critic pair accuracy ($0.987$)
+and also improves actor diagnostics over Positive-only, consistent
+with the retained critic-mediated update in~\eqref{eq:actor_rl}.
+
+Full \DOVE{} improves all four diagnostics over Positive-only.
+Compared with \CPCal{} only, it raises HSR from $0.722$ to $0.772$
+and reduces RMR$_{0.5}$ from $0.189$ to $0.151$; compared with
+ER w/o \CPCal{}, it raises critic pair accuracy from $0.345$ to
+$0.891$.
+This pattern is consistent with the joint training design: the actor
+learns from both direct intervention-pair supervision and risk-oriented
+updates at autonomous states, while the critics combine factual TD
+learning with pairwise calibration.
+The veto is thus reflected in both actor sampling and critic ordering,
+providing complementary signals from the actor's expected
+noise-prediction loss and the critics' proxy-risk scores for
+frozen execution.
+
+To examine how these scores contribute to inference-time action
+selection, Table~\ref{tab:simulation_diagnostics} holds the
+Full-\DOVE{} training configuration fixed and varies only the
+execution rule.
+In the actor-only mode, the second guided reverse chain is bypassed
+entirely; setting $\lambda_{\mathrm g}=0$ is not equivalent because
+the local projection in~\eqref{eq:guided_estimate} can still alter
+the candidate trajectory.
+This inference ablation pools 500 episodes from five frozen
+Full-\DOVE{} checkpoints and is reported separately from the
+seed-wise matched benchmark in Table~\ref{tab:main}.
+
+\begin{table}[!t]
+\centering
+\caption{{\normalfont Inference-side execution-mode ablation with the
+Full-\DOVE{} training configuration held fixed.}}
+\label{tab:simulation_diagnostics}
+\footnotesize
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.00}
+\begin{tabularx}{\columnwidth}{@{}L{0.46\columnwidth}*{4}{>{\centering\arraybackslash}X}@{}}
+\toprule
+Inference mode & Succ.$\uparrow$ & Coll.$\downarrow$ &
+Route$\uparrow$ & Ep.\ Reward$\uparrow$ \\
+\midrule
+Actor only (no guidance) & 0.400 & 0.400 & 0.768 & 288.53 \\
+Top-8 rerank & 0.388 & 0.500 & 0.703 & 261.45 \\
+Guidance, always execute & 0.472 & 0.490 & 0.658 & 244.14 \\
+\midrule
+Guidance, loss-only gate & 0.492 & 0.470 & 0.647 & 240.55 \\
+Guidance, proxy-only gate & 0.770 & 0.230 & 0.854 & 322.30 \\
+Guidance, w/o disagreement & 0.838 & 0.162 & 0.874 &
+\textbf{330.81} \\
+Guidance, full gate & \textbf{0.842} & \textbf{0.158} &
+\textbf{0.883} & 330.76 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Reranking eight unguided actor samples by $C_{\max}$ does not improve
+over actor-only inference (success $0.388$ versus $0.400$), so
+critic-based sample selection alone does not account for the benefit of
+local refinement.
+Guidance alone is not reliably beneficial across closed-loop metrics.
+Although always executing the refinement increases success from
+$0.400$ to $0.472$, collision rises from $0.400$ to $0.490$, while
+route completion and episode reward decrease from $0.768$ to $0.658$
+and from $288.53$ to $244.14$, respectively.
+The proxy-risk predicate provides the primary selection signal in
+this inference diagnostic and raises success to $0.770$, whereas
+the loss-only gate reaches $0.492$. Adding the expected
+noise-prediction-loss constraint to the proxy-risk gate further
+increases success from $0.770$ to $0.838$, showing that proxy-risk
+reduction and the loss constraint provide complementary selection
+signals. The disagreement condition adds only a marginal increase,
+from $0.838$ to $0.842$, indicating a secondary role relative to
+the proxy-risk and loss constraints.
+
+\subsection{RQ3: Physical-UGV Study}
+\label{sec:rq3}
+
+RQ3 evaluates the complete lifecycle on a physical UGV. Intervention data are collected under supervisor authority, and the actor and critics are repaired online during continued Route~1 interaction. All parameters and thresholds are then frozen. During frozen evaluation, no corrective supervision is used for learning and no model parameter is updated. A safety operator retains emergency takeover authority solely for physical protection. Any such takeover terminates the trial and is counted as a failure.
+
+\subsubsection{On-vehicle online repair and data-path audit}
+Table~\ref{tab:ugv_audit} reports phase-level row counts, gate decisions, and acceptance and fallback rates. The three phases contain 32{,}505 logged rows. A separate Route~1 audit contains 8{,}411 synchronized samples over 919.65~s. Mean and maximum speeds are 2.08 and 3.11~\(\mathrm{m\,s^{-1}}\). All phases run onboard the vehicle. Under the fast evaluation path, the gate is evaluated at every control
+tick, while one diagnostic decision is logged every 20 ticks. The
+Gate dec.\ column therefore reports subsampled diagnostic decisions, and
+the corresponding phase-level acceptance rates are descriptive audit
+statistics. During frozen execution, the sampled gate diagnostics
+show an acceptance rate of $0.985$ and a fallback rate
+of $0.015$. Thus, most sampled decisions accept the
+guided candidate, while the projected fallback is
+selected in the remaining cases. These rates describe
+gate behavior on the practiced Route~1 course; the
+contribution of individual gate conditions is evaluated
+separately in the MetaDrive inference ablation.
+
+\begin{table}[!b]
+\centering
+\caption{{\normalfont Route~1 physical-UGV phase-level data-path audit.}}
+\label{tab:ugv_audit}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.00}
+\begin{tabularx}{0.96\columnwidth}{@{}L{0.32\columnwidth}*{4}{>{\centering\arraybackslash}X}@{}}
+\toprule
+Phase & Rows & Logged dec. & Accept. rate & Fallback rate \\
+\midrule
+Collection & 7{,}514 & 375 & 0.005 & 0.995 \\
+Online repair & 22{,}362 & 1{,}104 & 0.746 & 0.254 \\
+Frozen execution & 2{,}629 & 131 & 0.985 & 0.015 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Table~\ref{tab:ugv_timing} complements the data-path audit with mean onboard timing. Across three runs, diffusion-only inference averages 33.35~ms within a 100.08~ms control period (9.99~Hz). Complete \DOVE{} inference averages 154.22~ms, and the policy loop averages 170.12~ms (5.88~Hz). The vehicle interface cycles every 105.48~ms (9.48~Hz). The 0.82~ms entry is CAN command publication rather than command-to-actuation delay.
+
+\begin{table}[!t]
+\centering
+\caption{{\normalfont Mean onboard timing on the physical UGV, in milliseconds for latency and period and in hertz for rate. }}
+\label{tab:ugv_timing}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.00}
+\begin{tabularx}{0.96\columnwidth}{@{}L{0.32\columnwidth}*{3}{>{\centering\arraybackslash}X}@{}}
+\toprule
+Component & Latency & Period & Rate \\
+\midrule
+Diffusion-only & 33.35 & 100.08 & 9.99 \\
+\DOVE{} & 154.22 & 170.12 & 5.88 \\
+Vehicle interface & 0.82 & 105.48 & 9.48 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The guided policy loop runs at 5.88~Hz, below the 9.48~Hz vehicle
+interface rate, whereas the frozen actor alone meets the nominal
+10~Hz budget. The latency increase is largely attributable to inference
+call count. Diffusion-only inference uses $T=20$ denoiser evaluations,
+whereas Full \DOVE{} uses 20 evaluations for the base chain,
+20 for the guided chain, and two $T$-step expected
+noise-prediction-loss evaluation sweeps, giving 80 denoiser
+evaluations in total. It additionally performs one critic-gradient query
+at each reverse step. The resulting computation is consistent with the
+measured latency increase from 33.35 to 154.22~ms ($4.62\times$), with
+critic gradients and control overhead accounting for the remaining
+difference beyond the raw $4\times$ denoiser-call increase. The expected-loss evaluation sweeps and guided chain therefore
+constitute the dominant targets for inference acceleration. The interface holds the last accepted action between policy updates, and the closed loop remains stable at the speeds tested here.
+
+Fig.~\ref{fig:ugv_context} shows the Route~1 course and intervention burden. \DOVE{}'s takeover rate declines faster than that of the positive-only
+diffusion policy as repair proceeds, corresponding to a lower
+intervention burden after repair.
+
+\begin{figure}[!t]
+\centering
+\setlength{\parskip}{0pt}
+\captionsetup[subfloat]{
+    captionskip=1pt,
+    farskip=0pt,
+    nearskip=0pt,
+    topadjust=0pt
+}
+
+\subfloat[Route~1 context]{%
+    \includegraphics[width=0.75\columnwidth]{figures/real_car/fig_route1_only_map.pdf}%
+}%
+\par\nointerlineskip
+\subfloat[Intervention burden]{%
+    \includegraphics[width=0.75\columnwidth]{figures/real_car/fig_real_takeover_dove_vs_positive_dbp.pdf}%
+}%
+\par
+
+\caption{Route~1 audit context: (a) course used for collection and
+online repair and (b) intervention burden for \DOVE{} and the
+positive-only diffusion policy. The frozen-policy evaluation
+scenarios of Fig.~\ref{fig:ugv_scenes} are staged separately from
+this course.}
+\label{fig:ugv_context}
+\end{figure}
+
+\subsubsection{Closed-loop scenario comparison}
+The closed-loop study evaluates frozen systems with matched start states and scripts across the four evaluation scenarios shown in Fig.~\ref{fig:ugv_scenes}: curve meeting (C), pedestrian yielding (P), obstacle avoidance (O), and straight tracking (S). These scenarios are staged separately from the Route~1 course used for collection and online repair. The baselines instantiate three ways of using the intervention stream: the positive-only diffusion baseline trains its actor on executed takeover actions without using the rejected action in the actor objective, IWR is DAgger-style~\cite{mandlekar2020iwr}, and PVP-style TD3 is proxy-value-style~\cite{fujimoto2018td3,peng2023pvp}. All methods are trained on the same Route~1 intervention stream and evaluated under the frozen protocol defined above. A collision or emergency takeover counts as failure.
+
+\begin{figure}[!t]
+\centering
+\subfloat[Curve meeting (C)]{%
+\includegraphics[width=0.45\linewidth]{figures/real_car/fig_real_curve_meeting_complex_traffic.pdf}}
+\hfil
+\subfloat[Obstacle avoidance (O)]{%
+\includegraphics[width=0.45\linewidth]{figures/real_car/fig_real_obstacle_avoidance_compressed.pdf}}\\[-2pt]
+\subfloat[Pedestrian yielding (P)]{%
+\includegraphics[width=0.45\linewidth]{figures/real_car/fig_real_pedestrian_yielding_compressed.pdf}}
+\hfil
+\subfloat[Straight lane keeping (S)]{%
+\includegraphics[width=0.45\linewidth]{figures/real_car/fig_real_straight_lane_keeping_compressed.pdf}}
+\caption{Four evaluation scenarios used in the closed-loop comparison:
+(a) curve meeting (C), (b) obstacle avoidance (O), (c) pedestrian yielding (P),
+and (d) straight lane keeping (S). The scenario-count columns in
+Table~\ref{tab:ugv_closedloop} are reported in C/P/O/S order.}
+\label{fig:ugv_scenes}
+\end{figure}
+
+Table~\ref{tab:ugv_closedloop} summarizes the same 40 trials, with 10 trials per scenario. Continuous metrics are reported as mean~\(\pm\) standard deviation over valid logged frames. Speed, lateral mean absolute error (MAE), and mean absolute jerk use units of \(\mathrm{m\,s^{-1}}\), \(\mathrm{m}\), and \(\mathrm{m\,s^{-3}}\), respectively, and C/P/O/S lists successful trials for the four scenarios in the order defined above.
+
+\begin{table}[!t]
+\centering
+\caption{{\normalfont Closed-loop scenario results on the physical UGV.  Speed, lateral MAE, and jerk are reported in $\mathrm{m\,s^{-1}}$, $\mathrm{m}$, and $\mathrm{m\,s^{-3}}$, respectively. The C/P/O/S entries report successful trials (n/10) in curve meeting, pedestrian yielding, obstacle avoidance, and straight lane keeping, respectively.}}
+\label{tab:ugv_closedloop}
+\footnotesize
+\setlength{\tabcolsep}{1pt}
+\renewcommand{\arraystretch}{1.03}
+\begin{tabular*}{0.96\columnwidth}{@{\extracolsep{\fill}}lccccc@{}}
+\toprule
+Method & Speed & Lat.\ MAE$\downarrow$ & Jerk$\downarrow$ & Succ.$\uparrow$ & C/P/O/S$\uparrow$ \\
+\midrule
+Positive-only & $1.25{\pm}0.52$ & $1.31{\pm}1.03$ & $2.53{\pm}0.39$ & 0.40 & 3/3/3/7\\
+IWR~\cite{mandlekar2020iwr} & $1.24{\pm}0.78$ & $1.10{\pm}0.39$ & $3.06{\pm}0.92$ & 0.30 & 2/3/2/5\\
+PVP~\cite{peng2023pvp} & $0.62{\pm}0.26$ & $\bm{0.47}{\pm}0.29$ & $1.90{\pm}1.37$ & 0.20 & 1/2/2/3\\
+\DOVE{} & $\bm{1.39}{\pm}0.75$ & $0.51{\pm}0.36$ & $\bm{1.16}{\pm}0.20$ & \textbf{0.80} & \textbf{8/8/7/9}\\
+\bottomrule
+\end{tabular*}
+\end{table}
+
+\DOVE{} succeeds in 32 of 40 trials, doubling the 16
+successes of the positive-only diffusion policy. Its
+success counts are 8/10 in curve meeting, 8/10 in
+pedestrian yielding, 7/10 in obstacle avoidance, and
+9/10 in straight lane keeping. Among the reported
+continuous metrics, \DOVE{} has the lowest mean absolute
+jerk ($1.16~\mathrm{m\,s^{-3}}$). Its lateral MAE
+($0.51~\mathrm{m}$) is lower than those of Positive-only
+and IWR and close to that of PVP ($0.47~\mathrm{m}$).
+The mean speed is reported descriptively rather than
+treated as an objective to maximize. The eight remaining
+failures include seven in the three interactive scenarios
+and one in straight lane keeping.
+
+\section{Limitations}
+
+The present evaluation covers MetaDrive and four physical UGV scenarios
+following on-vehicle online repair. Further studies across more diverse
+routes and supervision conditions would help characterize its broader
+applicability. The current formulation treats retained takeover pairs as
+local preferences; reliability-aware weighting is a natural extension
+for handling variation across supervisors. Guided sampling and expected noise-prediction-loss evaluation also add computation relative to actor-only inference, motivating shorter sampling chains and more efficient loss evaluation for higher-rate
+control.
+
+
+% \section{Limitations}
+% \DOVE{} treats a takeover as a local supervisory preference and does not assume that the human action is globally optimal. The current implementation assigns the same ranking weight to all
+% retained intervention pairs after the pair-distance filter. Consequently,
+% erroneous or inconsistent interventions may introduce noisy ordering
+% signals into both \ER{} and \CPCal{}. Learning supervisor reliability
+% or adapting pair weights online is a natural extension. The guided
+% physical loop also runs below the nominal vehicle-interface rate,
+% motivating shorter or distilled diffusion samplers. Finally, the closest
+% correction-pair methods use different policy backbones, action horizons,
+% or data regimes. A fully matched numerical comparison to these methods
+% remains future work.
+
+% \FloatBarrier
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+This work presented \DOVE{}, which uses the accepted--rejected relation
+in human takeovers to connect diffusion-policy learning with selective
+execution. \ER{} directly imposes a margin on the actor's noise-prediction
+losses for executed and rejected actions, while \CPCal{} imposes
+a per-head pairwise margin on proxy-risk critics. After training, the frozen critics
+guide bounded local refinements. A separate gate requires predicted proxy-risk reduction, limits the
+increase in expected noise-prediction loss relative to the projected
+base action, and checks critic disagreement before replacing the
+base action with a refinement.
+
+Component diagnostics show that veto supervision reduces sampling near
+rejected actions and improves critic ordering, while inference ablations
+show the complementary benefits of proxy-risk gating and the
+constraint on expected noise-prediction loss Under the matched 50{,}000-step MetaDrive HIL protocol, \DOVE{}
+achieves the highest mean success rate  and return among
+the compared learned-HIL methods, using 4.2K human-controlled environment
+steps---more than 70\% fewer than H-DSAC and PVP. Following on-vehicle
+online repair, the frozen system succeeds in 32 of 40 trials across four
+physical scenarios, compared with 16 successes for the positive-only
+diffusion baseline.
+
+Together, these results show that a takeover can do more than correct
+the current action. Learning from both sides of the takeover and reusing
+the resulting scores in action evaluation and selection turn limited
+human feedback into improved autonomous driving with less human control
+during training.
+
+
+% \section{Conclusion}
+% \label{sec:conclusion}
+
+% This work revisits human takeover as an observed same-state veto rather than as only an additional positive demonstration. \DOVE{} preserves this information throughout the lifecycle of a diffusion driving policy: \ER{} shapes actor-side denoising compatibility, \CPCal{} maintains the intervention ordering in twin proxy-risk critics, and frozen guidance uses proxy-risk reduction as the primary execution signal while actor compatibility and critic agreement constrain the refinement. The diagnostics on the actor and critic-side show that the observed veto is expressed at both learned interfaces, while the inference ablation shows that proxy-risk gating and actor compatibility play complementary roles during frozen execution. Under the matched MetaDrive HIL protocol, \DOVE{} uses more than 70\% fewer human-controlled steps than proxy-value learned-HIL baselines while attaining the highest observed success and return, and on the physical UGV it doubles the success count of a positive-only diffusion policy across four scenarios. Future work will shorten the guided sampling chain to recover the nominal control rate and evaluate the same lifecycle over broader routes and more diverse interactions.
+
+% \FloatBarrier
+
+\bibliographystyle{IEEEtran}
+\bibliography{DOVE_final_references}
+
+\end{document}

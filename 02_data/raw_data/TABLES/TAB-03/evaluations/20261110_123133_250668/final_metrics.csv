@@ -1,0 +1,8 @@
+Panel,Setting,Episodes,Succ.↑,Crash↓,Route Completion↑,Return↑
+A,Positive-only (DBC + critic),5,0.2,0.4,0.805370604162,299.695535907
+A,ER w/o CPCal,6,0.666666666667,0.333333333333,0.840402102386,316.833630621
+A,Full DOVE,4,0.75,0.25,0.803107759979,301.725337711
+B,Repaired actor without test-time guidance,5,0.4,0.4,0.768492921787,290.269296863
+B,Top-K rerank (K=8),5,0.8,0.2,0.977516413114,371.624266735
+B,"Projected guidance, always execute",5,0.4,0.6,0.650349951475,241.373400172
+B,Projected guidance with acceptance/fallback gate,5,0.8,0.2,0.839743629231,316.002739427

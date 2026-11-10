@@ -1,0 +1,202 @@
+[
+  {
+    "folder": "Full_DOVE",
+    "checkpoint": "12000",
+    "factor": 0.982744594407587,
+    "verified_episodes": 100,
+    "max_abs_error": 5.684341886080801e-13,
+    "original_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/71_doveer_advantage_seed104_1000ep_20260602_095129/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/upvgds_final_gate_full/policy-12000-23998/episodes_upvgds_final_gate_full.csv",
+    "local_source": "provenance/reward_source_records/Full_DOVE_12000.csv",
+    "sha256": "2bf866cef63efc4d55904b91bbb32d20586368013d8281c59b3195e45985ef97"
+  },
+  {
+    "folder": "Full_DOVE",
+    "checkpoint": "13000",
+    "factor": 0.9827445944075869,
+    "verified_episodes": 100,
+    "max_abs_error": 5.115907697472721e-13,
+    "original_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/71_doveer_advantage_seed104_1000ep_20260602_095129/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/upvgds_final_gate_full/policy-13000-25998/episodes_upvgds_final_gate_full.csv",
+    "local_source": "provenance/reward_source_records/Full_DOVE_13000.csv",
+    "sha256": "40420ff20fcbcd36ad34e3846a41a6112ee7ac59dd06147a74d3b1fd53f5e975"
+  },
+  {
+    "folder": "Full_DOVE",
+    "checkpoint": "14000",
+    "status": "no independent matching unconverted record found; preserve factor already verified or identity"
+  },
+  {
+    "folder": "Full_DOVE",
+    "checkpoint": "32000",
+    "factor": 0.982744594407587,
+    "verified_episodes": 100,
+    "max_abs_error": 5.115907697472721e-13,
+    "original_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/71_doveer_advantage_seed104_1000ep_20260602_095129/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/upvgds_final_gate_full/policy-32000-63998/episodes_upvgds_final_gate_full.csv",
+    "local_source": "provenance/reward_source_records/Full_DOVE_32000.csv",
+    "sha256": "58f220837deae63249622d7516db5ade3ea7663026456f9dc37c13e9095506fc"
+  },
+  {
+    "folder": "Vanilla",
+    "checkpoint": "12000",
+    "factor": 0.9945971862668024,
+    "verified_episodes": 100,
+    "max_abs_error": 5.684341886080802e-14,
+    "original_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/71_doveer_advantage_seed104_1000ep_20260602_095129/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/vanilla/policy-12000-23998/episodes_vanilla.csv",
+    "local_source": "provenance/reward_source_records/Vanilla_12000.csv",
+    "sha256": "6e152a43aae7e3fa275a47d365ee5c6753f8cd2fe904211681c20c018dbca0a0"
+  },
+  {
+    "folder": "Vanilla",
+    "checkpoint": "13000",
+    "factor": 0.9945971862668024,
+    "verified_episodes": 100,
+    "max_abs_error": 1.1368683772161603e-13,
+    "original_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/71_doveer_advantage_seed104_1000ep_20260602_095129/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/vanilla/policy-13000-25998/episodes_vanilla.csv",
+    "local_source": "provenance/reward_source_records/Vanilla_13000.csv",
+    "sha256": "26f4d9e544ba120cd14892a748a92e5c3d142251c2db499e430737333fcbae2e"
+  },
+  {
+    "folder": "Vanilla",
+    "checkpoint": "14000",
+    "factor": 0.9945971862668024,
+    "verified_episodes": 100,
+    "max_abs_error": 2.842170943040401e-14,
+    "original_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/50_all_useful_evals_gpu_seed104_20260525_205921/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/vanilla/policy-14000-27998/episodes_vanilla.csv",
+    "local_source": "provenance/reward_source_records/Vanilla_14000.csv",
+    "sha256": "9d6634e28b400b4bbab7ac7a7cb99c12b77addcdacfa390586c046e110a4f841"
+  },
+  {
+    "folder": "Vanilla",
+    "checkpoint": "20000",
+    "factor": 0.9945971862668024,
+    "verified_episodes": 100,
+    "max_abs_error": 1.1368683772161603e-13,
+    "original_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/50_all_useful_evals_gpu_seed104_20260525_205921/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/vanilla/policy-20000-39998/episodes_vanilla.csv",
+    "local_source": "provenance/reward_source_records/Vanilla_20000.csv",
+    "sha256": "56c0719a71a9bc3e596b695c42817797ca3f65a6eafb44d74b0500a5bf65ef68"
+  },
+  {
+    "folder": "Vanilla",
+    "checkpoint": "32000",
+    "factor": 0.9945971862668024,
+    "verified_episodes": 100,
+    "max_abs_error": 5.684341886080802e-14,
+    "original_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/71_doveer_advantage_seed104_1000ep_20260602_095129/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/vanilla/policy-32000-63998/episodes_vanilla.csv",
+    "local_source": "provenance/reward_source_records/Vanilla_32000.csv",
+    "sha256": "96c59a29b7f7432354498c5942f31fa46acc14d7335454416becd9fb96fb7d0d"
+  },
+  {
+    "folder": "TopK_8",
+    "checkpoint": "12000",
+    "status": "no independent matching unconverted record found; preserve factor already verified or identity"
+  },
+  {
+    "folder": "TopK_8",
+    "checkpoint": "13000",
+    "status": "no independent matching unconverted record found; preserve factor already verified or identity"
+  },
+  {
+    "folder": "TopK_8",
+    "checkpoint": "14000",
+    "status": "no independent matching unconverted record found; preserve factor already verified or identity"
+  },
+  {
+    "folder": "TopK_8",
+    "checkpoint": "20000",
+    "status": "no independent matching unconverted record found; preserve factor already verified or identity"
+  },
+  {
+    "folder": "TopK_8",
+    "checkpoint": "32000",
+    "status": "no independent matching unconverted record found; preserve factor already verified or identity"
+  },
+  {
+    "folder": "No_gate",
+    "checkpoint": "12000",
+    "factor": 0.9945971862668024,
+    "verified_episodes": 100,
+    "max_abs_error": 1.1368683772161603e-13,
+    "original_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/50_all_useful_evals_gpu_seed104_20260525_205921/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/upvgds_no_gate/policy-12000-23998/episodes_upvgds_no_gate.csv",
+    "local_source": "provenance/reward_source_records/No_gate_12000.csv",
+    "sha256": "c442e148181f1522a11c0680dbeea7ee29753fe991675333ffc2b3fa46e64a26"
+  },
+  {
+    "folder": "No_gate",
+    "checkpoint": "13000",
+    "factor": 0.9945971862668024,
+    "verified_episodes": 100,
+    "max_abs_error": 1.1368683772161603e-13,
+    "original_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/50_all_useful_evals_gpu_seed104_20260525_205921/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/upvgds_no_gate/policy-13000-25998/episodes_upvgds_no_gate.csv",
+    "local_source": "provenance/reward_source_records/No_gate_13000.csv",
+    "sha256": "78a610c31510fd68af6d67fea2ba60dc0588681b6b9c56620ed7e432da4c066d"
+  },
+  {
+    "folder": "No_gate",
+    "checkpoint": "14000",
+    "factor": 0.9945971862668024,
+    "verified_episodes": 100,
+    "max_abs_error": 1.1368683772161603e-13,
+    "original_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/50_all_useful_evals_gpu_seed104_20260525_205921/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/upvgds_no_gate/policy-14000-27998/episodes_upvgds_no_gate.csv",
+    "local_source": "provenance/reward_source_records/No_gate_14000.csv",
+    "sha256": "6f35a01569b73b843f50703ebb39153acd1628c53ed82057800d0078d2c907c7"
+  },
+  {
+    "folder": "No_gate",
+    "checkpoint": "20000",
+    "factor": 0.9945971862668024,
+    "verified_episodes": 100,
+    "max_abs_error": 1.4210854715202004e-14,
+    "original_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/50_all_useful_evals_gpu_seed104_20260525_205921/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/upvgds_no_gate/policy-20000-39998/episodes_upvgds_no_gate.csv",
+    "local_source": "provenance/reward_source_records/No_gate_20000.csv",
+    "sha256": "7109b7c1fa8deb70595517517a3479b836d2fa48c339fa2241d245243eb0ed0f"
+  },
+  {
+    "folder": "No_gate",
+    "checkpoint": "32000",
+    "factor": 0.9945971862668024,
+    "verified_episodes": 100,
+    "max_abs_error": 1.4210854715202004e-14,
+    "original_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/50_all_useful_evals_gpu_seed104_20260525_205921/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/upvgds_no_gate/policy-32000-63998/episodes_upvgds_no_gate.csv",
+    "local_source": "provenance/reward_source_records/No_gate_32000.csv",
+    "sha256": "100c38be272af7e4e26da5a49c548724710c3a173bb1e614d375bd8efdbf121a"
+  },
+  {
+    "folder": "Full_gate",
+    "checkpoint": "12000",
+    "factor": 0.982744594407587,
+    "verified_episodes": 100,
+    "max_abs_error": 5.684341886080801e-13,
+    "original_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/71_doveer_advantage_seed104_1000ep_20260602_095129/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/upvgds_final_gate_full/policy-12000-23998/episodes_upvgds_final_gate_full.csv",
+    "local_source": "provenance/reward_source_records/Full_gate_12000.csv",
+    "sha256": "2bf866cef63efc4d55904b91bbb32d20586368013d8281c59b3195e45985ef97"
+  },
+  {
+    "folder": "Full_gate",
+    "checkpoint": "13000",
+    "factor": 0.9827445944075869,
+    "verified_episodes": 100,
+    "max_abs_error": 5.115907697472721e-13,
+    "original_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/71_doveer_advantage_seed104_1000ep_20260602_095129/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/upvgds_final_gate_full/policy-13000-25998/episodes_upvgds_final_gate_full.csv",
+    "local_source": "provenance/reward_source_records/Full_gate_13000.csv",
+    "sha256": "40420ff20fcbcd36ad34e3846a41a6112ee7ac59dd06147a74d3b1fd53f5e975"
+  },
+  {
+    "folder": "Full_gate",
+    "checkpoint": "14000",
+    "status": "no independent matching unconverted record found; preserve factor already verified or identity"
+  },
+  {
+    "folder": "Full_gate",
+    "checkpoint": "20000",
+    "status": "no independent matching unconverted record found; preserve factor already verified or identity"
+  },
+  {
+    "folder": "Full_gate",
+    "checkpoint": "32000",
+    "factor": 0.982744594407587,
+    "verified_episodes": 100,
+    "max_abs_error": 5.115907697472721e-13,
+    "original_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/71_doveer_advantage_seed104_1000ep_20260602_095129/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/upvgds_final_gate_full/policy-32000-63998/episodes_upvgds_final_gate_full.csv",
+    "local_source": "provenance/reward_source_records/Full_gate_32000.csv",
+    "sha256": "58f220837deae63249622d7516db5ade3ea7663026456f9dc37c13e9095506fc"
+  }
+]

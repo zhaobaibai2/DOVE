@@ -1,0 +1,4 @@
+policy_name,n_episodes,reward_mean,reward_episode_sd,cost_mean,cost_episode_sd,success_mean,success_episode_sd
+policy-11000-21998.pkl,2,379.8585745389429,0.4046670836255205,0.0,0.0,1.0,0.0
+policy-12000-23998.pkl,2,379.65981796771433,0.08315303500670616,0.0,0.0,1.0,0.0
+policy-13000-25998.pkl,2,378.9991923152178,0.2171782101247562,0.0,0.0,1.0,0.0

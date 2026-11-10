@@ -1,0 +1,4 @@
+record_type,setting,checkpoint,actor_pairs,critic_pairs,pairsat_e,ovr_e,diversity,pairacc_c,terminal_text
+checkpoint,Positive-only,policy-1000-1998,4,4,0.0,0.25,0.038746852427721024,0.25,Positive-only 第1/1组 PairSat_E=0.000 OVR_E=0.250 Diversity=0.039 PairAcc_C=0.250
+checkpoint,ER_wo_CPCal,policy-1000-1998,4,4,0.25,0.0,0.036867222748696804,0.0,ER_wo_CPCal 第1/1组 PairSat_E=0.250 OVR_E=0.000 Diversity=0.037 PairAcc_C=0.000
+checkpoint,Full_DOVE,policy-1000-1998,4,4,0.25,0.0,0.043453970924019814,0.25,Full_DOVE 第1/1组 PairSat_E=0.250 OVR_E=0.000 Diversity=0.043 PairAcc_C=0.250

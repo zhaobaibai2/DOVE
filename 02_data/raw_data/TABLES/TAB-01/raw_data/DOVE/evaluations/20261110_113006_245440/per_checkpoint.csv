@@ -1,0 +1,4 @@
+policy_name,n_episodes,reward_mean,reward_episode_sd,cost_mean,cost_episode_sd,success_mean,success_episode_sd
+seed0-final.pkl,4,379.8585745389429,0.33040929019423165,0.0,0.0,1.0,0.0
+seed1-final.pkl,4,379.65981796771433,0.0678941687767391,0.0,0.0,1.0,0.0
+seed2-final.pkl,4,378.9991923152178,0.17732526601886667,0.0,0.0,1.0,0.0

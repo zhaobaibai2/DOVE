@@ -1,0 +1,3 @@
+{
+  "reason": "User changed evaluation count from 1000 to 400 episodes per checkpoint. This interrupted run is not used for aggregation."
+}

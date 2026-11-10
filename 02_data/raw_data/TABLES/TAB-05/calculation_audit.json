@@ -1,0 +1,24 @@
+{
+  "table": "TAB-05",
+  "smoke": false,
+  "inputs": [
+    {
+      "file": "DOVE/reported_counts.csv",
+      "sha256": "1d565836f0c26149557233631b26dd0e1a0dde0796e39bf3da3661d1b3b92258"
+    },
+    {
+      "file": "IWR/reported_counts.csv",
+      "sha256": "338498b648fc1b07ae61c29be465e2aace3f04d187572af8cdf451eee4fe5822"
+    },
+    {
+      "file": "PVP-style_TD3/reported_counts.csv",
+      "sha256": "94f48390ee35011f6808799a71aa3bb4d7f72715bf84a69c99811feb34fdec22"
+    },
+    {
+      "file": "Positive-only/reported_counts.csv",
+      "sha256": "91b103525e4aa48f435912db7e2906bd4efc4a24a7cd7dd29b02fee3c62f977b"
+    }
+  ],
+  "metrics_source": "Only reported aggregate counts exist; no individual trial ledger was recovered.",
+  "processing": "Sum the four original scenario success counts; divide by original total trials. No synthetic per-trial rows are generated."
+}

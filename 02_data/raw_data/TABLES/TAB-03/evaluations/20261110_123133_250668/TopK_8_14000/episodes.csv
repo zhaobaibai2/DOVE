@@ -1,0 +1,2 @@
+policy_name,policy_path,map_seed,episode_idx,reward,cost,native_cost,takeover_cost,length,reason,route_completion,success,crash,out_of_route,timeout
+policy-14000-27998.pkl,/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-03/models/Full_DOVE/policy-14000-27998.pkl,104,0,379.42563773123106,0.0,0.0,0.0,548.0,success,0.9866280396554172,1.0,0.0,0.0,0.0

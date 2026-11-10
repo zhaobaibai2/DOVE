@@ -1,0 +1,2 @@
+files_visited,schema_similar_candidates,strong_160_row_candidates,required_observed_trial_rows,found_promotable_trial_rows,synthetic_rows_created,earliest_git_aggregate_commit,earliest_git_aggregate_time,earliest_git_evidence_type,promotion_status
+11209,33,0,160,0,0,7957db59613664b3db8713286612ee623cca1e92,2026-07-11T16:33:14+08:00,TeX aggregate table only,NO_RAW_TRIAL_LEDGER_FOUND

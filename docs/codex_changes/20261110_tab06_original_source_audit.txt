@@ -1,0 +1,11 @@
+TAB-06 original physical-log audit
+
+At the user's request, independently recomputed all continuous metrics directly from the 12 original source CSVs listed by provenance/source_manifest.csv: 4 source-DACER runs, 2 DOVE route-control runs, 3 IWR runs and 3 PVP-TD3 runs (22863 original rows total). All original SHA-256 values match the preserved manifest. All selected source values match local projected runs.csv records within 1e-12, including missing-value positions.
+
+Added scripts/audit_table06_sources.py. It does not import the current table calculator. It independently parses the raw original files and uses NumPy finite differences for the jerk, then aggregates per-run metrics using mean and sample SD. Independently loads the original summarize_metrics.py functions for a third-way comparison without invoking their file-writing main(). The original script is copied unchanged to TAB-06/provenance/summarize_metrics_original.py. Minor timestamp-parser floating point differences with the original pandas implementation do not affect any displayed 0.001 precision value.
+
+All 24 displayed continuous numbers are reproduced from source. The printed table remains unchanged. source_verified_metrics.csv is the verified per-method data; source_audit/ contains per-run source results, exact file/projection checks, original-script comparisons, an alternative pooled-frame result and the detailed JSON audit.
+
+Material evidence boundaries retained: ± is sample SD across the per-run metrics, not SD of all logged frames as the manuscript currently says. IWR speed is 1.744121259... in the original logs and original summary, while the manuscript prints1.24. The 16/40,32/40,12/40,8/40 success counts match TAB-05 scenario aggregate sums, but no individual trial ledger was recovered. Source-DACER to Positive-only mapping and matched same-stream training remain unverified. DOVE continuous-metric records are two Route1 traces, not a complete four-scenario 40-trial ledger.
+
+The user then requested a numerical result first. Provided the independently verified existing arithmetic without fabricating trial rows, scaling speeds, changing method mappings or replacing source-derived values with paper targets.

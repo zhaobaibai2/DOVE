@@ -1,0 +1,48 @@
+TAB-02 / 当前论文 Table III：四种 ER、CPCal 组合的 actor/critic 诊断
+
+以用户 1110 目录的 DOVE_v3.tex、PDF 为准：tab:rq2_audit。
+旧版 PairSat_E / OVR_E / Diversity 三组表接入错误，已停用；旧脚本和结果存 reference/legacy_v1。
+当前入口保持 bash scripts/run_tab02.sh test，执行真实 GPU 模型推理，然后自动 calculate.py。
+直接重算本次本地记录：bash scripts/run_tab02.sh calculate。
+
+输入和规模：
+Positive-only / ER w/o CPCal / CPCal only / Full DOVE，分别 50 / 50 / 46 / 46 个 checkpoint，共 192。
+每个 checkpoint 使用同一批 256 个 intervention pairs；每对采样 64 个无 guidance 的 actor 动作。
+VLB 覆盖全部 20 个 VP 扩散时间步，每步 64 个正负动作共享噪声，固定 noise_seed=20260810。
+模型、args、输入对均已本地保存；运行不需要旧 Backup 目录。模型不是独立训练种子的重复实验。
+本表的 reference 是核对依据，未用来替代新模型的推理输出。
+
+指标：
+rho_VLB：对全部 pair-checkpoint 统计 Delta_VLB > 0 的比例。t1 decoder variance=beta1，之后用 posterior variance。严格使用原 VP schedule 和终端项。
+HSR：每个 pair 的 64 个采样动作中，(a - (a_h+a_n)/2) dot (a_h-a_n) / ||a_h-a_n||^2 > 0 的比例。
+RMR_0.5：采样动作满足 ||a-a_n|| < 0.5*||a_h-a_n|| 的比例。
+PairAcc_C_mean：同一 256 对、同一 checkpoint 集合上，target twin critics 均值满足 Qbar_n > Qbar_h 的比例。
+逐 pair 整数计数汇总；无缩放、拟合或按论文目标替换。checkpoint SD/SE 另外保留。
+
+全量重算：evaluations/20261110_145128_416502。
+192 个 checkpoint、49152 个 pair-checkpoint、3145728 个实际 actor 采样动作。
+全部 VLB 指示量与原 64-noise 审计逐样本一致。
+四组 HSR/RMR 与已有 64-sample 记录逐 pair 一致；critic 与原 Qbar 在当前 256 对子集上的排序逐 pair 一致。
+
+实际结果（rho_VLB / HSR / RMR_0.5 / PairAcc_C_mean）：
+Positive-only：0.620 / 0.614 / 0.295 / 0.983
+ER w/o CPCal：0.989 / 0.981 / 0.007 / 0.462
+CPCal only：0.772 / 0.722 / 0.189 / 0.987
+Full DOVE：0.820 / 0.772 / 0.151 / 0.980
+
+当前论文的 16 个单元格有 10 个与按正文定义的实算结果匹配，6 个不匹配。
+三个 critic 旧文稿值 0.789 / 0.345 / 0.891 来自旧 512 对、52/52/48 checkpoint 汇总，不是当前正文 256 对、50/50/46 checkpoint 的汇总。两种分母不可混用。
+其余差异：Positive-only rho_VLB / HSR、Full DOVE rho_VLB，现存原始审计按通常三位小数取整也与论文值不同。
+之前 1029 版 paper_repro 的独立审计已经记录同样的 10/16 匹配、6 个差异；该审计代码、说明和核对数据也保存在 provenance/rq2_v2、reference/rq2_v2。
+本次没有改动用户论文；实测值与论文参考值明确分列。
+
+输出：
+test_results.csv：每个 checkpoint 的终端指标及四行最终结果；同次时间戳 CSV 同步保存。
+final_metrics.csv：本次实算四行四列指标。
+table_values.csv：精确值、样本量、checkpoint SD/SE、论文对比。
+comparison.csv：16 项逐项比较、差值和差异解释。
+legacy_critic_denominator_audit.csv：旧 critic 统计分母及实际均值，不混入当前结果。
+per_checkpoint.csv：192 个模型分别的计算结果。
+calculation_audit.json：输入哈希及公式。
+evaluations/时间/checkpoints：本次逐 pair 真实指标与 20 步正负去噪残差。
+--smoke 仅验证链路，明确标记且不覆盖正式结果。

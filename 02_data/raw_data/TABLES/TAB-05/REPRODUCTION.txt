@@ -1,0 +1,19 @@
+TAB-05：真实车辆分场景成功次数
+运行 bash scripts/run_tab05.sh test（或本表 run.sh test）。
+本表只有 reported_counts.csv 的场景汇总，每方法四个场景、每场景 10 次、每方法共 40 次。
+Positive-only：3+3+3+7 = 16/40；IWR：2+3+2+5 = 12/40；PVP：1+2+2+3 = 8/40；DOVE：8+8+7+9 = 32/40。
+脚本实际读取原始计数，核对总次数，计算比例并写 CSV。
+之前已扫描 11209 个候选文件、33 个较相关候选，没有找回可核对的逐次试验 ledger；详情在 provenance/。
+因此这里只能进行“场景汇总计数重算”。没有生成虚构的 160 行逐次结果，也没有宣称加载 pkl 就重新做了实车试验。
+
+输出（均在本表目录内）：
+  test_results.csv：终端显示的逐项结果和最终结果，terminal_text 保留原显示文本。
+  test_results_时间.csv：本次运行的独立 CSV。
+  final_metrics.csv：表中最终指标。
+  table_values.csv：精确数值、样本数、SD/SE 和旧表比较（适用时）。
+  per_checkpoint.csv / per_phase.csv / per_run.csv / scenario_counts.csv：相应中间聚合。
+  calculation_audit.json：输入哈希、计算口径和证据范围。
+仿真/诊断全量运行另有 evaluations/时间/，保存真实测量及本次清单；只在全部成功后发布顶层结果。
+只重新聚合已有本地记录：bash 本表/run.sh calculate；该操作不执行模型仿真。
+TAB-02/03 支持 test --smoke 验证整条链路；该模式在 evaluations 下单独保存，明确标为 smoke，不覆盖正式结果。
+每个 calculate.py 独立使用 Python 标准库和本表输入，无需 Backup 或其他表的文件。

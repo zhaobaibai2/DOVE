@@ -1,0 +1,5 @@
+record_type,Method,curve_meeting,pedestrian_yielding,obstacle_avoidance,straight_tracking,Successes,Trials,Succ.↑,evidence,terminal_text
+summary,DOVE,8,8,7,9,32,40,0.8,reported scenario counts; individual trial records unavailable,DOVE curve=8/10 pedestrian=8/10 obstacle=7/10 straight=9/10 success=32/40 (80.0%)
+summary,IWR,2,3,2,5,12,40,0.3,reported scenario counts; individual trial records unavailable,IWR curve=2/10 pedestrian=3/10 obstacle=2/10 straight=5/10 success=12/40 (30.0%)
+summary,PVP-style_TD3,1,2,2,3,8,40,0.2,reported scenario counts; individual trial records unavailable,PVP-style_TD3 curve=1/10 pedestrian=2/10 obstacle=2/10 straight=3/10 success=8/40 (20.0%)
+summary,Positive-only,3,3,3,7,16,40,0.4,reported scenario counts; individual trial records unavailable,Positive-only curve=3/10 pedestrian=3/10 obstacle=3/10 straight=7/10 success=16/40 (40.0%)

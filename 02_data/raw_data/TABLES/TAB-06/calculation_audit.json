@@ -1,0 +1,40 @@
+{
+  "table": "TAB-06",
+  "smoke": false,
+  "inputs": [
+    {
+      "file": "DOVE/reported.csv",
+      "sha256": "5bf5119e2087f81600cc737a380d19c74dfa0bf6494a32ee2e025d389be9dfd0"
+    },
+    {
+      "file": "DOVE/runs.csv",
+      "sha256": "785e1f11b6c1c6b38b5ae03849ef4df0dc6c1ceafb02a8cbd1691b8460a37b1e"
+    },
+    {
+      "file": "IWR/reported.csv",
+      "sha256": "128022afb3d83c013f293ca1c538fb97aaa7c9cd7daf7703013278f52ce0eaa3"
+    },
+    {
+      "file": "IWR/runs.csv",
+      "sha256": "fb2c8f5ccfd91c80f2f18ff7fff3a257c78d90ee37c1e9d378bdad50bca00ee1"
+    },
+    {
+      "file": "PVP-style_TD3/reported.csv",
+      "sha256": "27bc7036a26f204bead0ff8c465ae46e162e3421b5e6cbba1079710c9514b4ec"
+    },
+    {
+      "file": "PVP-style_TD3/runs.csv",
+      "sha256": "0ad16d240806accf470a57a0c633bd0051d953dedc29a8b14f2524288a680d7b"
+    },
+    {
+      "file": "Positive-only/reported.csv",
+      "sha256": "22325ccd9bc332e50af5adeecc9437091aa77ee40e272010c84dc400ce5b6169"
+    },
+    {
+      "file": "Positive-only/runs.csv",
+      "sha256": "621e4c4145818a30a8533b1af605aea9620be5e0a9d2c92459f892f2c05f6d1a"
+    }
+  ],
+  "metrics_source": "Full local physical driving traces; reported success counts remain separately sourced.",
+  "processing": "Compute speed, absolute lateral error and absolute jerk separately per recorded run, then unweighted run mean and sample SD. Sort timestamp-speed pairs and keep first duplicate timestamp. Success counts come from reported.csv, not inferred from traces. Positive-only source is labelled DACER; the alias is unverified."
+}

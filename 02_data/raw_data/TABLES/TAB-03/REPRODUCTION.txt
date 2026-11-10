@@ -1,0 +1,54 @@
+TAB-03：1110 DOVE_v3.tex 的 Table IV，七种 inference execution-mode 消融
+
+入口：bash scripts/run_tab03.sh test。
+默认真实运行全部 35 个模型-模式组合，4 个并行 GPU 推理/CPU 仿真进程；--workers 6 可用六进程。
+配置：原地图 104、交通密度 0.06、horizon 1000；不增加随机交通流，每个任务连续 100 回合，不分片改变 reset 序列。
+固定 Full_DOVE 的 12000、13000、14000、20000、32000 五个 checkpoint，七模式各 500 回合，共 3500 回合。
+本表中不再混入 Positive-only、ER w/o CPCal 的训练消融。旧版训练+推理表保留在 reference/legacy_v1 和旧 evaluations 中。
+
+七种模式与原命名：
+Actor only (no guidance) / Vanilla / vanilla：绕过 guided chain。
+Top-8 rerank / TopK_8 / topk_rerank：8 个 actor 候选按保守成本排序。
+Guidance, always execute / No_gate / upvgds_no_gate：引导后直接执行。
+Guidance, loss-only gate / Loss_only_gate / final_gate_prior_only：保留去噪 loss/prior 条件，去掉 proxy-risk 条件。
+Guidance, proxy-only gate / Proxy_only_gate / final_gate_proxy_only：保留 proxy-risk 条件，去掉 loss/prior 条件。
+Guidance, w/o disagreement / No_disagreement / final_gate_no_disagreement：完整 gate，但 tau_u=-1，关闭 gate 的 disagreement 条件。
+Guidance, full gate / Full_gate / upvgds_final_gate_full：全部 gate 条件。
+后四种保持同一指导参数，guidance_lambda0=.5、beta_unc=1、target critics、clean_x0、noise_level、lower cost；gate 最大动作偏移 .2、prior 阈值 .02、能量采样数4。
+注意去掉 gate 的 disagreement 条件并不等于移除指导内部的不确定性权重。
+
+原始证据：
+备份 runs/25_eval_final_gate_prior_only_policy_seed104.sh：loss-only。
+runs/24_eval_final_gate_proxy_only_policy_seed104.sh：proxy-only。
+runs/23_eval_final_gate_no_disagreement_policy_seed104.sh：w/o disagreement。
+备份 logs2/run_energy_sweep.sh 的矩阵定义确认7种模式和 energy_samples=4。
+命令已复制到 provenance/inference_v2，无需运行时访问备份。
+原矩阵逐回合记录的本地副本：reference/inference_v2/raw_data，各模式五份100回合。
+这套旧记录重新计算的28个显示单元格全部匹配1110论文，不能据此把旧记录重算称作新仿真。
+
+运行与汇总：
+逐回合显示 arrive/crash/out_of_route/timeout/other 和累计成功率；不打印模型路径或地图调试信息。
+结束自动运行 calculate.py，输出7行成功率、碰撞率、路线完成率、Return。
+每种模式汇总500个回合的均值，另外保存样本SD、SE和每个 checkpoint 的均值。
+固定历史 Return 换算仅使用有已确认原始证据的系数；每个公开回合同时保存 reward_raw、reward、reward_factor。未找回换算依据的保持实测原值，不拟合论文目标。
+
+复用：
+默认 test 每次新跑3500回合，不依赖历史参考测量。
+显式 --reuse-from 可复用本地完整实际测试：必须校验原实验快照、评测代码、模型哈希、全部100回合及参数一致。
+复用来源、哈希和回合数写入 measurement.json，绝不把复用记录称作本次新跑。
+本次为补接三种缺失模式，复用已完成的20个任务/2000回合，另实跑缺失15个任务/1500回合。
+已启动的旧版用户进程不被终止；新结果在旧进程退出后发布，避免互相覆盖。
+
+文件：
+experiment_v2.json：新版七模式完整配置；旧进程结束后 experiment.json 同步为新版。
+evaluations/时间/：原始实际测量、完整配置快照、终端CSV和来源清单。
+test_results.csv 和 test_results_时间.csv：逐回合数值、终端显示及最终7行。
+final_metrics.csv：7模式最终四指标。
+table_values.csv：精确均值、样本量、SD/SE和论文对比。
+per_checkpoint.csv：35个组合分别的结果。
+comparison.csv：当前结果与论文28个单元格比较，不强制一致。
+calculation_audit.json、measurement.json：计算和实验来源。
+calculate.py 支持 --protocol inference；默认自动识别新版数据，同时允许已启动的旧版测试完成其旧数据汇总。
+
+只重算已有本地数据：bash scripts/run_tab03.sh calculate。
+--smoke 仅验证链路，单独存放，不覆盖正式结果。

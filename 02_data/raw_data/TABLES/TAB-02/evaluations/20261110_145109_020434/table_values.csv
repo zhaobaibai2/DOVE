@@ -1,0 +1,5 @@
+setting,checkpoints,pair_checkpoint_rows,actor_samples,rho_vlb,hsr,rmr_0p5,pairacc_c_mean,rho_vlb_checkpoint_sd,rho_vlb_checkpoint_se,rho_vlb_paper,rho_vlb_matches_paper_3dp,hsr_checkpoint_sd,hsr_checkpoint_se,hsr_paper,hsr_matches_paper_3dp,rmr_0p5_checkpoint_sd,rmr_0p5_checkpoint_se,rmr_0p5_paper,rmr_0p5_matches_paper_3dp,pairacc_c_mean_checkpoint_sd,pairacc_c_mean_checkpoint_se,pairacc_c_mean_paper,pairacc_c_mean_matches_paper_3dp
+Positive-only,1,4,256,1.0,0.9921875,0.0078125,0.25,0.0,0.0,0.619,False,0.0,0.0,0.615,False,0.0,0.0,0.295,False,0.0,0.0,0.789,False
+ER w/o CPCal,1,4,256,1.0,1.0,0.0,0.0,0.0,0.0,0.989,False,0.0,0.0,0.981,False,0.0,0.0,0.007,False,0.0,0.0,0.345,False
+CPCal only,1,4,256,1.0,1.0,0.0,0.25,0.0,0.0,0.772,False,0.0,0.0,0.722,False,0.0,0.0,0.189,False,0.0,0.0,0.987,False
+Full DOVE,1,4,256,1.0,1.0,0.0,0.25,0.0,0.0,0.821,False,0.0,0.0,0.772,False,0.0,0.0,0.151,False,0.0,0.0,0.891,False

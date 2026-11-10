@@ -1,0 +1,2 @@
+variant,checkpoints,pair_checkpoint_rows,actor_samples,rho_vlb,rho_vlb_se_over_checkpoints,hsr,hsr_se_over_checkpoints,rmr_0p5,rmr_0p5_se_over_checkpoints,pairacc_c_mean,pairacc_c_mean_se_over_checkpoints
+CPCal-only (EnergyRank disabled),46,11776,753664,0.7721637228260869,0.027030331083498185,0.7215536366338315,0.018865376794796513,0.18910018257472827,0.013646753622947679,0.9868376358695652,0.0010328451739850981

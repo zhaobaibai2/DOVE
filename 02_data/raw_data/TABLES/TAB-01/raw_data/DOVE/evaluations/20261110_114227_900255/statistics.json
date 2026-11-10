@@ -1,0 +1,27 @@
+{
+  "source": "live_simulation",
+  "run_dir": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-01/raw_data/DOVE/evaluations/20261110_114227_900255",
+  "n_checkpoints": 3,
+  "n_episodes": 12,
+  "reward_transform": "none",
+  "dispersion": "sample SD of the three checkpoint means (ddof=1); not independent-training-run SD",
+  "sampling": {
+    "scheme": "replicated_original_config_v1",
+    "note": "Original map/reset/traffic configuration in every environment; deterministic replicas may repeat outcomes."
+  },
+  "reward_mean": 379.5058616072917,
+  "reward_sd": 0.4499015140001442,
+  "reward_se": 0.2597507602168035,
+  "reward_pooled_episode_sd": 0.4322208484206768,
+  "reward_pooled_episode_se": 0.1247714115925231,
+  "cost_mean": 0.0,
+  "cost_sd": 0.0,
+  "cost_se": 0.0,
+  "cost_pooled_episode_sd": 0.0,
+  "cost_pooled_episode_se": 0.0,
+  "success_mean": 1.0,
+  "success_sd": 0.0,
+  "success_se": 0.0,
+  "success_pooled_episode_sd": 0.0,
+  "success_pooled_episode_se": 0.0
+}

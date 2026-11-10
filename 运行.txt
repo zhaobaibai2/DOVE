@@ -1,0 +1,9 @@
+bash scripts/run_pvp.sh test
+
+bash scripts/run_tab02.sh test
+
+bash scripts/run_tab03.sh test
+bash scripts/run_tab04.sh test
+bash scripts/run_tab05.sh test
+bash scripts/run_tab06.sh test
+

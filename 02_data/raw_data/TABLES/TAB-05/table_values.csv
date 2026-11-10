@@ -1,0 +1,5 @@
+paper_method,curve_meeting,pedestrian_yielding,obstacle_avoidance,straight_tracking,total_successes,trials_per_scenario,total_trials,arithmetic_match,observed_trial_rows,trial_level_recomputation
+DOVE,8,8,7,9,32,10,40,True,0,MISSING
+IWR,2,3,2,5,12,10,40,True,0,MISSING
+PVP-style_TD3,1,2,2,3,8,10,40,True,0,MISSING
+Positive-only,3,3,3,7,16,10,40,True,0,MISSING

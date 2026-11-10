@@ -1,0 +1,355 @@
+{
+  "run": "evaluations/20261110_152418_447070",
+  "comparison": [
+    {
+      "folder": "Vanilla",
+      "checkpoint": "12000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Vanilla",
+      "checkpoint": "13000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Vanilla",
+      "checkpoint": "14000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Vanilla",
+      "checkpoint": "20000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Vanilla",
+      "checkpoint": "32000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "TopK_8",
+      "checkpoint": "12000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "TopK_8",
+      "checkpoint": "13000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "TopK_8",
+      "checkpoint": "14000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "TopK_8",
+      "checkpoint": "20000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "TopK_8",
+      "checkpoint": "32000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "No_gate",
+      "checkpoint": "12000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "No_gate",
+      "checkpoint": "13000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "No_gate",
+      "checkpoint": "14000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "No_gate",
+      "checkpoint": "20000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "No_gate",
+      "checkpoint": "32000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Loss_only_gate",
+      "checkpoint": "12000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Loss_only_gate",
+      "checkpoint": "13000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Loss_only_gate",
+      "checkpoint": "14000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Loss_only_gate",
+      "checkpoint": "20000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Loss_only_gate",
+      "checkpoint": "32000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Proxy_only_gate",
+      "checkpoint": "12000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Proxy_only_gate",
+      "checkpoint": "13000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Proxy_only_gate",
+      "checkpoint": "14000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Proxy_only_gate",
+      "checkpoint": "20000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Proxy_only_gate",
+      "checkpoint": "32000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "No_disagreement",
+      "checkpoint": "12000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "No_disagreement",
+      "checkpoint": "13000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "No_disagreement",
+      "checkpoint": "14000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "No_disagreement",
+      "checkpoint": "20000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "No_disagreement",
+      "checkpoint": "32000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Full_gate",
+      "checkpoint": "12000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Full_gate",
+      "checkpoint": "13000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Full_gate",
+      "checkpoint": "14000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Full_gate",
+      "checkpoint": "20000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Full_gate",
+      "checkpoint": "32000",
+      "episodes": 100,
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    }
+  ]
+}

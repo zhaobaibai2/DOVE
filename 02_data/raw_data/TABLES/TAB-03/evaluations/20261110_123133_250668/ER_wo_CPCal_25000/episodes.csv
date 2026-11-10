@@ -1,0 +1,2 @@
+policy_name,policy_path,map_seed,episode_idx,reward,cost,native_cost,takeover_cost,length,reason,route_completion,success,crash,out_of_route,timeout
+policy-25000-49998.pkl,/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-03/models/ER_wo_CPCal/policy-25000-49998.pkl,104,0,374.52182596517906,0.0,0.0,0.0,527.0,success,0.9859130747198777,1.0,0.0,0.0,0.0

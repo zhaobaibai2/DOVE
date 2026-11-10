@@ -1,0 +1,8 @@
+record_type,Panel,Setting,Episodes,Succ.↑,Crash↓,Route Completion↑,Return↑,terminal_text
+summary,A,Positive-only (DBC + critic),500,0.442,0.362,0.886500318594,324.984769655,Positive-only (DBC + critic) arrive=44.2% crash=36.2% route_completion=0.887 Return↑=324.98
+summary,A,ER w/o CPCal,600,0.68,0.32,0.852224257247,315.252591265,ER w/o CPCal arrive=68.0% crash=32.0% route_completion=0.852 Return↑=315.25
+summary,A,Full DOVE,400,0.94,0.06,0.965815904669,363.363907993,Full DOVE arrive=94.0% crash=6.0% route_completion=0.966 Return↑=363.36
+summary,B,Repaired actor without test-time guidance,500,0.4,0.4,0.768048591164,288.528010714,Repaired actor without test-time guidance arrive=40.0% crash=40.0% route_completion=0.768 Return↑=288.53
+summary,B,Top-K rerank (K=8),500,0.388,0.5,0.702678208423,261.450830988,Top-K rerank (K=8) arrive=38.8% crash=50.0% route_completion=0.703 Return↑=261.45
+summary,B,"Projected guidance, always execute",500,0.472,0.49,0.658484309404,244.141289814,"Projected guidance, always execute arrive=47.2% crash=49.0% route_completion=0.658 Return↑=244.14"
+summary,B,Projected guidance with acceptance/fallback gate,500,0.842,0.158,0.882782273149,330.759430154,Projected guidance with acceptance/fallback gate arrive=84.2% crash=15.8% route_completion=0.883 Return↑=330.76

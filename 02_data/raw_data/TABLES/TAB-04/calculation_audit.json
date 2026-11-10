@@ -1,0 +1,20 @@
+{
+  "table": "TAB-04",
+  "smoke": false,
+  "inputs": [
+    {
+      "file": "DOVE/collection_repair.csv",
+      "sha256": "359acb4e8a0cfd5c61afd7d134e8c0c5646f95102d46ad5fb43f2934392d9f48"
+    },
+    {
+      "file": "DOVE/connected_trace.csv",
+      "sha256": "0c8082089af63f1c9cd6106890c9546471d6cfb4088ff39fe72aadf3031e6fb5"
+    },
+    {
+      "file": "DOVE/frozen_execution.csv",
+      "sha256": "14be11baeb316c90c7d24939952156ccd4505435d9b7e7550291d246e0e9e2bc"
+    }
+  ],
+  "metrics_source": "Recalculation of complete recorded physical vehicle traces, not a new physical drive.",
+  "processing": "Gate denominator includes logged diagnostic rows only. P95 uses linear interpolation at (n-1)*0.95, seconds converted to milliseconds. Actual maximum and speed P95 are separate metrics."
+}

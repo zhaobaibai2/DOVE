@@ -1,0 +1,372 @@
+[
+  {
+    "folder": "Vanilla",
+    "checkpoint": "12000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/vanilla/12000.csv",
+    "archive_local": "reference/inference_v2/raw_data/Vanilla/12000.csv",
+    "archive_sha256": "c41e40b5bc424aa7665fdaef51151b4b7065f45576147bf366c6813a5fa4e067",
+    "factor": 0.9945971862668024,
+    "verified_rows": 100,
+    "max_abs_error": 5.684341886080802e-14,
+    "raw_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/50_all_useful_evals_gpu_seed104_20260525_205921/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/vanilla/policy-12000-23998/episodes_vanilla.csv",
+    "raw_local": "provenance/inference_v2/original_raw/Vanilla/12000.csv",
+    "raw_sha256": "0e80f897c36e2bc076027fb9e9b097d999093c10d71fa24cded6e26d1b4efe6a",
+    "applied_factor": 0.9945971862668024
+  },
+  {
+    "folder": "Vanilla",
+    "checkpoint": "13000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/vanilla/13000.csv",
+    "archive_local": "reference/inference_v2/raw_data/Vanilla/13000.csv",
+    "archive_sha256": "c66fcf07e4f34fcabd930c730a7743bab9c3249f4ad5f9453e00dc0ebc8c56cd",
+    "factor": 0.9945971862668024,
+    "verified_rows": 100,
+    "max_abs_error": 1.1368683772161603e-13,
+    "raw_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/50_all_useful_evals_gpu_seed104_20260525_205921/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/vanilla/policy-13000-25998/episodes_vanilla.csv",
+    "raw_local": "provenance/inference_v2/original_raw/Vanilla/13000.csv",
+    "raw_sha256": "1530794e0ab1d17c95070a2c35b1dd6cbcad1359627bc5407075a8cfa869a19e",
+    "applied_factor": 0.9945971862668024
+  },
+  {
+    "folder": "Vanilla",
+    "checkpoint": "14000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/vanilla/14000.csv",
+    "archive_local": "reference/inference_v2/raw_data/Vanilla/14000.csv",
+    "archive_sha256": "4c3abf8338fbcea58fbe5d35af4ec5c1b52e8f68d0ad5567056408e2f255ab93",
+    "factor": 0.9945971862668024,
+    "verified_rows": 100,
+    "max_abs_error": 2.842170943040401e-14,
+    "raw_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/50_all_useful_evals_gpu_seed104_20260525_205921/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/vanilla/policy-14000-27998/episodes_vanilla.csv",
+    "raw_local": "provenance/inference_v2/original_raw/Vanilla/14000.csv",
+    "raw_sha256": "9d6634e28b400b4bbab7ac7a7cb99c12b77addcdacfa390586c046e110a4f841",
+    "applied_factor": 0.9945971862668024
+  },
+  {
+    "folder": "Vanilla",
+    "checkpoint": "20000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/vanilla/20000.csv",
+    "archive_local": "reference/inference_v2/raw_data/Vanilla/20000.csv",
+    "archive_sha256": "12d1eeb1db56ae2ade59f9057c5fd206ddf7f996e0183bb329b24915b75fefc5",
+    "factor": 0.9945971862668024,
+    "verified_rows": 100,
+    "max_abs_error": 1.1368683772161603e-13,
+    "raw_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/50_all_useful_evals_gpu_seed104_20260525_205921/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/vanilla/policy-20000-39998/episodes_vanilla.csv",
+    "raw_local": "provenance/inference_v2/original_raw/Vanilla/20000.csv",
+    "raw_sha256": "56c0719a71a9bc3e596b695c42817797ca3f65a6eafb44d74b0500a5bf65ef68",
+    "applied_factor": 0.9945971862668024
+  },
+  {
+    "folder": "Vanilla",
+    "checkpoint": "32000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/vanilla/32000.csv",
+    "archive_local": "reference/inference_v2/raw_data/Vanilla/32000.csv",
+    "archive_sha256": "aedc8e12670be6255467ec420665f16892b5b9a9fe5d7b4222d415a073aee9fc",
+    "factor": 0.9945971862668024,
+    "verified_rows": 100,
+    "max_abs_error": 5.684341886080802e-14,
+    "raw_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/50_all_useful_evals_gpu_seed104_20260525_205921/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/vanilla/policy-32000-63998/episodes_vanilla.csv",
+    "raw_local": "provenance/inference_v2/original_raw/Vanilla/32000.csv",
+    "raw_sha256": "d1d17642ecaad3d16a8a87c0a75e25cb325386bb421b5604b1dd556ed023cdbc",
+    "applied_factor": 0.9945971862668024
+  },
+  {
+    "folder": "TopK_8",
+    "checkpoint": "12000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/topk_rerank/12000.csv",
+    "archive_local": "reference/inference_v2/raw_data/TopK_8/12000.csv",
+    "archive_sha256": "bd9dc94952bd48d62afe8a7cf01ba77628d616f138f7189142a83315c96301a1",
+    "applied_factor": 1.0
+  },
+  {
+    "folder": "TopK_8",
+    "checkpoint": "13000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/topk_rerank/13000.csv",
+    "archive_local": "reference/inference_v2/raw_data/TopK_8/13000.csv",
+    "archive_sha256": "a0af95420f403a6d1a2d9f75c0d310c6c13f97745fcfb7a7d8373d1cb095f028",
+    "applied_factor": 1.0
+  },
+  {
+    "folder": "TopK_8",
+    "checkpoint": "14000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/topk_rerank/14000.csv",
+    "archive_local": "reference/inference_v2/raw_data/TopK_8/14000.csv",
+    "archive_sha256": "549d150ea3283925ca67a7a238a378d0f83236919d3da170e84109f78f7048a2",
+    "applied_factor": 1.0
+  },
+  {
+    "folder": "TopK_8",
+    "checkpoint": "20000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/topk_rerank/20000.csv",
+    "archive_local": "reference/inference_v2/raw_data/TopK_8/20000.csv",
+    "archive_sha256": "e69b078b6e755a6141f361b095b18e332638e0e2c2d6c3e9dd63c7dc7941d739",
+    "applied_factor": 1.0
+  },
+  {
+    "folder": "TopK_8",
+    "checkpoint": "32000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/topk_rerank/32000.csv",
+    "archive_local": "reference/inference_v2/raw_data/TopK_8/32000.csv",
+    "archive_sha256": "4a9228ffffd0e044db3a83ec93a83fa805f6a986d7deba3aaa36492a3c5ae04c",
+    "applied_factor": 1.0
+  },
+  {
+    "folder": "No_gate",
+    "checkpoint": "12000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/upvgds_no_gate/12000.csv",
+    "archive_local": "reference/inference_v2/raw_data/No_gate/12000.csv",
+    "archive_sha256": "c3c74840d3978311d95e67703ed638d83707edc7205278d41ef01b59c545d7e2",
+    "factor": 0.9945971862668024,
+    "verified_rows": 100,
+    "max_abs_error": 1.1368683772161603e-13,
+    "raw_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/50_all_useful_evals_gpu_seed104_20260525_205921/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/upvgds_no_gate/policy-12000-23998/episodes_upvgds_no_gate.csv",
+    "raw_local": "provenance/inference_v2/original_raw/No_gate/12000.csv",
+    "raw_sha256": "c442e148181f1522a11c0680dbeea7ee29753fe991675333ffc2b3fa46e64a26",
+    "applied_factor": 0.9945971862668024
+  },
+  {
+    "folder": "No_gate",
+    "checkpoint": "13000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/upvgds_no_gate/13000.csv",
+    "archive_local": "reference/inference_v2/raw_data/No_gate/13000.csv",
+    "archive_sha256": "845e46d09a697cad38a3509318cd7f5a4f6ed626579a6aa125477c3ede6fcf0f",
+    "factor": 0.9945971862668024,
+    "verified_rows": 100,
+    "max_abs_error": 1.1368683772161603e-13,
+    "raw_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/50_all_useful_evals_gpu_seed104_20260525_205921/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/upvgds_no_gate/policy-13000-25998/episodes_upvgds_no_gate.csv",
+    "raw_local": "provenance/inference_v2/original_raw/No_gate/13000.csv",
+    "raw_sha256": "78a610c31510fd68af6d67fea2ba60dc0588681b6b9c56620ed7e432da4c066d",
+    "applied_factor": 0.9945971862668024
+  },
+  {
+    "folder": "No_gate",
+    "checkpoint": "14000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/upvgds_no_gate/14000.csv",
+    "archive_local": "reference/inference_v2/raw_data/No_gate/14000.csv",
+    "archive_sha256": "e2560c9d18d3fa16c4a71a9df28621d7022224c7dc6efe09583df45373ee7d2d",
+    "factor": 0.9945971862668024,
+    "verified_rows": 100,
+    "max_abs_error": 1.1368683772161603e-13,
+    "raw_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/50_all_useful_evals_gpu_seed104_20260525_205921/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/upvgds_no_gate/policy-14000-27998/episodes_upvgds_no_gate.csv",
+    "raw_local": "provenance/inference_v2/original_raw/No_gate/14000.csv",
+    "raw_sha256": "6f35a01569b73b843f50703ebb39153acd1628c53ed82057800d0078d2c907c7",
+    "applied_factor": 0.9945971862668024
+  },
+  {
+    "folder": "No_gate",
+    "checkpoint": "20000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/upvgds_no_gate/20000.csv",
+    "archive_local": "reference/inference_v2/raw_data/No_gate/20000.csv",
+    "archive_sha256": "09b68024c99142ad6e97627eea39a8b8b15c31a326cf2488843eddc8f8f04012",
+    "factor": 0.9945971862668024,
+    "verified_rows": 100,
+    "max_abs_error": 1.4210854715202004e-14,
+    "raw_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/50_all_useful_evals_gpu_seed104_20260525_205921/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/upvgds_no_gate/policy-20000-39998/episodes_upvgds_no_gate.csv",
+    "raw_local": "provenance/inference_v2/original_raw/No_gate/20000.csv",
+    "raw_sha256": "7109b7c1fa8deb70595517517a3479b836d2fa48c339fa2241d245243eb0ed0f",
+    "applied_factor": 0.9945971862668024
+  },
+  {
+    "folder": "No_gate",
+    "checkpoint": "32000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/upvgds_no_gate/32000.csv",
+    "archive_local": "reference/inference_v2/raw_data/No_gate/32000.csv",
+    "archive_sha256": "6f3fc2544eb38f7abdde47d186f621fb4ff3280b23e5e4920b8696b7b72bd431",
+    "factor": 0.9945971862668024,
+    "verified_rows": 100,
+    "max_abs_error": 1.4210854715202004e-14,
+    "raw_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/50_all_useful_evals_gpu_seed104_20260525_205921/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/upvgds_no_gate/policy-32000-63998/episodes_upvgds_no_gate.csv",
+    "raw_local": "provenance/inference_v2/original_raw/No_gate/32000.csv",
+    "raw_sha256": "100c38be272af7e4e26da5a49c548724710c3a173bb1e614d375bd8efdbf121a",
+    "applied_factor": 0.9945971862668024
+  },
+  {
+    "folder": "Loss_only_gate",
+    "checkpoint": "12000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/final_gate_prior_only/12000.csv",
+    "archive_local": "reference/inference_v2/raw_data/Loss_only_gate/12000.csv",
+    "archive_sha256": "08253a28801fe3091a3855f73e7fb88415ab0547292c66b516e2b333ccf2e3fc",
+    "applied_factor": 1.0
+  },
+  {
+    "folder": "Loss_only_gate",
+    "checkpoint": "13000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/final_gate_prior_only/13000.csv",
+    "archive_local": "reference/inference_v2/raw_data/Loss_only_gate/13000.csv",
+    "archive_sha256": "0d0a41ccca55e9672b6ec847270c25b74441807131fa2de61c88ba6bf97456f9",
+    "applied_factor": 1.0
+  },
+  {
+    "folder": "Loss_only_gate",
+    "checkpoint": "14000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/final_gate_prior_only/14000.csv",
+    "archive_local": "reference/inference_v2/raw_data/Loss_only_gate/14000.csv",
+    "archive_sha256": "dfa8d83bb79804544abdc3982ccbc40b49b1d252814695684aad9cc4122c5fa5",
+    "applied_factor": 1.0
+  },
+  {
+    "folder": "Loss_only_gate",
+    "checkpoint": "20000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/final_gate_prior_only/20000.csv",
+    "archive_local": "reference/inference_v2/raw_data/Loss_only_gate/20000.csv",
+    "archive_sha256": "70b36485a931b71cb9ab9ff9dbe471addf144bdd951820fa80ea6db7afe198c6",
+    "applied_factor": 1.0
+  },
+  {
+    "folder": "Loss_only_gate",
+    "checkpoint": "32000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/final_gate_prior_only/32000.csv",
+    "archive_local": "reference/inference_v2/raw_data/Loss_only_gate/32000.csv",
+    "archive_sha256": "62896d08a449643afa0464b6c5d2d212821d4e80e611859e5edc12ac8126087c",
+    "applied_factor": 1.0
+  },
+  {
+    "folder": "Proxy_only_gate",
+    "checkpoint": "12000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/final_gate_proxy_only/12000.csv",
+    "archive_local": "reference/inference_v2/raw_data/Proxy_only_gate/12000.csv",
+    "archive_sha256": "98989b75c29869f70a5e25ec20ee346729688b3eeb58fb3ed474b239ec6c9435",
+    "factor": 0.9945971862668024,
+    "verified_rows": 100,
+    "max_abs_error": 5.684341886080802e-14,
+    "raw_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/50_all_useful_evals_gpu_seed104_20260525_205921/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/final_gate_proxy_only/policy-12000-23998/episodes_final_gate_proxy_only.csv",
+    "raw_local": "provenance/inference_v2/original_raw/Proxy_only_gate/12000.csv",
+    "raw_sha256": "746f55db030e9cc0364f7f5c9a79bb3fd0143b7f59dfe9d37a904b12c42c28ec",
+    "applied_factor": 0.9945971862668024
+  },
+  {
+    "folder": "Proxy_only_gate",
+    "checkpoint": "13000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/final_gate_proxy_only/13000.csv",
+    "archive_local": "reference/inference_v2/raw_data/Proxy_only_gate/13000.csv",
+    "archive_sha256": "2d4027359ae783b2d1332e668f263ca3d6c85682828641a9fdaa6e4217a28225",
+    "factor": 0.9945971862668024,
+    "verified_rows": 100,
+    "max_abs_error": 1.1368683772161603e-13,
+    "raw_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/50_all_useful_evals_gpu_seed104_20260525_205921/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/final_gate_proxy_only/policy-13000-25998/episodes_final_gate_proxy_only.csv",
+    "raw_local": "provenance/inference_v2/original_raw/Proxy_only_gate/13000.csv",
+    "raw_sha256": "f0e073d8640872e26698cb059aafb9ebb6687a0c10373488601fc5192d623430",
+    "applied_factor": 0.9945971862668024
+  },
+  {
+    "folder": "Proxy_only_gate",
+    "checkpoint": "14000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/final_gate_proxy_only/14000.csv",
+    "archive_local": "reference/inference_v2/raw_data/Proxy_only_gate/14000.csv",
+    "archive_sha256": "b00689d830cc460db0cc1302c014fe5e185a2349a3b151f212f59ee7896a0ce6",
+    "factor": 0.9945971862668024,
+    "verified_rows": 100,
+    "max_abs_error": 5.684341886080802e-14,
+    "raw_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/50_all_useful_evals_gpu_seed104_20260525_205921/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/final_gate_proxy_only/policy-14000-27998/episodes_final_gate_proxy_only.csv",
+    "raw_local": "provenance/inference_v2/original_raw/Proxy_only_gate/14000.csv",
+    "raw_sha256": "5e62f8b64d3f860782e527b632b8d33e4c8f1c699d5cf2704c0400077367f39e",
+    "applied_factor": 0.9945971862668024
+  },
+  {
+    "folder": "Proxy_only_gate",
+    "checkpoint": "20000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/final_gate_proxy_only/20000.csv",
+    "archive_local": "reference/inference_v2/raw_data/Proxy_only_gate/20000.csv",
+    "archive_sha256": "c9cf38adb25a37f48dc4252e6f00e39fa0540e6773bc00f26b066fc134035940",
+    "factor": 0.9945971862668024,
+    "verified_rows": 100,
+    "max_abs_error": 1.1368683772161603e-13,
+    "raw_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/50_all_useful_evals_gpu_seed104_20260525_205921/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/final_gate_proxy_only/policy-20000-39998/episodes_final_gate_proxy_only.csv",
+    "raw_local": "provenance/inference_v2/original_raw/Proxy_only_gate/20000.csv",
+    "raw_sha256": "4d0f241b9a702bfc544420da6f3a73dd473f88a1297ae84c198ae85f57a9e38b",
+    "applied_factor": 0.9945971862668024
+  },
+  {
+    "folder": "Proxy_only_gate",
+    "checkpoint": "32000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/final_gate_proxy_only/32000.csv",
+    "archive_local": "reference/inference_v2/raw_data/Proxy_only_gate/32000.csv",
+    "archive_sha256": "21921831aaa1388b91610d32fc4f80a24c7738daabfcbd6629d9a9537e712314",
+    "factor": 0.9945971862668024,
+    "verified_rows": 100,
+    "max_abs_error": 5.684341886080802e-14,
+    "raw_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/logs/50_all_useful_evals_gpu_seed104_20260525_205921/closed_loop_matrix/12_train_doveer_er_seed104_50000_20260522_104112_pvp_dacer_20260522_104125_s0/final_gate_proxy_only/policy-32000-63998/episodes_final_gate_proxy_only.csv",
+    "raw_local": "provenance/inference_v2/original_raw/Proxy_only_gate/32000.csv",
+    "raw_sha256": "f44934cb8d5d66698ff8a4dc1f8a4ebb0cd3f9d3f10653b2297832afb676075b",
+    "applied_factor": 0.9945971862668024
+  },
+  {
+    "folder": "No_disagreement",
+    "checkpoint": "12000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/final_gate_no_disagreement/12000.csv",
+    "archive_local": "reference/inference_v2/raw_data/No_disagreement/12000.csv",
+    "archive_sha256": "714c6c2a6534d70f9224cc94f2767fe4d60152c8259d4dc203335c50ca8a12e9",
+    "applied_factor": 1.0
+  },
+  {
+    "folder": "No_disagreement",
+    "checkpoint": "13000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/final_gate_no_disagreement/13000.csv",
+    "archive_local": "reference/inference_v2/raw_data/No_disagreement/13000.csv",
+    "archive_sha256": "453de7fe98bd3de0f57fb81d031e844df8a0c90ea8c67cf164a3ea8df1876598",
+    "applied_factor": 1.0
+  },
+  {
+    "folder": "No_disagreement",
+    "checkpoint": "14000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/final_gate_no_disagreement/14000.csv",
+    "archive_local": "reference/inference_v2/raw_data/No_disagreement/14000.csv",
+    "archive_sha256": "c50cada41e12c37a9ef036e57cae0b7566e0b3a2016aef77ed69c34f859cd6e1",
+    "applied_factor": 1.0
+  },
+  {
+    "folder": "No_disagreement",
+    "checkpoint": "20000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/final_gate_no_disagreement/20000.csv",
+    "archive_local": "reference/inference_v2/raw_data/No_disagreement/20000.csv",
+    "archive_sha256": "b524b2f668b05e60cf3731fee7043926b571f92de5f33fe7004ffbd7c7a84302",
+    "applied_factor": 1.0
+  },
+  {
+    "folder": "No_disagreement",
+    "checkpoint": "32000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/final_gate_no_disagreement/32000.csv",
+    "archive_local": "reference/inference_v2/raw_data/No_disagreement/32000.csv",
+    "archive_sha256": "7fe10cce4607dea56deb5b541ac6eb2e955f265fc91feb470c748347debc498c",
+    "applied_factor": 1.0
+  },
+  {
+    "folder": "Full_gate",
+    "checkpoint": "12000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/upvgds_final_gate_full/12000.csv",
+    "archive_local": "reference/inference_v2/raw_data/Full_gate/12000.csv",
+    "archive_sha256": "dde76a8c5abc5387b21fb320bb469f5aa57aca3c3b9fb9d7df4721e003185cd6",
+    "applied_factor": 0.982744594407587
+  },
+  {
+    "folder": "Full_gate",
+    "checkpoint": "13000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/upvgds_final_gate_full/13000.csv",
+    "archive_local": "reference/inference_v2/raw_data/Full_gate/13000.csv",
+    "archive_sha256": "638add1f45da83e070ad3465c3494f4887fd0c5f07795259242bba315b0ea062",
+    "applied_factor": 0.9827445944075869
+  },
+  {
+    "folder": "Full_gate",
+    "checkpoint": "14000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/upvgds_final_gate_full/14000.csv",
+    "archive_local": "reference/inference_v2/raw_data/Full_gate/14000.csv",
+    "archive_sha256": "25cee81f5e912e782812c88d532b8c3fc3963125e591de72059eae20e48f785d",
+    "applied_factor": 0.9827445944075865
+  },
+  {
+    "folder": "Full_gate",
+    "checkpoint": "20000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/upvgds_final_gate_full/20000.csv",
+    "archive_local": "reference/inference_v2/raw_data/Full_gate/20000.csv",
+    "archive_sha256": "f20a4712f05af8b520e524e90e9fc62457669ed4fe725fc7a8ab2dd1c4fab0c2",
+    "applied_factor": 1.0
+  },
+  {
+    "folder": "Full_gate",
+    "checkpoint": "32000",
+    "archive_source": "/home/aaa/data/target/Backup/exp/expB0/0108/DACER-te-new0428/test0508/github/simulation/paper_repro/inputs/table_04/upvgds_final_gate_full/32000.csv",
+    "archive_local": "reference/inference_v2/raw_data/Full_gate/32000.csv",
+    "archive_sha256": "860c9e9517c339e698eb167b361904668e6c4dfff689b533423b7ef111f1b0bb",
+    "applied_factor": 0.982744594407587
+  }
+]

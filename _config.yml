@@ -1,0 +1,13 @@
+# Keep GitHub Pages focused on the preserved project website.
+# Models, datasets and experiment code stay available in the Git repository.
+exclude:
+  - 02_data
+  - docs
+  - experiments
+  - map_splits.py
+  - relax
+  - relax_env
+  - requirements.txt
+  - robot_real
+  - scripts
+  - "运行.txt"

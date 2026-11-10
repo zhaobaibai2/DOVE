@@ -1,0 +1,493 @@
+{
+  "run": "evaluations/20261110_152418_447070",
+  "schema": "inference_seven_modes_v2",
+  "source": "live_model_simulation",
+  "smoke": false,
+  "jobs": [
+    {
+      "folder": "Vanilla",
+      "checkpoint": "12000",
+      "model_sha256": "ab2878acc65d1b514c7c117a3d858e08bb3226d5b66ed2a8d2a7d5ee0a48efc0",
+      "source": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-03/evaluations/20261110_123819_316993/Vanilla_12000/episodes.csv",
+      "episodes": 100,
+      "episodes_sha256": "db8e2052b0f051cdf12e93ac97947b5a0c7436a42c096e494694a6cc1f36b4e3",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "sha256": "db8e2052b0f051cdf12e93ac97947b5a0c7436a42c096e494694a6cc1f36b4e3"
+    },
+    {
+      "folder": "Vanilla",
+      "checkpoint": "13000",
+      "model_sha256": "753e1ea16d2f7d982f5131d486a7f2a23e2cd0cfe5809a3c09283946551895f8",
+      "source": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-03/evaluations/20261110_123819_316993/Vanilla_13000/episodes.csv",
+      "episodes": 100,
+      "episodes_sha256": "96a9ba67d2cbfad5138674a21dd5015d34f4146ad462fea6f7ee644a0016ff61",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "sha256": "96a9ba67d2cbfad5138674a21dd5015d34f4146ad462fea6f7ee644a0016ff61"
+    },
+    {
+      "folder": "Vanilla",
+      "checkpoint": "14000",
+      "model_sha256": "e4f85809774504b73b6b6476652479f7e3c4d7728dce1810aba98415f1d1a478",
+      "source": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-03/evaluations/20261110_123819_316993/Vanilla_14000/episodes.csv",
+      "episodes": 100,
+      "episodes_sha256": "8e3abe209860bccfee996fa4dd7a1ccb4e7036376bc071389f8becd2660d8182",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "sha256": "8e3abe209860bccfee996fa4dd7a1ccb4e7036376bc071389f8becd2660d8182"
+    },
+    {
+      "folder": "Vanilla",
+      "checkpoint": "20000",
+      "model_sha256": "fd238c06e2d3e2cb158d42db116d87f41bc583ae7a38a9df448b0e29b95df8c6",
+      "source": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-03/evaluations/20261110_123819_316993/Vanilla_20000/episodes.csv",
+      "episodes": 100,
+      "episodes_sha256": "2d2cf1a7a210ffc3bea4e3b573604815c464f5ce4eb71e4fe3b1790b7d4df7b1",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "sha256": "2d2cf1a7a210ffc3bea4e3b573604815c464f5ce4eb71e4fe3b1790b7d4df7b1"
+    },
+    {
+      "folder": "Vanilla",
+      "checkpoint": "32000",
+      "model_sha256": "44c1c9db1a7d0167b2ce02becde61d39856d479f70444067566c2088bb5470c8",
+      "source": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-03/evaluations/20261110_123819_316993/Vanilla_32000/episodes.csv",
+      "episodes": 100,
+      "episodes_sha256": "b633cf1142a51420b0b42106a534099fbf325bf14787c2e3785203f58810cdef",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "sha256": "b633cf1142a51420b0b42106a534099fbf325bf14787c2e3785203f58810cdef"
+    },
+    {
+      "folder": "TopK_8",
+      "checkpoint": "12000",
+      "model_sha256": "ab2878acc65d1b514c7c117a3d858e08bb3226d5b66ed2a8d2a7d5ee0a48efc0",
+      "source": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-03/evaluations/20261110_123819_316993/TopK_8_12000/episodes.csv",
+      "episodes": 100,
+      "episodes_sha256": "f62f46ffcf63337839fb502fc501866066c2efdb4d95e9bd06a44fc692800479",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "sha256": "f62f46ffcf63337839fb502fc501866066c2efdb4d95e9bd06a44fc692800479"
+    },
+    {
+      "folder": "TopK_8",
+      "checkpoint": "13000",
+      "model_sha256": "753e1ea16d2f7d982f5131d486a7f2a23e2cd0cfe5809a3c09283946551895f8",
+      "source": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-03/evaluations/20261110_123819_316993/TopK_8_13000/episodes.csv",
+      "episodes": 100,
+      "episodes_sha256": "e11ffe88fe7be41475a9b8bd89624ba3658436386c9b7ddbb75598d352ebaa82",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "sha256": "e11ffe88fe7be41475a9b8bd89624ba3658436386c9b7ddbb75598d352ebaa82"
+    },
+    {
+      "folder": "TopK_8",
+      "checkpoint": "14000",
+      "model_sha256": "e4f85809774504b73b6b6476652479f7e3c4d7728dce1810aba98415f1d1a478",
+      "source": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-03/evaluations/20261110_123819_316993/TopK_8_14000/episodes.csv",
+      "episodes": 100,
+      "episodes_sha256": "0805344558cb0c9609f919212be3a63437eaafe4883767f6267b65dcf77f4e6c",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "sha256": "0805344558cb0c9609f919212be3a63437eaafe4883767f6267b65dcf77f4e6c"
+    },
+    {
+      "folder": "TopK_8",
+      "checkpoint": "20000",
+      "model_sha256": "fd238c06e2d3e2cb158d42db116d87f41bc583ae7a38a9df448b0e29b95df8c6",
+      "source": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-03/evaluations/20261110_123819_316993/TopK_8_20000/episodes.csv",
+      "episodes": 100,
+      "episodes_sha256": "e79cf6492e4d58ffbfe23e2d4d32681f74515024336e778d57fb173c26937f18",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "sha256": "e79cf6492e4d58ffbfe23e2d4d32681f74515024336e778d57fb173c26937f18"
+    },
+    {
+      "folder": "TopK_8",
+      "checkpoint": "32000",
+      "model_sha256": "44c1c9db1a7d0167b2ce02becde61d39856d479f70444067566c2088bb5470c8",
+      "source": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-03/evaluations/20261110_123819_316993/TopK_8_32000/episodes.csv",
+      "episodes": 100,
+      "episodes_sha256": "25cf5cfb667d17cb7f8774f61ee2e3b01b57e1923e9900eabf685edb87b04de7",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "sha256": "25cf5cfb667d17cb7f8774f61ee2e3b01b57e1923e9900eabf685edb87b04de7"
+    },
+    {
+      "folder": "No_gate",
+      "checkpoint": "12000",
+      "model_sha256": "ab2878acc65d1b514c7c117a3d858e08bb3226d5b66ed2a8d2a7d5ee0a48efc0",
+      "source": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-03/evaluations/20261110_123819_316993/No_gate_12000/episodes.csv",
+      "episodes": 100,
+      "episodes_sha256": "554b7981bc595a432586a2769c285d523227e40ab222320350285a744db55761",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "sha256": "554b7981bc595a432586a2769c285d523227e40ab222320350285a744db55761"
+    },
+    {
+      "folder": "No_gate",
+      "checkpoint": "13000",
+      "model_sha256": "753e1ea16d2f7d982f5131d486a7f2a23e2cd0cfe5809a3c09283946551895f8",
+      "source": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-03/evaluations/20261110_123819_316993/No_gate_13000/episodes.csv",
+      "episodes": 100,
+      "episodes_sha256": "21feb4280903d087c2bda0d543f45a94492787a89e238d905cb5dfbbd5a38692",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "sha256": "21feb4280903d087c2bda0d543f45a94492787a89e238d905cb5dfbbd5a38692"
+    },
+    {
+      "folder": "No_gate",
+      "checkpoint": "14000",
+      "model_sha256": "e4f85809774504b73b6b6476652479f7e3c4d7728dce1810aba98415f1d1a478",
+      "source": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-03/evaluations/20261110_123819_316993/No_gate_14000/episodes.csv",
+      "episodes": 100,
+      "episodes_sha256": "ba1ec31eebc61543c044f5c6e1bf121b4e75d992a035e08b1d4c1a7ee885412d",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "sha256": "ba1ec31eebc61543c044f5c6e1bf121b4e75d992a035e08b1d4c1a7ee885412d"
+    },
+    {
+      "folder": "No_gate",
+      "checkpoint": "20000",
+      "model_sha256": "fd238c06e2d3e2cb158d42db116d87f41bc583ae7a38a9df448b0e29b95df8c6",
+      "source": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-03/evaluations/20261110_123819_316993/No_gate_20000/episodes.csv",
+      "episodes": 100,
+      "episodes_sha256": "43254ce121d1d70ad007eb268b6d50e284d133aacee836d7fb628fa35bc88a81",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "sha256": "43254ce121d1d70ad007eb268b6d50e284d133aacee836d7fb628fa35bc88a81"
+    },
+    {
+      "folder": "No_gate",
+      "checkpoint": "32000",
+      "model_sha256": "44c1c9db1a7d0167b2ce02becde61d39856d479f70444067566c2088bb5470c8",
+      "source": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-03/evaluations/20261110_123819_316993/No_gate_32000/episodes.csv",
+      "episodes": 100,
+      "episodes_sha256": "5c8c3658ce9caac4995a83336a2a207f93a3fb5e93c06abe556f947fe78ef812",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "sha256": "5c8c3658ce9caac4995a83336a2a207f93a3fb5e93c06abe556f947fe78ef812"
+    },
+    {
+      "folder": "Loss_only_gate",
+      "checkpoint": "12000",
+      "model_sha256": "ab2878acc65d1b514c7c117a3d858e08bb3226d5b66ed2a8d2a7d5ee0a48efc0",
+      "source": "live",
+      "episodes": 100,
+      "episodes_sha256": "6e724cb50405ae9ef6184478cf3affefad81e11f8f1362ce8af2831331385d54",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Loss_only_gate",
+      "checkpoint": "13000",
+      "model_sha256": "753e1ea16d2f7d982f5131d486a7f2a23e2cd0cfe5809a3c09283946551895f8",
+      "source": "live",
+      "episodes": 100,
+      "episodes_sha256": "6f879e4bdcd856d82880aa2d8673456a17f092f9615083e2b4cb8aadf9549042",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Loss_only_gate",
+      "checkpoint": "14000",
+      "model_sha256": "e4f85809774504b73b6b6476652479f7e3c4d7728dce1810aba98415f1d1a478",
+      "source": "live",
+      "episodes": 100,
+      "episodes_sha256": "d629f241182581e8e0d79be08dc47d4b3862cdf540e8313a6ae6a4205141ea4a",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Loss_only_gate",
+      "checkpoint": "20000",
+      "model_sha256": "fd238c06e2d3e2cb158d42db116d87f41bc583ae7a38a9df448b0e29b95df8c6",
+      "source": "live",
+      "episodes": 100,
+      "episodes_sha256": "27b5de756d1d5d0ff2cbb6298a7cc15cba43c30718506703585ff4d244e7b89b",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Loss_only_gate",
+      "checkpoint": "32000",
+      "model_sha256": "44c1c9db1a7d0167b2ce02becde61d39856d479f70444067566c2088bb5470c8",
+      "source": "live",
+      "episodes": 100,
+      "episodes_sha256": "57ca90037880273e7efa8abc6e79e842c4b1b5ec423934864351bb2b299d3566",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Proxy_only_gate",
+      "checkpoint": "12000",
+      "model_sha256": "ab2878acc65d1b514c7c117a3d858e08bb3226d5b66ed2a8d2a7d5ee0a48efc0",
+      "source": "live",
+      "episodes": 100,
+      "episodes_sha256": "c43a234e106e077fd827a56039bb19d8cdf8c40a5cce88bc5141774f5f8fa658",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Proxy_only_gate",
+      "checkpoint": "13000",
+      "model_sha256": "753e1ea16d2f7d982f5131d486a7f2a23e2cd0cfe5809a3c09283946551895f8",
+      "source": "live",
+      "episodes": 100,
+      "episodes_sha256": "84f9788abc578317ce3ea564e87b5aedfe943abd4284273141945d48ed1bb956",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Proxy_only_gate",
+      "checkpoint": "14000",
+      "model_sha256": "e4f85809774504b73b6b6476652479f7e3c4d7728dce1810aba98415f1d1a478",
+      "source": "live",
+      "episodes": 100,
+      "episodes_sha256": "307daa069f5b8afdbb1992516ea003a1eaf269e59a533bc781265dfb5bef514b",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Proxy_only_gate",
+      "checkpoint": "20000",
+      "model_sha256": "fd238c06e2d3e2cb158d42db116d87f41bc583ae7a38a9df448b0e29b95df8c6",
+      "source": "live",
+      "episodes": 100,
+      "episodes_sha256": "3bfa22be0af122f590309ed5316557c11db2c6df57424a6b5cfb3b38144749f4",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Proxy_only_gate",
+      "checkpoint": "32000",
+      "model_sha256": "44c1c9db1a7d0167b2ce02becde61d39856d479f70444067566c2088bb5470c8",
+      "source": "live",
+      "episodes": 100,
+      "episodes_sha256": "94e0a22554defff300f4baca210c6ecf336dbadc3920151f93d5f1170e01aa74",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "No_disagreement",
+      "checkpoint": "12000",
+      "model_sha256": "ab2878acc65d1b514c7c117a3d858e08bb3226d5b66ed2a8d2a7d5ee0a48efc0",
+      "source": "live",
+      "episodes": 100,
+      "episodes_sha256": "f1eff9a3cf25217180a6c9462d6f2ed13d276e451cc5d286ab246185bcd7f10e",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "No_disagreement",
+      "checkpoint": "13000",
+      "model_sha256": "753e1ea16d2f7d982f5131d486a7f2a23e2cd0cfe5809a3c09283946551895f8",
+      "source": "live",
+      "episodes": 100,
+      "episodes_sha256": "38f55807aaab87c9ed2c372d02832028cbef455b6f97aee3e8fd7b0f16c6ec6c",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "No_disagreement",
+      "checkpoint": "14000",
+      "model_sha256": "e4f85809774504b73b6b6476652479f7e3c4d7728dce1810aba98415f1d1a478",
+      "source": "live",
+      "episodes": 100,
+      "episodes_sha256": "367047a1621b3ba175a4745c150e43f79dc26e2fe0a5b6d5dcb37a533fe76657",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "No_disagreement",
+      "checkpoint": "20000",
+      "model_sha256": "fd238c06e2d3e2cb158d42db116d87f41bc583ae7a38a9df448b0e29b95df8c6",
+      "source": "live",
+      "episodes": 100,
+      "episodes_sha256": "a88b908bea05e44b54e5fa42a79b02deb7d801b0df39351fb4ad8e5ec1a0cd66",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "No_disagreement",
+      "checkpoint": "32000",
+      "model_sha256": "44c1c9db1a7d0167b2ce02becde61d39856d479f70444067566c2088bb5470c8",
+      "source": "live",
+      "episodes": 100,
+      "episodes_sha256": "aab725515da81da8da4e75ded75f2659a9ea12252f0eea4e3ef61363d1928c91",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      }
+    },
+    {
+      "folder": "Full_gate",
+      "checkpoint": "12000",
+      "model_sha256": "ab2878acc65d1b514c7c117a3d858e08bb3226d5b66ed2a8d2a7d5ee0a48efc0",
+      "source": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-03/evaluations/20261110_123819_316993/Full_DOVE_12000/episodes.csv",
+      "episodes": 100,
+      "episodes_sha256": "f1eff9a3cf25217180a6c9462d6f2ed13d276e451cc5d286ab246185bcd7f10e",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "sha256": "f1eff9a3cf25217180a6c9462d6f2ed13d276e451cc5d286ab246185bcd7f10e"
+    },
+    {
+      "folder": "Full_gate",
+      "checkpoint": "13000",
+      "model_sha256": "753e1ea16d2f7d982f5131d486a7f2a23e2cd0cfe5809a3c09283946551895f8",
+      "source": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-03/evaluations/20261110_123819_316993/Full_DOVE_13000/episodes.csv",
+      "episodes": 100,
+      "episodes_sha256": "38f55807aaab87c9ed2c372d02832028cbef455b6f97aee3e8fd7b0f16c6ec6c",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "sha256": "38f55807aaab87c9ed2c372d02832028cbef455b6f97aee3e8fd7b0f16c6ec6c"
+    },
+    {
+      "folder": "Full_gate",
+      "checkpoint": "14000",
+      "model_sha256": "e4f85809774504b73b6b6476652479f7e3c4d7728dce1810aba98415f1d1a478",
+      "source": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-03/evaluations/20261110_123819_316993/Full_DOVE_14000/episodes.csv",
+      "episodes": 100,
+      "episodes_sha256": "fa87913fa1a53ac074044148a2398d6d5fae3f37682025fd601fe1e9de4c8d58",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "sha256": "fa87913fa1a53ac074044148a2398d6d5fae3f37682025fd601fe1e9de4c8d58"
+    },
+    {
+      "folder": "Full_gate",
+      "checkpoint": "20000",
+      "model_sha256": "fd238c06e2d3e2cb158d42db116d87f41bc583ae7a38a9df448b0e29b95df8c6",
+      "source": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-03/evaluations/20261110_123819_316993/Full_gate_20000/episodes.csv",
+      "episodes": 100,
+      "episodes_sha256": "c8936ab44eb4140afcf713b7ae2e75e94d7dc9b62ba17374f80be87bec27ed7a",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "sha256": "c8936ab44eb4140afcf713b7ae2e75e94d7dc9b62ba17374f80be87bec27ed7a"
+    },
+    {
+      "folder": "Full_gate",
+      "checkpoint": "32000",
+      "model_sha256": "44c1c9db1a7d0167b2ce02becde61d39856d479f70444067566c2088bb5470c8",
+      "source": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-03/evaluations/20261110_123819_316993/Full_DOVE_32000/episodes.csv",
+      "episodes": 100,
+      "episodes_sha256": "1a3c231c0dd0e36fff2c34535c0c4f539f314f9c62c51dee894d594961838060",
+      "archive_outcome_mismatches": {
+        "success": 0,
+        "crash": 0,
+        "route_completion": 0
+      },
+      "sha256": "1a3c231c0dd0e36fff2c34535c0c4f539f314f9c62c51dee894d594961838060"
+    }
+  ],
+  "modes": 7,
+  "checkpoints": 5,
+  "table_episodes": 3500,
+  "fresh_episodes": 1500,
+  "reused_live_episodes": 2000,
+  "spec_sha256": "76b6dc9a6bf5362fdc94b0f18d9e6e99511cb1a0a3d9ac951453f543e178cac4",
+  "evaluator_sha256": "91a8db421d22b5fefec9e400d78f308d01203f8db2839de574516747596b0f63",
+  "runner_sha256": "9258e0707ce7aec25384c339f530e4ed6196b16dcc2b47e100cf6f8af5483b55",
+  "configuration": "Original map104, traffic .06, horizon1000, 100 continuous episodes per job. Explicit reuse never counts as newly rerun simulation.",
+  "conversion": "Only fixed historical factors from experiment.json; raw reward retained in per-job and public episode CSV."
+}

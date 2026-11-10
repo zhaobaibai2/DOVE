@@ -1,0 +1,21 @@
+TAB-02 through TAB-06 executable table workflows (2026-11-10)
+
+Problem: calculators previously consumed stripped CSVs and printed only an output path. The user requested sh -> existing models/recorded measurements -> original aggregation -> concise terminal and CSV, with all runtime assets local.
+
+Entrypoints: scripts/run_tab02.sh ... run_tab06.sh and each TAB/run.sh. Default test is a full execution. calculate/recompute only aggregates existing local records. TAB-02/03 smoke is explicitly labelled, saved separately and cannot replace official outputs.
+
+Recovered once from the read-only Backup root: 152 TAB-02 models (146 actor memberships, 152 critic memberships), exact 256/512 intervention pairs and row IDs; 35 TAB-03 logical jobs. Source filenames, paths and hashes are in each table's provenance/ and experiment.json. Original calculators/results/data are preserved under reference/. No evaluator needs the Backup or github/git roots at runtime.
+
+TAB-02 runs actual checkpoint inference on GPU using matched per-observation diffusion keys. Actor metrics use 8 energy timesteps and 32 sampled actions. Critic uses target critics. Actor diversity is pairwise distinct unordered Euclidean distance. Vectorized JIT preserves per-pair randomness. The original actor audit script was not recovered; formulas were reconstructed from surviving code and verified against archived measurements. Full diagnostics completed at evaluations/20261110_123311_768708. Full pair audit confirms all actor/critic decision indicators match; maximum diversity error is recorded in provenance/full_pair_comparison.json.
+
+TAB-03 runs map104, traffic density .06, horizon1000, 100 consecutive episodes per original model/configuration. Four identical Full_DOVE/Full_gate jobs share actual measurements: 3100 actual episodes, 3500 logical table rows. Six GPU processes completed evaluations/20261110_123819_316993. Every logical episode's success, crash and route completion matches the archived table. Fixed historical reward factors are applied only where supported by archived evidence; raw actual measurements remain intact. Positive-only/ER legacy per-checkpoint max370 conversion is inferable from full comparison but the original code was not recovered, so actual returns are retained. TopK and one Full_gate checkpoint also retain Return differences. No target-dependent adjustment, fabricated episodes or outcome relabelling was added.
+
+TAB-04/06 fully recalculate physical recordings. TAB-04 gate denominators count only logged diagnostics; seconds -> ms; linear P95. Preserve speed max3.833 separately from P95 3.111. TAB-06 uses unweighted per-run means and sample SD; retains source DACER alias uncertainty for Positive-only. Success counts remain sourced from reported.csv, not inferred from the twelve driving traces.
+
+TAB-05 can only recompute the four method scenario aggregate counts. The recovered trial ledger is missing. It explicitly identifies aggregate recomputation and does not invent 160 per-trial records or claim fresh physical execution.
+
+Outputs: test_results.csv plus timestamp copy; final_metrics.csv; table_values.csv; per_checkpoint/per_phase/per_run/scenario_counts CSV; calculation_audit.json. All terminal metric rows have terminal_text in CSV. Setup messages, pkl/map details and debug text are not written to console log files. Local source/config manifests are provenance, not console logs.
+
+Shared evaluator change: compact core-metrics mode now includes route_completion, using the same final-info extraction/fallback as the full mode, and progress events include it. Policy actions are unchanged. TAB-01 seven existing tests still pass.
+
+Validation: all five calculators run standalone with standard library only, and reproduce every archived aggregation exactly when given archived inputs. Real physical sh entrypoints checked from another working directory. Full TAB-02 GPU diagnostics and full TAB-03 GPU simulation completed. All 10 shell entrypoints pass bash -n; edited Python files compile; scripts/test_table_workflows.py and scripts/audit_table_reproduction.py pass. The five old table-folder definitions differ from the later current_paper definitions, so the existing folders' definitions were preserved and documented.

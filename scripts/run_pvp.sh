@@ -3,15 +3,22 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd -- "$SCRIPT_DIR/.." && pwd)"
-PYTHON_BIN="${PYTHON_BIN:-python}"
-MODEL_PATH="$PROJECT_ROOT/02_data/models/final/simulation/DOVE/policy-13000-25998.pkl"
+if [[ -z "${PYTHON_BIN:-}" ]]; then
+    PYTHON_BIN="python"
+    if ! "$PYTHON_BIN" -c 'import jax, metadrive' >/dev/null 2>&1; then
+        if [[ -x "$HOME/miniconda3/envs/dacer_pvp/bin/python" ]]; then
+            PYTHON_BIN="$HOME/miniconda3/envs/dacer_pvp/bin/python"
+        fi
+    fi
+fi
 
 cd "$PROJECT_ROOT"
 
 usage() {
-    echo "Usage: $0 train [training arguments...] | test"
+    echo "Usage: $0 train [training arguments...] | test [--num-episodes N | --replay]"
     echo "  train  Start training; optional arguments are passed to train_pvp_dacer_metadrive_off.py"
-    echo "  test   Evaluate the saved DOVE policy on map 104 (5 episodes by default)"
+    echo "  test   Evaluate the 3 recorded DOVE checkpoints on map 104 (400 episodes each)"
+    echo "         --replay uses the 3 archived episode CSVs without running simulation"
 }
 
 case "${1:-}" in
@@ -20,14 +27,8 @@ case "${1:-}" in
         exec "$PYTHON_BIN" "$SCRIPT_DIR/train_pvp_dacer_metadrive_off.py" "$@"
         ;;
     test)
-        if [[ ! -f "$MODEL_PATH" ]]; then
-            echo "Checkpoint not found: $MODEL_PATH" >&2
-            exit 1
-        fi
-        exec "$PYTHON_BIN" "$SCRIPT_DIR/eval_pvp_policies_fixed_v3.py" \
-            --log_dir "$MODEL_PATH" \
-            --maps 104 \
-            --num_episodes "${NUM_EPISODES:-5}"
+        shift
+        exec "$PYTHON_BIN" "$SCRIPT_DIR/eval_dove_table01.py" "$@"
         ;;
     *)
         usage >&2

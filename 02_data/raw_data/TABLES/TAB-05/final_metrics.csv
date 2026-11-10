@@ -1,0 +1,5 @@
+Method,curve_meeting,pedestrian_yielding,obstacle_avoidance,straight_tracking,Successes,Trials,Succ.↑,evidence
+DOVE,8,8,7,9,32,40,0.8,reported scenario counts; individual trial records unavailable
+IWR,2,3,2,5,12,40,0.3,reported scenario counts; individual trial records unavailable
+PVP-style_TD3,1,2,2,3,8,40,0.2,reported scenario counts; individual trial records unavailable
+Positive-only,3,3,3,7,16,40,0.4,reported scenario counts; individual trial records unavailable

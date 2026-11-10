@@ -1,0 +1,23 @@
+{
+  "source": "live_simulation",
+  "run_dir": "/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-01/raw_data/DOVE/evaluations/20261110_101213_263214",
+  "n_checkpoints": 3,
+  "n_episodes": 300,
+  "reward_transform": "none",
+  "dispersion": "sample SD of the three checkpoint means (ddof=1); not independent-training-run SD",
+  "reward_mean": 374.0711019159418,
+  "reward_sd": 5.763716781474342,
+  "reward_se": 3.327683435316975,
+  "reward_pooled_episode_sd": 28.465959746204124,
+  "reward_pooled_episode_se": 1.6434829522212,
+  "cost_mean": 0.03,
+  "cost_sd": 0.026457513110645904,
+  "cost_se": 0.015275252316519466,
+  "cost_pooled_episode_sd": 0.17087224588772665,
+  "cost_pooled_episode_se": 0.00986531371603149,
+  "success_mean": 0.9500000000000001,
+  "success_sd": 0.03999999999999998,
+  "success_se": 0.02309401076758502,
+  "success_pooled_episode_sd": 0.21830909938949905,
+  "success_pooled_episode_se": 0.012604081729907204
+}

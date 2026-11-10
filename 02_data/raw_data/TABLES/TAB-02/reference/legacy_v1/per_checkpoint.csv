@@ -1,0 +1,299 @@
+setting,checkpoint,kind,samples,pairsat_e,ovr_e,diversity,pairacc_c
+Positive-only,run11_noer_policy-1000-1998,actor,256,0.0078125,0.51953125,0.03474793505301932,
+Positive-only,run11_noer_policy-10000-19998,actor,256,0.04296875,0.9453125,0.06660096484120004,
+Positive-only,run11_noer_policy-11000-21998,actor,256,0.06640625,0.8671875,0.07100132550112903,
+Positive-only,run11_noer_policy-12000-23998,actor,256,0.1015625,0.47265625,0.059515950284549035,
+Positive-only,run11_noer_policy-13000-25998,actor,256,0.01171875,0.86328125,0.0473185687296791,
+Positive-only,run11_noer_policy-14000-27998,actor,256,0.1796875,0.6484375,0.07458282857260201,
+Positive-only,run11_noer_policy-15000-29998,actor,256,0.05078125,0.82421875,0.06099933703080751,
+Positive-only,run11_noer_policy-16000-31998,actor,256,0.09375,0.6796875,0.060387270656065084,
+Positive-only,run11_noer_policy-17000-33998,actor,256,0.0390625,0.89453125,0.061198389070341364,
+Positive-only,run11_noer_policy-18000-35998,actor,256,0.0234375,0.83984375,0.055217051922227256,
+Positive-only,run11_noer_policy-19000-37998,actor,256,0.015625,0.875,0.05847648801136529,
+Positive-only,run11_noer_policy-2000-3998,actor,256,0.31640625,0.07421875,0.03720673406496644,
+Positive-only,run11_noer_policy-20000-39998,actor,256,0.03515625,0.828125,0.05341246717580361,
+Positive-only,run11_noer_policy-21000-41998,actor,256,0.12890625,0.3203125,0.05653363475721562,
+Positive-only,run11_noer_policy-22000-43998,actor,256,0.01953125,0.8125,0.040071818068099674,
+Positive-only,run11_noer_policy-23000-45998,actor,256,0.05078125,0.7421875,0.0465502259976347,
+Positive-only,run11_noer_policy-24000-47998,actor,256,0.01953125,0.8125,0.04735159534175182,
+Positive-only,run11_noer_policy-25000-49998,actor,256,0.03125,0.86328125,0.05479289974027779,
+Positive-only,run11_noer_policy-26000-51998,actor,256,0.03125,0.90234375,0.06111660826718435,
+Positive-only,run11_noer_policy-27000-53998,actor,256,0.1015625,0.61328125,0.05164326050726231,
+Positive-only,run11_noer_policy-28000-55998,actor,256,0.0859375,0.74609375,0.06084185807412723,
+Positive-only,run11_noer_policy-29000-57998,actor,256,0.01953125,0.78125,0.0411506468517473,
+Positive-only,run11_noer_policy-3000-5998,actor,256,0.16015625,0.2421875,0.04706898223957978,
+Positive-only,run11_noer_policy-30000-59998,actor,256,0.0390625,0.86328125,0.05709145859873388,
+Positive-only,run11_noer_policy-31000-61998,actor,256,0.0625,0.67578125,0.04672072825633222,
+Positive-only,run11_noer_policy-32000-63998,actor,256,0.04296875,0.8671875,0.05929719651612686,
+Positive-only,run11_noer_policy-33000-65998,actor,256,0.01953125,0.54296875,0.03783342830138281,
+Positive-only,run11_noer_policy-34000-67998,actor,256,0.03125,0.765625,0.04231802474168944,
+Positive-only,run11_noer_policy-35000-69998,actor,256,0.03125,0.875,0.04812831374874804,
+Positive-only,run11_noer_policy-36000-71998,actor,256,0.02734375,0.828125,0.04381207868937054,
+Positive-only,run11_noer_policy-37000-73998,actor,256,0.02734375,0.84375,0.047534171397273894,
+Positive-only,run11_noer_policy-38000-75998,actor,256,0.08203125,0.62890625,0.05037221693783067,
+Positive-only,run11_noer_policy-39000-77998,actor,256,0.08203125,0.4921875,0.04384334831411252,
+Positive-only,run11_noer_policy-4000-7998,actor,256,0.12890625,0.1015625,0.03856584103050409,
+Positive-only,run11_noer_policy-40000-79998,actor,256,0.05078125,0.76953125,0.04715172402939061,
+Positive-only,run11_noer_policy-41000-81998,actor,256,0.0859375,0.70703125,0.04976940986671252,
+Positive-only,run11_noer_policy-42000-83998,actor,256,0.11328125,0.53125,0.04537046542100143,
+Positive-only,run11_noer_policy-43000-85998,actor,256,0.109375,0.34375,0.04248494154307991,
+Positive-only,run11_noer_policy-44000-87998,actor,256,0.046875,0.53125,0.03874155824814807,
+Positive-only,run11_noer_policy-45000-89998,actor,256,0.12890625,0.203125,0.037256087038258556,
+Positive-only,run11_noer_policy-46000-91998,actor,256,0.15625,0.15625,0.03403358046489302,
+Positive-only,run11_noer_policy-47000-93998,actor,256,0.19921875,0.08984375,0.030593374875024892,
+Positive-only,run11_noer_policy-48000-95998,actor,256,0.0546875,0.33203125,0.029792617475322913,
+Positive-only,run11_noer_policy-49000-97998,actor,256,0.125,0.1953125,0.028445533904232434,
+Positive-only,run11_noer_policy-5000-9998,actor,256,0.05859375,0.65625,0.04052559713454684,
+Positive-only,run11_noer_policy-50000-99998,actor,256,0.14453125,0.109375,0.026156948848438333,
+Positive-only,run11_noer_policy-6000-11998,actor,256,0.00390625,0.578125,0.036357433746161405,
+Positive-only,run11_noer_policy-7000-13998,actor,256,0.12890625,0.4296875,0.049103158788057044,
+Positive-only,run11_noer_policy-8000-15998,actor,256,0.046875,0.59765625,0.0486265771323815,
+Positive-only,run11_noer_policy-9000-17998,actor,256,0.0390625,0.84765625,0.06663309270516038,
+Positive-only,final_policy_50000.pkl,critic,512,,,,0.767578125
+Positive-only,policy-1000-1998.pkl,critic,512,,,,0.908203125
+Positive-only,policy-10000-19998.pkl,critic,512,,,,0.705078125
+Positive-only,policy-11000-21998.pkl,critic,512,,,,0.728515625
+Positive-only,policy-12000-23998.pkl,critic,512,,,,0.720703125
+Positive-only,policy-13000-25998.pkl,critic,512,,,,0.75
+Positive-only,policy-14000-27998.pkl,critic,512,,,,0.76171875
+Positive-only,policy-15000-29998.pkl,critic,512,,,,0.787109375
+Positive-only,policy-16000-31998.pkl,critic,512,,,,0.7890625
+Positive-only,policy-17000-33998.pkl,critic,512,,,,0.794921875
+Positive-only,policy-18000-35998.pkl,critic,512,,,,0.794921875
+Positive-only,policy-19000-37998.pkl,critic,512,,,,0.80859375
+Positive-only,policy-2000-3998.pkl,critic,512,,,,0.91015625
+Positive-only,policy-20000-39998.pkl,critic,512,,,,0.80078125
+Positive-only,policy-21000-41998.pkl,critic,512,,,,0.8046875
+Positive-only,policy-22000-43998.pkl,critic,512,,,,0.802734375
+Positive-only,policy-23000-45998.pkl,critic,512,,,,0.80078125
+Positive-only,policy-24000-47998.pkl,critic,512,,,,0.798828125
+Positive-only,policy-25000-49998.pkl,critic,512,,,,0.8046875
+Positive-only,policy-26000-51998.pkl,critic,512,,,,0.796875
+Positive-only,policy-27000-53998.pkl,critic,512,,,,0.798828125
+Positive-only,policy-28000-55998.pkl,critic,512,,,,0.80078125
+Positive-only,policy-29000-57998.pkl,critic,512,,,,0.8046875
+Positive-only,policy-3000-5998.pkl,critic,512,,,,0.91015625
+Positive-only,policy-30000-59998.pkl,critic,512,,,,0.794921875
+Positive-only,policy-31000-61998.pkl,critic,512,,,,0.79296875
+Positive-only,policy-32000-63998.pkl,critic,512,,,,0.796875
+Positive-only,policy-33000-65998.pkl,critic,512,,,,0.79296875
+Positive-only,policy-34000-67998.pkl,critic,512,,,,0.79296875
+Positive-only,policy-35000-69998.pkl,critic,512,,,,0.798828125
+Positive-only,policy-36000-71998.pkl,critic,512,,,,0.78515625
+Positive-only,policy-37000-73998.pkl,critic,512,,,,0.78515625
+Positive-only,policy-38000-75998.pkl,critic,512,,,,0.7890625
+Positive-only,policy-39000-77998.pkl,critic,512,,,,0.7890625
+Positive-only,policy-4000-7998.pkl,critic,512,,,,0.90625
+Positive-only,policy-40000-79998.pkl,critic,512,,,,0.78515625
+Positive-only,policy-41000-81998.pkl,critic,512,,,,0.76953125
+Positive-only,policy-42000-83998.pkl,critic,512,,,,0.763671875
+Positive-only,policy-43000-85998.pkl,critic,512,,,,0.783203125
+Positive-only,policy-44000-87998.pkl,critic,512,,,,0.7578125
+Positive-only,policy-45000-89998.pkl,critic,512,,,,0.755859375
+Positive-only,policy-46000-91998.pkl,critic,512,,,,0.763671875
+Positive-only,policy-47000-93998.pkl,critic,512,,,,0.759765625
+Positive-only,policy-48000-95998.pkl,critic,512,,,,0.7578125
+Positive-only,policy-49000-97998.pkl,critic,512,,,,0.765625
+Positive-only,policy-5000-9998.pkl,critic,512,,,,0.904296875
+Positive-only,policy-50000-99998.pkl,critic,512,,,,0.767578125
+Positive-only,policy-6000-11998.pkl,critic,512,,,,0.806640625
+Positive-only,policy-7000-13998.pkl,critic,512,,,,0.65625
+Positive-only,policy-8000-15998.pkl,critic,512,,,,0.673828125
+Positive-only,policy-9000-17998.pkl,critic,512,,,,0.673828125
+Positive-only,stage1b_offline_bc_policy.pkl,critic,512,,,,0.91015625
+ER w/o CPCal,run13_eronly_policy-1000-1998,actor,256,0.16796875,0.21875,0.03483841517299879,
+ER w/o CPCal,run13_eronly_policy-10000-19998,actor,256,0.44140625,0.23828125,0.04637940048269229,
+ER w/o CPCal,run13_eronly_policy-11000-21998,actor,256,0.765625,0.0,0.03679261970683001,
+ER w/o CPCal,run13_eronly_policy-12000-23998,actor,256,0.49609375,0.078125,0.02943341390346177,
+ER w/o CPCal,run13_eronly_policy-13000-25998,actor,256,0.4453125,0.15625,0.02785745743676671,
+ER w/o CPCal,run13_eronly_policy-14000-27998,actor,256,0.578125,0.0078125,0.031090096083062235,
+ER w/o CPCal,run13_eronly_policy-15000-29998,actor,256,0.30859375,0.21875,0.023764531779306708,
+ER w/o CPCal,run13_eronly_policy-16000-31998,actor,256,0.51171875,0.01171875,0.03413608064147411,
+ER w/o CPCal,run13_eronly_policy-17000-33998,actor,256,0.625,0.02734375,0.029264051729114726,
+ER w/o CPCal,run13_eronly_policy-18000-35998,actor,256,0.5859375,0.0546875,0.024549468798795715,
+ER w/o CPCal,run13_eronly_policy-19000-37998,actor,256,0.58984375,0.0546875,0.023594019850861514,
+ER w/o CPCal,run13_eronly_policy-2000-3998,actor,256,0.54296875,0.0078125,0.025563430179317947,
+ER w/o CPCal,run13_eronly_policy-20000-39998,actor,256,0.58203125,0.0,0.020672937458584784,
+ER w/o CPCal,run13_eronly_policy-21000-41998,actor,256,0.58984375,0.0625,0.029330082128581125,
+ER w/o CPCal,run13_eronly_policy-22000-43998,actor,256,0.45703125,0.11328125,0.023204572233225917,
+ER w/o CPCal,run13_eronly_policy-23000-45998,actor,256,0.65625,0.0703125,0.026266043889336288,
+ER w/o CPCal,run13_eronly_policy-24000-47998,actor,256,0.578125,0.12890625,0.02711238032861729,
+ER w/o CPCal,run13_eronly_policy-25000-49998,actor,256,0.6328125,0.0390625,0.021892750814004103,
+ER w/o CPCal,run13_eronly_policy-26000-51998,actor,256,0.64453125,0.02734375,0.02129614025398041,
+ER w/o CPCal,run13_eronly_policy-27000-53998,actor,256,0.60546875,0.00390625,0.02464159979717806,
+ER w/o CPCal,run13_eronly_policy-28000-55998,actor,256,0.484375,0.015625,0.0209356083869352,
+ER w/o CPCal,run13_eronly_policy-29000-57998,actor,256,0.5078125,0.015625,0.021042912114353385,
+ER w/o CPCal,run13_eronly_policy-3000-5998,actor,256,0.4609375,0.13671875,0.031600052148860414,
+ER w/o CPCal,run13_eronly_policy-30000-59998,actor,256,0.7734375,0.0,0.016465511529531796,
+ER w/o CPCal,run13_eronly_policy-31000-61998,actor,256,0.53515625,0.00390625,0.02994978698552586,
+ER w/o CPCal,run13_eronly_policy-32000-63998,actor,256,0.53125,0.0,0.020023080011014827,
+ER w/o CPCal,run13_eronly_policy-33000-65998,actor,256,0.44140625,0.22265625,0.020656027361837914,
+ER w/o CPCal,run13_eronly_policy-34000-67998,actor,256,0.66796875,0.03125,0.020242117781890556,
+ER w/o CPCal,run13_eronly_policy-35000-69998,actor,256,0.67578125,0.00390625,0.01885570309968898,
+ER w/o CPCal,run13_eronly_policy-36000-71998,actor,256,0.6796875,0.015625,0.018370254460023716,
+ER w/o CPCal,run13_eronly_policy-37000-73998,actor,256,0.671875,0.01953125,0.016620136990241008,
+ER w/o CPCal,run13_eronly_policy-38000-75998,actor,256,0.78125,0.00390625,0.01917059074912686,
+ER w/o CPCal,run13_eronly_policy-39000-77998,actor,256,0.6015625,0.0,0.01489568830038479,
+ER w/o CPCal,run13_eronly_policy-4000-7998,actor,256,0.5859375,0.04296875,0.03385157815500861,
+ER w/o CPCal,run13_eronly_policy-40000-79998,actor,256,0.5546875,0.0,0.01766069810219051,
+ER w/o CPCal,run13_eronly_policy-41000-81998,actor,256,0.6796875,0.02734375,0.019493970095936675,
+ER w/o CPCal,run13_eronly_policy-42000-83998,actor,256,0.4765625,0.1328125,0.016433159202279057,
+ER w/o CPCal,run13_eronly_policy-43000-85998,actor,256,0.640625,0.01171875,0.013095418977172812,
+ER w/o CPCal,run13_eronly_policy-44000-87998,actor,256,0.5859375,0.015625,0.019148406587191857,
+ER w/o CPCal,run13_eronly_policy-45000-89998,actor,256,0.6015625,0.03515625,0.01716106191815925,
+ER w/o CPCal,run13_eronly_policy-46000-91998,actor,256,0.84375,0.0,0.023755019152304158,
+ER w/o CPCal,run13_eronly_policy-47000-93998,actor,256,0.5390625,0.1171875,0.01563088147122471,
+ER w/o CPCal,run13_eronly_policy-48000-95998,actor,256,0.83203125,0.00390625,0.014211333018465666,
+ER w/o CPCal,run13_eronly_policy-49000-97998,actor,256,0.640625,0.015625,0.01622994281569845,
+ER w/o CPCal,run13_eronly_policy-5000-9998,actor,256,0.72265625,0.0,0.025930530107871164,
+ER w/o CPCal,run13_eronly_policy-50000-99998,actor,256,0.625,0.03515625,0.016683656183886342,
+ER w/o CPCal,run13_eronly_policy-6000-11998,actor,256,0.5390625,0.0625,0.03163669572677463,
+ER w/o CPCal,run13_eronly_policy-7000-13998,actor,256,0.51953125,0.04296875,0.0340398535845452,
+ER w/o CPCal,run13_eronly_policy-8000-15998,actor,256,0.48046875,0.1484375,0.035669212804350536,
+ER w/o CPCal,run13_eronly_policy-9000-17998,actor,256,0.53125,0.00390625,0.03522915775101865,
+ER w/o CPCal,final_policy_50000.pkl,critic,512,,,,0.30859375
+ER w/o CPCal,policy-1000-1998.pkl,critic,512,,,,0.845703125
+ER w/o CPCal,policy-10000-19998.pkl,critic,512,,,,0.34375
+ER w/o CPCal,policy-11000-21998.pkl,critic,512,,,,0.2890625
+ER w/o CPCal,policy-12000-23998.pkl,critic,512,,,,0.26953125
+ER w/o CPCal,policy-13000-25998.pkl,critic,512,,,,0.30859375
+ER w/o CPCal,policy-14000-27998.pkl,critic,512,,,,0.326171875
+ER w/o CPCal,policy-15000-29998.pkl,critic,512,,,,0.283203125
+ER w/o CPCal,policy-16000-31998.pkl,critic,512,,,,0.29296875
+ER w/o CPCal,policy-17000-33998.pkl,critic,512,,,,0.3046875
+ER w/o CPCal,policy-18000-35998.pkl,critic,512,,,,0.314453125
+ER w/o CPCal,policy-19000-37998.pkl,critic,512,,,,0.31640625
+ER w/o CPCal,policy-2000-3998.pkl,critic,512,,,,0.876953125
+ER w/o CPCal,policy-20000-39998.pkl,critic,512,,,,0.314453125
+ER w/o CPCal,policy-21000-41998.pkl,critic,512,,,,0.3046875
+ER w/o CPCal,policy-22000-43998.pkl,critic,512,,,,0.2890625
+ER w/o CPCal,policy-23000-45998.pkl,critic,512,,,,0.291015625
+ER w/o CPCal,policy-24000-47998.pkl,critic,512,,,,0.29296875
+ER w/o CPCal,policy-25000-49998.pkl,critic,512,,,,0.294921875
+ER w/o CPCal,policy-26000-51998.pkl,critic,512,,,,0.287109375
+ER w/o CPCal,policy-27000-53998.pkl,critic,512,,,,0.291015625
+ER w/o CPCal,policy-28000-55998.pkl,critic,512,,,,0.2890625
+ER w/o CPCal,policy-29000-57998.pkl,critic,512,,,,0.294921875
+ER w/o CPCal,policy-3000-5998.pkl,critic,512,,,,0.357421875
+ER w/o CPCal,policy-30000-59998.pkl,critic,512,,,,0.296875
+ER w/o CPCal,policy-31000-61998.pkl,critic,512,,,,0.306640625
+ER w/o CPCal,policy-32000-63998.pkl,critic,512,,,,0.302734375
+ER w/o CPCal,policy-33000-65998.pkl,critic,512,,,,0.294921875
+ER w/o CPCal,policy-34000-67998.pkl,critic,512,,,,0.294921875
+ER w/o CPCal,policy-35000-69998.pkl,critic,512,,,,0.298828125
+ER w/o CPCal,policy-36000-71998.pkl,critic,512,,,,0.298828125
+ER w/o CPCal,policy-37000-73998.pkl,critic,512,,,,0.30859375
+ER w/o CPCal,policy-38000-75998.pkl,critic,512,,,,0.32421875
+ER w/o CPCal,policy-39000-77998.pkl,critic,512,,,,0.333984375
+ER w/o CPCal,policy-4000-7998.pkl,critic,512,,,,0.306640625
+ER w/o CPCal,policy-40000-79998.pkl,critic,512,,,,0.333984375
+ER w/o CPCal,policy-41000-81998.pkl,critic,512,,,,0.341796875
+ER w/o CPCal,policy-42000-83998.pkl,critic,512,,,,0.322265625
+ER w/o CPCal,policy-43000-85998.pkl,critic,512,,,,0.314453125
+ER w/o CPCal,policy-44000-87998.pkl,critic,512,,,,0.3046875
+ER w/o CPCal,policy-45000-89998.pkl,critic,512,,,,0.3046875
+ER w/o CPCal,policy-46000-91998.pkl,critic,512,,,,0.287109375
+ER w/o CPCal,policy-47000-93998.pkl,critic,512,,,,0.287109375
+ER w/o CPCal,policy-48000-95998.pkl,critic,512,,,,0.30078125
+ER w/o CPCal,policy-49000-97998.pkl,critic,512,,,,0.302734375
+ER w/o CPCal,policy-5000-9998.pkl,critic,512,,,,0.322265625
+ER w/o CPCal,policy-50000-99998.pkl,critic,512,,,,0.30859375
+ER w/o CPCal,policy-6000-11998.pkl,critic,512,,,,0.375
+ER w/o CPCal,policy-7000-13998.pkl,critic,512,,,,0.423828125
+ER w/o CPCal,policy-8000-15998.pkl,critic,512,,,,0.396484375
+ER w/o CPCal,policy-9000-17998.pkl,critic,512,,,,0.365234375
+ER w/o CPCal,stage1b_offline_bc_policy.pkl,critic,512,,,,0.91015625
+Full DOVE,run12_full_policy-1000-1998,actor,256,0.07421875,0.6171875,0.042124606916331686,
+Full DOVE,run12_full_policy-10000-19998,actor,256,0.1015625,0.4140625,0.0507252778406837,
+Full DOVE,run12_full_policy-11000-21998,actor,256,0.11328125,0.41796875,0.05388227276853286,
+Full DOVE,run12_full_policy-12000-23998,actor,256,0.046875,0.71875,0.04847228351718513,
+Full DOVE,run12_full_policy-13000-25998,actor,256,0.05859375,0.41015625,0.038909166389203165,
+Full DOVE,run12_full_policy-14000-27998,actor,256,0.0703125,0.578125,0.05282980052288622,
+Full DOVE,run12_full_policy-15000-29998,actor,256,0.140625,0.16796875,0.044854999003291596,
+Full DOVE,run12_full_policy-16000-31998,actor,256,0.13671875,0.38671875,0.056388557619357016,
+Full DOVE,run12_full_policy-17000-33998,actor,256,0.328125,0.0546875,0.04573947338940343,
+Full DOVE,run12_full_policy-18000-35998,actor,256,0.33984375,0.046875,0.04968143988662632,
+Full DOVE,run12_full_policy-19000-37998,actor,256,0.1015625,0.375,0.0490356578011415,
+Full DOVE,run12_full_policy-2000-3998,actor,256,0.0625,0.59375,0.04825988715310814,
+Full DOVE,run12_full_policy-20000-39998,actor,256,0.09765625,0.30078125,0.04016964582842775,
+Full DOVE,run12_full_policy-21000-41998,actor,256,0.078125,0.42578125,0.03907264787630993,
+Full DOVE,run12_full_policy-22000-43998,actor,256,0.16796875,0.26953125,0.03992611870489782,
+Full DOVE,run12_full_policy-23000-45998,actor,256,0.13671875,0.28515625,0.03931027824728517,
+Full DOVE,run12_full_policy-24000-47998,actor,256,0.09765625,0.42578125,0.045756776351481676,
+Full DOVE,run12_full_policy-25000-49998,actor,256,0.18359375,0.203125,0.037101720037753694,
+Full DOVE,run12_full_policy-26000-51998,actor,256,0.140625,0.41015625,0.04733646914246492,
+Full DOVE,run12_full_policy-27000-53998,actor,256,0.34375,0.0703125,0.04274438656284474,
+Full DOVE,run12_full_policy-28000-55998,actor,256,0.0703125,0.30078125,0.028515786265415954,
+Full DOVE,run12_full_policy-29000-57998,actor,256,0.03125,0.61328125,0.04294223541364772,
+Full DOVE,run12_full_policy-3000-5998,actor,256,0.046875,0.640625,0.048092147495481186,
+Full DOVE,run12_full_policy-30000-59998,actor,256,0.1171875,0.37890625,0.039549283847009065,
+Full DOVE,run12_full_policy-31000-61998,actor,256,0.40625,0.16015625,0.04212057221957366,
+Full DOVE,run12_full_policy-32000-63998,actor,256,0.078125,0.47265625,0.040584986221801955,
+Full DOVE,run12_full_policy-33000-65998,actor,256,0.24609375,0.140625,0.028240101088158553,
+Full DOVE,run12_full_policy-34000-67998,actor,256,0.171875,0.3125,0.0306573171128548,
+Full DOVE,run12_full_policy-35000-69998,actor,256,0.1953125,0.2265625,0.031797966332305805,
+Full DOVE,run12_full_policy-36000-71998,actor,256,0.3671875,0.11328125,0.03839897932994063,
+Full DOVE,run12_full_policy-37000-73998,actor,256,0.25,0.2890625,0.03881229288163013,
+Full DOVE,run12_full_policy-38000-75998,actor,256,0.1484375,0.3828125,0.028223242075910093,
+Full DOVE,run12_full_policy-39000-77998,actor,256,0.25390625,0.33984375,0.044924096026079496,
+Full DOVE,run12_full_policy-4000-7998,actor,256,0.046875,0.58984375,0.04376820805191528,
+Full DOVE,run12_full_policy-40000-79998,actor,256,0.4140625,0.03125,0.02686059861753165,
+Full DOVE,run12_full_policy-41000-81998,actor,256,0.3359375,0.16796875,0.02244079210504424,
+Full DOVE,run12_full_policy-42000-83998,actor,256,0.31640625,0.14453125,0.034399231770294136,
+Full DOVE,run12_full_policy-43000-85998,actor,256,0.45703125,0.03125,0.028612485877602012,
+Full DOVE,run12_full_policy-44000-87998,actor,256,0.2109375,0.16015625,0.0225276921337354,
+Full DOVE,run12_full_policy-45000-89998,actor,256,0.3203125,0.16796875,0.03168782818647742,
+Full DOVE,run12_full_policy-46000-91998,actor,256,0.44921875,0.11328125,0.02761873217059474,
+Full DOVE,run12_full_policy-5000-9998,actor,256,0.0078125,0.7734375,0.04153964043507585,
+Full DOVE,run12_full_policy-6000-11998,actor,256,0.0546875,0.25390625,0.038168709143064916,
+Full DOVE,run12_full_policy-7000-13998,actor,256,0.0234375,0.76171875,0.05163645813445328,
+Full DOVE,run12_full_policy-8000-15998,actor,256,0.015625,0.73046875,0.04685127303673653,
+Full DOVE,run12_full_policy-9000-17998,actor,256,0.203125,0.234375,0.05528609998873435,
+Full DOVE,final_policy_46656.pkl,critic,512,,,,0.8828125
+Full DOVE,policy-1000-1998.pkl,critic,512,,,,0.873046875
+Full DOVE,policy-10000-19998.pkl,critic,512,,,,0.90234375
+Full DOVE,policy-11000-21998.pkl,critic,512,,,,0.8984375
+Full DOVE,policy-12000-23998.pkl,critic,512,,,,0.888671875
+Full DOVE,policy-13000-25998.pkl,critic,512,,,,0.88671875
+Full DOVE,policy-14000-27998.pkl,critic,512,,,,0.8828125
+Full DOVE,policy-15000-29998.pkl,critic,512,,,,0.8515625
+Full DOVE,policy-16000-31998.pkl,critic,512,,,,0.869140625
+Full DOVE,policy-17000-33998.pkl,critic,512,,,,0.849609375
+Full DOVE,policy-18000-35998.pkl,critic,512,,,,0.853515625
+Full DOVE,policy-19000-37998.pkl,critic,512,,,,0.861328125
+Full DOVE,policy-2000-3998.pkl,critic,512,,,,0.91015625
+Full DOVE,policy-20000-39998.pkl,critic,512,,,,0.876953125
+Full DOVE,policy-21000-41998.pkl,critic,512,,,,0.890625
+Full DOVE,policy-22000-43998.pkl,critic,512,,,,0.900390625
+Full DOVE,policy-23000-45998.pkl,critic,512,,,,0.904296875
+Full DOVE,policy-24000-47998.pkl,critic,512,,,,0.9140625
+Full DOVE,policy-25000-49998.pkl,critic,512,,,,0.908203125
+Full DOVE,policy-26000-51998.pkl,critic,512,,,,0.91015625
+Full DOVE,policy-27000-53998.pkl,critic,512,,,,0.904296875
+Full DOVE,policy-28000-55998.pkl,critic,512,,,,0.896484375
+Full DOVE,policy-29000-57998.pkl,critic,512,,,,0.890625
+Full DOVE,policy-3000-5998.pkl,critic,512,,,,0.912109375
+Full DOVE,policy-30000-59998.pkl,critic,512,,,,0.888671875
+Full DOVE,policy-31000-61998.pkl,critic,512,,,,0.88671875
+Full DOVE,policy-32000-63998.pkl,critic,512,,,,0.8984375
+Full DOVE,policy-33000-65998.pkl,critic,512,,,,0.888671875
+Full DOVE,policy-34000-67998.pkl,critic,512,,,,0.88671875
+Full DOVE,policy-35000-69998.pkl,critic,512,,,,0.884765625
+Full DOVE,policy-36000-71998.pkl,critic,512,,,,0.892578125
+Full DOVE,policy-37000-73998.pkl,critic,512,,,,0.896484375
+Full DOVE,policy-38000-75998.pkl,critic,512,,,,0.884765625
+Full DOVE,policy-39000-77998.pkl,critic,512,,,,0.884765625
+Full DOVE,policy-4000-7998.pkl,critic,512,,,,0.916015625
+Full DOVE,policy-40000-79998.pkl,critic,512,,,,0.88671875
+Full DOVE,policy-41000-81998.pkl,critic,512,,,,0.88671875
+Full DOVE,policy-42000-83998.pkl,critic,512,,,,0.884765625
+Full DOVE,policy-43000-85998.pkl,critic,512,,,,0.8828125
+Full DOVE,policy-44000-87998.pkl,critic,512,,,,0.888671875
+Full DOVE,policy-45000-89998.pkl,critic,512,,,,0.87890625
+Full DOVE,policy-46000-91998.pkl,critic,512,,,,0.888671875
+Full DOVE,policy-5000-9998.pkl,critic,512,,,,0.916015625
+Full DOVE,policy-6000-11998.pkl,critic,512,,,,0.916015625
+Full DOVE,policy-7000-13998.pkl,critic,512,,,,0.9140625
+Full DOVE,policy-8000-15998.pkl,critic,512,,,,0.904296875
+Full DOVE,policy-9000-17998.pkl,critic,512,,,,0.90625
+Full DOVE,stage1b_offline_bc_policy.pkl,critic,512,,,,0.91015625

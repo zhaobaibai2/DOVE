@@ -1,0 +1,4 @@
+paper_setting,actor_source_group,actor_checkpoints,actor_pairs_per_checkpoint,actor_pair_rows,critic_source_group,critic_checkpoints,critic_pairs_per_checkpoint,critic_pair_rows,pairsat_e,pairsat_e_checkpoint_se,ovr_e,ovr_e_checkpoint_se,diversity,diversity_checkpoint_se,pairacc_c,pairacc_c_checkpoint_se,rounded_values,reported_values,matches_final_tex
+Positive-only,run11_noer,1,256,4,critic_pair_diag_run11_no_er,1,512,4,0,0,0.25,0,0.038746852427721,0,0.25,0,0.000/0.250/0.039/0.250,0.074/0.615/0.048/0.789,false
+ER w/o CPCal,run13_eronly,1,256,4,critic_pair_diag_run13_no_cpcal,1,512,4,0.25,0,0,0,0.0368672227486968,0,0,0,0.250/0.000/0.037/0.000,0.580/0.054/0.024/0.345,false
+Full DOVE,run12_full,1,256,4,critic_pair_diag_run12_full,1,512,4,0.25,0,0,0,0.0434539709240198,0,0.25,0,0.250/0.000/0.043/0.250,0.175/0.341/0.041/0.891,false

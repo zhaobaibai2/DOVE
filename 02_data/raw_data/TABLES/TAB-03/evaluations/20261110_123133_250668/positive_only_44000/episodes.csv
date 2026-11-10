@@ -1,0 +1,2 @@
+policy_name,policy_path,map_seed,episode_idx,reward,cost,native_cost,takeover_cost,length,reason,route_completion,success,crash,out_of_route,timeout
+policy-44000-87998.pkl,/home/aaa/data2/ZCY/paper1/github/github1102/02_data/raw_data/TABLES/TAB-03/models/Positive-only/policy-44000-87998.pkl,104,0,295.90926049164,0.0,0.0,0.0,643.0,crash,0.8015970021805259,0.0,1.0,0.0,0.0

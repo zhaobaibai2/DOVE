@@ -1,8 +1,18 @@
 #!/usr/bin/env python3
 from pathlib import Path
 from collections import defaultdict
+import argparse, hashlib, json
+from datetime import datetime
 import csv, math
-ROOT=Path(__file__).resolve().parent;DATA=ROOT/'raw_data/DOVE'
+ROOT=Path(__file__).resolve().parent
+
+parser=argparse.ArgumentParser()
+parser.add_argument('--data-root',type=Path,default=ROOT/'raw_data')
+parser.add_argument('--output-dir',type=Path,default=ROOT)
+parser.add_argument('--terminal-csv',type=Path)
+parser.add_argument('--smoke',action='store_true')
+OPTIONS=parser.parse_args();DATA_ROOT=OPTIONS.data_root.resolve();OUTPUT=OPTIONS.output_dir.resolve();OUTPUT.mkdir(parents=True,exist_ok=True)
+DATA=DATA_ROOT/'DOVE'
 def num(row,key):
  try:
   v=float(row[key]);return v if math.isfinite(v) else math.nan
@@ -10,6 +20,31 @@ def num(row,key):
 def p95(values):
  d=sorted(x for x in values if math.isfinite(x));pos=(len(d)-1)*.95;lo=math.floor(pos);hi=math.ceil(pos)
  return d[lo] if lo==hi else d[lo]+(pos-lo)*(d[hi]-d[lo])
+DETAIL_NAME='per_phase.csv'
+EVIDENCE_NOTE='Recalculation of complete recorded physical vehicle traces, not a new physical drive.'
+PROCESSING_NOTE='Gate denominator includes logged diagnostic rows only. P95 uses linear interpolation at (n-1)*0.95, seconds converted to milliseconds. Actual maximum and speed P95 are separate metrics.'
+
+# Self-contained: only the Python standard library and this table's local inputs.
+def save_csv(path,rows):
+ path.parent.mkdir(parents=True,exist_ok=True)
+ fields=list(dict.fromkeys(k for r in rows for k in r))
+ with path.open('w',encoding='utf-8',newline='') as f:
+  w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows(rows)
+def publish(values,details,lines):
+ save_csv(OUTPUT/'final_metrics.csv',values)
+ if details:save_csv(OUTPUT/DETAIL_NAME,details)
+ events=[]
+ if OPTIONS.terminal_csv:
+  with Path(OPTIONS.terminal_csv).open(encoding='utf-8-sig',newline='') as f:events=list(csv.DictReader(f))
+ for row,line in zip(values,lines):
+  print(line,flush=True);events.append({'record_type':'summary',**row,'terminal_text':line})
+ save_csv(OUTPUT/'test_results.csv',events)
+ if OUTPUT==ROOT:
+  import shutil
+  shutil.copyfile(OUTPUT/'test_results.csv',OUTPUT/('test_results_'+datetime.now().strftime('%Y%m%d_%H%M%S_%f')+'.csv'))
+ inputs=[{'file':str(p.relative_to(DATA_ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in sorted(DATA_ROOT.rglob('*.csv'))]
+ (OUTPUT/'calculation_audit.json').write_text(json.dumps({'table':ROOT.name,'smoke':OPTIONS.smoke,'inputs':inputs,'metrics_source':EVIDENCE_NOTE,'processing':PROCESSING_NOTE},ensure_ascii=False,indent=2)+'\n')
+
 def main():
  phases=defaultdict(lambda:{'rows':0,'ts':[],'process':[],'loop':[],'gate':0,'accept':0.,'fallback':0.})
  with (DATA/'collection_repair.csv').open(encoding='utf-8-sig',newline='') as f:
@@ -31,7 +66,12 @@ def main():
  g=frozen['gate'];values.append({'paper_row':'Frozen execution','raw_rows_or_samples':frozen['rows'],'duration_s':max(frozen['ts'])-min(frozen['ts']),'gate_evaluations':g,'gate_accept_rate':frozen['accept']/g,'gate_fallback_rate':frozen['fallback']/g,'process_p95_ms':p95(frozen['process'])*1000,'infer_p95_ms':p95(frozen['infer'])*1000,'loop_p95_ms':p95(frozen['loop'])*1000,'mean_speed_mps':'','max_speed_mps':'','speed_p95_mps':'','source':'raw_data/DOVE/frozen_execution.csv','selection':'all frozen execution rows'})
  values.append({'paper_row':'Connected trace','raw_rows_or_samples':len(speeds),'duration_s':max(times)-min(times),'gate_evaluations':'','gate_accept_rate':'','gate_fallback_rate':'','process_p95_ms':'','infer_p95_ms':'','loop_p95_ms':'','mean_speed_mps':sum(speeds)/len(speeds),'max_speed_mps':max(speeds),'speed_p95_mps':p95(speeds),'source':'raw_data/DOVE/connected_trace.csv','selection':'all connected trace samples'})
  if [r['raw_rows_or_samples'] for r in values]!=[7514,22362,2629,8411]:raise ValueError('unexpected source row counts')
- out=ROOT/'table_values.csv'
+ out=OUTPUT/'table_values.csv'
  with out.open('w',encoding='utf-8',newline='') as f:w=csv.DictWriter(f,fieldnames=list(values[0]));w.writeheader();w.writerows(values)
- print(out)
+ final=[{k:v for k,v in r.items() if k not in ('source','selection')} for r in values]
+ lines=[]
+ for r in values:
+  if r['gate_evaluations']!='':lines.append(f"{r['paper_row']} accept={r['gate_accept_rate']:.1%} fallback={r['gate_fallback_rate']:.1%} process_p95={r['process_p95_ms']:.2f}ms loop_p95={r['loop_p95_ms']:.2f}ms")
+  else:lines.append(f"{r['paper_row']} duration={r['duration_s']:.2f}s speed_mean={r['mean_speed_mps']:.3f}m/s speed_max={r['max_speed_mps']:.3f}m/s speed_p95={r['speed_p95_mps']:.3f}m/s")
+ publish(final,values,lines)
 if __name__=='__main__':main()

@@ -1,0 +1,16 @@
+{
+  "selection": "user_accepted_source_verified_run_statistics",
+  "continuous_statistics": "equal-weight mean of per-run metrics; sample SD across runs (ddof=1)",
+  "runs": {
+    "Positive-only": 4,
+    "DOVE": 2,
+    "IWR": 3,
+    "PVP-style_TD3": 3
+  },
+  "jerk": "speed finite differences over timestamp differences; keep first duplicate timestamp",
+  "success_statistics": "existing scenario aggregate counts, checked for arithmetic consistency; not a recovered individual-trial ledger",
+  "independent_source_verification": "source_audit/audit.json",
+  "verified_data": "source_verified_metrics.csv",
+  "verified_data_sha256": "e1993c96a038c7ec765a4f197e92b1d583dc2e514b51fd81dd3e4e5d90f244d3",
+  "runtime": "run.sh test invokes calculate.py to recompute local trace rows; reference numbers are not substituted for calculated values"
+}

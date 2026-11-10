@@ -1,0 +1,36 @@
+{
+  "table": "TAB-03",
+  "smoke": true,
+  "inputs": [
+    {
+      "file": "ER_wo_CPCal/episodes.csv",
+      "sha256": "d4de49ef59acdc27e4a776963086765ea03dc607d35516a512f0b156607d2219"
+    },
+    {
+      "file": "Full_DOVE/episodes.csv",
+      "sha256": "f64f4167ea6d8231cc7ba3d0aa390c0bcadacda769e91c122c3b1d56a6459c52"
+    },
+    {
+      "file": "Full_gate/episodes.csv",
+      "sha256": "2c0bead473ca91e72b377519dd309440887268a32330a0bc92256da9b1d162ff"
+    },
+    {
+      "file": "No_gate/episodes.csv",
+      "sha256": "dfc46c30ab042ea99ce97f921cd8a80a8ea7ebce283f869aca6f12b902616c3e"
+    },
+    {
+      "file": "TopK_8/episodes.csv",
+      "sha256": "24910049ce0da28187705ac4b0915b0c154425c4d8f5dad8e2cfb438a17ef309"
+    },
+    {
+      "file": "Vanilla/episodes.csv",
+      "sha256": "0fbdc8608c3a705db3c97051489adef3120dc3aa10b9933ba3aa35209694f1bb"
+    },
+    {
+      "file": "positive_only/episodes.csv",
+      "sha256": "f1c39bc84677af38e6f9de75fd1e3a0750dbf865fd5bc533daca9b0ded7310dc"
+    }
+  ],
+  "metrics_source": "Local episode records; run.sh test loads the packaged models and generates fresh episodes.",
+  "processing": "Pool episodes within each setting; retain sample SD and SE. Every stored reward already includes its fixed historical conversion exactly once. Preserve original checkpoint membership and 500/600/400 panel A counts."
+}

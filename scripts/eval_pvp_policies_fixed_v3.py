@@ -112,6 +112,8 @@ def require_jax_gpu_ready() -> Tuple[str, List[Any]]:
 
 
 def _create_tb_writer(tb_dir: Path):
+    if os.environ.get("DOVE_NO_TENSORBOARD") == "1":
+        return None
     try:
         from torch.utils.tensorboard import SummaryWriter
         tb_dir.mkdir(parents=True, exist_ok=True)
@@ -1370,8 +1372,6 @@ def _diffusion_prior_energy_pair(
 def _dove_final_gate_action(agent, adapter: Dict[str, Any], obs: np.ndarray) -> np.ndarray:
     cfg = adapter["guidance_cfg"]
     obs_jax = jnp.asarray(obs, dtype=jnp.float32)
-    obs_b = obs_jax[None, :]
-    key = random_key_from_data(obs_b)
 
     fast_final_gate_fn = adapter.get("final_gate_jit_fn")
     if fast_final_gate_fn is not None:
@@ -1384,6 +1384,8 @@ def _dove_final_gate_action(agent, adapter: Dict[str, Any], obs: np.ndarray) -> 
         _append_guidance_stats(adapter, stats)
         return _as_action_1d(action_jax)
 
+    obs_b = obs_jax[None, :]
+    key = random_key_from_data(obs_b)
     # IMPORTANT: final gate needs both vanilla and guided actions.
     # Reuse pre-warmed JIT samplers. Otherwise JAX/XLA may recompile
     # the diffusion lax.scan inside every closed-loop env step.
@@ -1592,10 +1594,10 @@ def det_action(agent, adapter: Dict[str, Any], obs: np.ndarray) -> np.ndarray:
     step_idx = int(adapter.get("_episode_action_step", 0))
     cfg_for_stride = adapter.get("guidance_cfg", {}) or {}
     stride = int(cfg_for_stride.get("step_diagnostics_stride", 1) or 0)
-    adapter["_collect_step_stats"] = bool(stride > 0 and (step_idx % stride == 0))
+    adapter["_collect_step_stats"] = bool(not adapter.get("_core_metrics_only", False)
+                                           and stride > 0 and (step_idx % stride == 0))
     adapter["_episode_action_step"] = step_idx + 1
 
-    obs_jax = jnp.asarray(obs, dtype=jnp.float32)
     jit_fn = adapter.get("jit_fn")
     use_guidance = bool(adapter.get("use_value_guidance", False))
     use_topk_rerank = bool(adapter.get("use_topk_rerank", False))
@@ -1604,6 +1606,7 @@ def det_action(agent, adapter: Dict[str, Any], obs: np.ndarray) -> np.ndarray:
     if use_final_gate and use_guidance and not use_topk_rerank:
         return _dove_final_gate_action(agent, adapter, obs)
 
+    obs_jax = jnp.asarray(obs, dtype=jnp.float32)
     if use_topk_rerank:
         topk_rerank_jit_fn = adapter.get("topk_rerank_jit_fn")
         if topk_rerank_jit_fn is not None:
@@ -1737,6 +1740,7 @@ def guidance_dry_run(agent, adapter: Dict[str, Any], obs: np.ndarray) -> Optiona
 def list_policy_files(log_dir: Path) -> List[Path]:
     files: Dict[Path, Path] = {}
     patterns = [
+        "seed*-final.pkl",
         "policy-*.pkl",
         "policy_*.pkl",
         "final_policy_*.pkl",
@@ -1983,6 +1987,9 @@ def eval_episode(
     episode_idx: int = 0,
     reliability_horizon: int = 25,
 ):
+    metrics_only = (os.environ.get("DOVE_CORE_METRICS_ONLY") == "1"
+                    and step_records is None and video_recorder is None)
+    adapter["_core_metrics_only"] = metrics_only
     obs, info = _reset_and_verify_seed(env, map_seed, allowed_maps=allowed_maps or [int(map_seed)])
     adapter["_episode_gate_stats"] = []
     adapter["_episode_action_step"] = 0
@@ -2015,16 +2022,19 @@ def eval_episode(
     episode_step_records: List[Dict[str, Any]] = []
 
     while not done:
-        t_action = time.time()
-        action = det_action(agent, adapter, obs)
-        inference_latencies.append(float(time.time() - t_action))
-        gate_step_stats = _latest_step_gate_stats(adapter)
-        action_arr = np.asarray(action, dtype=np.float32).reshape(-1)
-        if action_arr.size >= 1:
-            steering_cmds.append(float(action_arr[0]))
-        if action_arr.size >= 2:
-            accel_cmds.append(float(action_arr[1]))
-        action_saturation_flags.append(float(np.any(np.abs(action_arr) >= 0.98)))
+        if metrics_only:
+            action = det_action(agent, adapter, obs)
+        else:
+            t_action = time.time()
+            action = det_action(agent, adapter, obs)
+            inference_latencies.append(float(time.time() - t_action))
+            gate_step_stats = _latest_step_gate_stats(adapter)
+            action_arr = np.asarray(action, dtype=np.float32).reshape(-1)
+            if action_arr.size >= 1:
+                steering_cmds.append(float(action_arr[0]))
+            if action_arr.size >= 2:
+                accel_cmds.append(float(action_arr[1]))
+            action_saturation_flags.append(float(np.any(np.abs(action_arr) >= 0.98)))
         obs, reward, terminated, truncated, info = env.step(action)
         if video_recorder is not None:
             video_recorder.capture(env)
@@ -2035,6 +2045,8 @@ def eval_episode(
         ep_native_cost += float(info.get("native_cost", 0.0) or 0.0)
         ep_takeover_cost += float(info.get("takeover_cost", 0.0) or 0.0)
         ep_steps += 1
+        if metrics_only:
+            continue
 
         if step_records is not None:
             qbar_g = _gate_stat(gate_step_stats, "final_gate/qbar_guided")
@@ -2102,6 +2114,15 @@ def eval_episode(
         prev_spd = spd
 
     reason = terminal_reason(final_info, bool(terminated), bool(truncated))
+    if metrics_only:
+        completion = _safe_float(final_info, "route_completion", "completion", "progress", "complete_ratio")
+        if completion is None:
+            completion = 1.0 if reason == "success" else 0.0
+        return {"reward": float(ep_reward), "cost": float(ep_cost),
+                "native_cost": float(ep_native_cost), "takeover_cost": float(ep_takeover_cost),
+                "length": float(ep_steps), "reason": reason, "route_completion": float(completion),
+                "success": float(reason == "success"), "crash": float(reason == "crash"),
+                "out_of_route": float(reason == "out_of_route"), "timeout": float(reason == "timeout")}
 
     if verbose:
         true_keys = [k for k, v in final_info.items()
@@ -2259,6 +2280,7 @@ def eval_map_multi(
     reliability_horizon: int = 25,
 ):
     results = []
+    episode_start = int(os.environ.get("DOVE_EPISODE_START", "0"))
     for ep_idx in range(num_episodes):
         video_recorder = None
         if record_video and policy_pkl is not None and ep_idx < max(int(video_episodes), 0):
@@ -2281,6 +2303,15 @@ def eval_map_multi(
                 reliability_horizon=reliability_horizon,
             )
             results.append(metrics)
+            if os.environ.get("DOVE_EPISODE_PROGRESS") == "1":
+                print("DOVE_EPISODE " + json.dumps({
+                    "episode": episode_start + ep_idx + 1, "reward": metrics["reward"],
+                    "cost": metrics["cost"], "arrive": int(metrics["success"]),
+                    "crash": int(metrics["crash"]), "out_of_route": int(metrics["out_of_route"]),
+                    "timeout": int(metrics["timeout"]),
+                    "route_completion": metrics.get("route_completion", float("nan")),
+                    "reason": metrics["reason"],
+                }), flush=True)
         finally:
             if video_recorder is not None:
                 video_recorder.close()
@@ -2696,7 +2727,7 @@ def main():
                     "policy_name": policy_name,
                     "policy_path": str(policy_pkl),
                     "map_seed": int(map_seed),
-                    "episode_idx": int(ep_idx),
+                    "episode_idx": int(os.environ.get("DOVE_EPISODE_START", "0")) + int(ep_idx),
                 }
                 for key, value in ep.items():
                     ep_row[key] = value

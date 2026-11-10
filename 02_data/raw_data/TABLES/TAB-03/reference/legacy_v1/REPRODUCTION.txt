@@ -1,0 +1,29 @@
+TAB-03：训练与推理消融
+运行 bash scripts/run_tab03.sh test（或本表 run.sh test），默认每 checkpoint 100 回合，保持原配置。可用 --workers 6 开六个独立仿真进程。
+不会添加随机交通流；地图 104，交通密度 0.06，horizon 1000；每个任务完整连续跑 100 回合，不将任务拆成改变 reset 序列的分片。
+
+Panel A：positive_only 用 44000/final50000/27000/16000/48000，共 500 回合；ER_wo_CPCal 用 21000/23000/25000/1000/18000/7000，共 600 回合；Full_DOVE 用 12000/13000/14000/32000，共 400 回合。
+Panel B：Vanilla / TopK_8 / No_gate / Full_gate 各用 12000/13000/14000/20000/32000，各 500 回合。
+Full_DOVE 和 Full_gate 有四个完全相同的模型/推理任务，共用实际测量：表内 3500 行，对应 3100 次实际仿真回合，不将共享测量称作独立重复试验。
+
+推理参数、模型哈希、每条 reward 的固定历史换算系数在 experiment.json；保留原始实测 reward，再给公开逐回合 CSV 的 reward 统一换算一次。
+已独立核对的固定换算：Full_DOVE 的部分 checkpoint 为 0.9827445944075866；Vanilla / No_gate 为 0.9945971862668024。
+证据在 provenance/reward_processing.json 和 reward_source_records/；未经确认的历史差异保持实测原值，不根据论文目标或本次结果反推系数。
+Full 14000 的旧换算沿用同组系数且首回合实测核对一致，但未找到独立完整原始记录。其确认范围保留在证据文件中。
+全量核对后，所有 3500 行成功、碰撞、路线完成率与旧记录逐行一致。Positive-only / ER 的旧 reward 分别等于本次原始 reward 乘每个 checkpoint 固定的系数，且旧记录每个 checkpoint 的最大 reward 都恰为 370，可推断曾逐 checkpoint 做最大值归一化。原处理脚本尚未找回，因此本流程未将该推断用于修正新实测值。TopK_8 和 Full_gate 的 20000 同样仍有旧 Return 单位差异，保留在 provenance/full_episode_comparison.json。
+所有指标对该设置的全部回合取均值，另存样本 SD、SE；checkpoint 汇总另存 per_checkpoint.csv。
+
+旧表正文称 Panel A 全部 500 回合，与实际 500/600/400 不符；旧 Positive-only Return 实际四舍五入为 324.98，正文写 324.99。均保留差异。
+此处沿用本目录旧表定义，不自动替换为 current_paper 后来变更的七种推理变体。
+
+输出（均在本表目录内）：
+  test_results.csv：终端显示的逐项结果和最终结果，terminal_text 保留原显示文本。
+  test_results_时间.csv：本次运行的独立 CSV。
+  final_metrics.csv：表中最终指标。
+  table_values.csv：精确数值、样本数、SD/SE 和旧表比较（适用时）。
+  per_checkpoint.csv / per_phase.csv / per_run.csv / scenario_counts.csv：相应中间聚合。
+  calculation_audit.json：输入哈希、计算口径和证据范围。
+仿真/诊断全量运行另有 evaluations/时间/，保存真实测量及本次清单；只在全部成功后发布顶层结果。
+只重新聚合已有本地记录：bash 本表/run.sh calculate；该操作不执行模型仿真。
+TAB-02/03 支持 test --smoke 验证整条链路；该模式在 evaluations 下单独保存，明确标为 smoke，不覆盖正式结果。
+每个 calculate.py 独立使用 Python 标准库和本表输入，无需 Backup 或其他表的文件。

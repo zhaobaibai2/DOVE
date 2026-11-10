@@ -1,0 +1,10 @@
+{
+  "source": "live_simulation",
+  "run_id": "20261110_114711_946257",
+  "num_episodes_per_checkpoint": 400,
+  "episodes_sha256": "8d9280cd61aff0d05772ab3f637bfcf0c467180f77f96d082d8fb8d4f85b14e6",
+  "sampling": {
+    "scheme": "replicated_original_config_v1",
+    "note": "Original map/reset/traffic configuration in every environment; deterministic replicas may repeat outcomes."
+  }
+}

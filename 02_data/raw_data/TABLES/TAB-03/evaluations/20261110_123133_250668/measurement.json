@@ -1,0 +1,11 @@
+{
+  "source": "live_model_simulation",
+  "smoke": true,
+  "unique_jobs": 31,
+  "actual_episodes": 31,
+  "table_episodes": 35,
+  "reward_conversion": "Fixed historical factors in experiment.json; applied once to every published episode reward. Raw measurements remain in each job directory.",
+  "shared_measurements": "Identical Full_DOVE/Full_gate checkpoint and inference configurations reuse the same measurements.",
+  "spec_sha256": "ff3295c2ccc98d56cc2f8c8eed77b9dd28b7c560e2a8a487b7dd3be6a4357c0c",
+  "evaluator_sha256": "91a8db421d22b5fefec9e400d78f308d01203f8db2839de574516747596b0f63"
+}

@@ -1,0 +1,23 @@
+TAB-06：真实车辆驾驶指标
+当前采用用户确认的源日志核验结果：逐运行计算，再按运行等权均值和样本SD汇总；IWR速度保留实算值1.744 ± 0.782。独立核验数据见 source_verified_metrics.csv，口径记录见 accepted_protocol.json。
+运行 bash scripts/run_tab06.sh test（或本表 run.sh test），从全部本地 runs.csv 重算。
+Positive-only 4 段轨迹 / 4050 行；DOVE 2 段 / 10408 行；IWR 3 段 / 2693 行；PVP 3 段 / 5712 行。
+每段分别计算平均速度、横向绝对误差均值、jerk 绝对值均值，再对各段指标等权取均值和样本标准差（ddof=1）。不将不同长度的段直接混合为一个长轨迹。
+Jerk：按时间排序；重复时间保留第一条；a_i=(v_i-v_(i-1))/dt_i；j_i=(a_i-a_(i-1))/dt_i；再取 |j_i| 的均值。
+routecontrol 格式用 actual_timestamp / actual_speed_mps / path_lateral_error_m，航向角由度转弧度；缺少关键时间、速度或横向误差的行跳过。
+winter_eval_log 格式用 ts / carspeed / error_distance / error_yaw。
+成功次数仍取 reported.csv，不从仅有的 12 段轨迹反推 160 次试验。
+Positive-only 的旧源记录标注 DACER，这个别名对应关系未得到进一步实验证据确认，保留在 per_run.csv 和 audit 中。
+本操作重算真实驾驶记录；不表示重新开车。
+
+输出（均在本表目录内）：
+  test_results.csv：终端显示的逐项结果和最终结果，terminal_text 保留原显示文本。
+  test_results_时间.csv：本次运行的独立 CSV。
+  final_metrics.csv：表中最终指标。
+  table_values.csv：精确数值、样本数、SD/SE 和旧表比较（适用时）。
+  per_checkpoint.csv / per_phase.csv / per_run.csv / scenario_counts.csv：相应中间聚合。
+  calculation_audit.json：输入哈希、计算口径和证据范围。
+仿真/诊断全量运行另有 evaluations/时间/，保存真实测量及本次清单；只在全部成功后发布顶层结果。
+只重新聚合已有本地记录：bash 本表/run.sh calculate；该操作不执行模型仿真。
+TAB-02/03 支持 test --smoke 验证整条链路；该模式在 evaluations 下单独保存，明确标为 smoke，不覆盖正式结果。
+每个 calculate.py 独立使用 Python 标准库和本表输入，无需 Backup 或其他表的文件。

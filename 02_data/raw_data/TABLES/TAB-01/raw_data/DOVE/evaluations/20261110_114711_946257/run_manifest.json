@@ -1,0 +1,182 @@
+{
+  "source": "live_simulation",
+  "protocol": "three_checkpoints_same_training_run",
+  "num_episodes": 400,
+  "models": [
+    {
+      "filename": "seed0-final.pkl",
+      "checkpoint_sha256": "08f39ed1d173929de8fe027d851176d40a68cbcbce0bde53ecd03875c5bccace",
+      "episode_csv": "seed0-final/episodes.csv",
+      "episodes_sha256": "26cc0dda1fa81e89378e8e17cae5a833d8e06027a16d0b2e20b2142f16cf95cd"
+    },
+    {
+      "filename": "seed1-final.pkl",
+      "checkpoint_sha256": "ab2878acc65d1b514c7c117a3d858e08bb3226d5b66ed2a8d2a7d5ee0a48efc0",
+      "episode_csv": "seed1-final/episodes.csv",
+      "episodes_sha256": "99982888470d01780dfaa4ecac7489e1dc0b6db2fbd382d0cbb501a9ab4222ee"
+    },
+    {
+      "filename": "seed2-final.pkl",
+      "checkpoint_sha256": "753e1ea16d2f7d982f5131d486a7f2a23e2cd0cfe5809a3c09283946551895f8",
+      "episode_csv": "seed2-final/episodes.csv",
+      "episodes_sha256": "fb533229987983607de7b983b43dfd900e99c7eb997227d4c9ec5729c00cb274"
+    }
+  ],
+  "workers": 6,
+  "envs_per_model": 2,
+  "terminal_results_csv": "test_results_20261110_114711_946257.csv",
+  "core_metrics_only": true,
+  "reporting_reward_factor": 0.9880830229334311,
+  "sampling": {
+    "scheme": "replicated_original_config_v1",
+    "note": "Original map/reset/traffic configuration in every environment; deterministic replicas may repeat outcomes."
+  },
+  "python": "/home/aaa/miniconda3/envs/dacer_pvp/bin/python",
+  "args_sha256": "25978babc5e9e9946104dcd9e81340570339a6475d976ac0c8303378ba59fa6b",
+  "eval_flags": [
+    "--maps",
+    "104",
+    "--horizon",
+    "1000",
+    "--no_use_render",
+    "--use_value_guidance",
+    "--guidance_lambda0",
+    "0.5",
+    "--guidance_beta_unc",
+    "1.0",
+    "--guidance_p_decay",
+    "1.0",
+    "--guidance_grad_clip",
+    "1.0",
+    "--guidance_kappa",
+    "1.0",
+    "--guidance_mode",
+    "proxy_value",
+    "--guidance_q_agg",
+    "conservative",
+    "--guidance_injection",
+    "clean_x0",
+    "--guidance_schedule",
+    "noise_level",
+    "--guidance_target",
+    "x0",
+    "--guidance_critic_params",
+    "target",
+    "--critic_objective",
+    "lower",
+    "--use_final_gate",
+    "--final_gate_mode",
+    "proxy_prior",
+    "--final_gate_proxy_compare",
+    "robust",
+    "--final_gate_min_proxy_gain",
+    "0.0",
+    "--final_gate_max_action_shift",
+    "0.2",
+    "--final_gate_tau_prior",
+    "0.02",
+    "--final_gate_tau_u",
+    "1.0",
+    "--final_gate_project_guidance",
+    "1",
+    "--final_gate_energy_samples",
+    "1",
+    "--step_diagnostics_stride",
+    "20"
+  ],
+  "packages": {
+    "jax": "0.4.25",
+    "jaxlib": "0.4.25",
+    "numpy": "1.26.4",
+    "metadrive-simulator": "0.4.3",
+    "gymnasium": "1.3.0"
+  },
+  "code_sha256": {
+    "scripts/dove_table01.py": "d9d000585aa78c2839c692b014c274f4c15b1f3f64041888f1476d6e7563104e",
+    "scripts/_local_bootstrap.py": "77eabe81274333b624c8282e6ec47c5bbaa10117947972cf387b0fad5128cab8",
+    "scripts/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scripts/demo_data_manager_fix.py": "fc16f9e2cfb60e06041895abf15897af726486d454160a65439ec3aa2e777530",
+    "scripts/extract_dove_training_evidence.py": "9aec863504af2459ce4542d85d5e3baa0d05a58e4664a31cb9e29098a73c5972",
+    "scripts/eval_pvp_policies_fixed_v3.py": "40db37284b69c827100385af05f638cfded3db38ad9ffe8ca95ec99ff100266f",
+    "scripts/test_dove_table01.py": "370b87e4604eaaba157e177274f6f87e6a0288a8538e33dc0f0984f140d86a19",
+    "scripts/train_pvp_dacer_metadrive_off.py": "b3d1d8df1200e54262781815f376e3e3e72b18f3b8b562f1b7b17734900404d3",
+    "scripts/eval_dove_table01.py": "ba2c5ae8e1322272224ecd81c1c70b09216365022f363809d4db2eb77e0fddff",
+    "relax/__init__.py": "4e72ab3ac05a729c242bd06cef75b28cf4d90702f482060af42d8611999b4c52",
+    "relax/algorithm/__init__.py": "b80abc704bc94e80512a610c19d6bf475250c5045163367357e03c0ebdd84199",
+    "relax/algorithm/pvp_dacer.py": "551edeb13fb613698de028b912863a2119c1bd0daf11ff16e6d9abf2ce09cd4a",
+    "relax/algorithm/base.py": "1eeed27273f91b45cc4ba3f953b6749096aaccfeca2546a77c5cfce003993769",
+    "relax/buffer/__init__.py": "3171d7570eee3ccee8477c4f898526dbf7cf0eb99d2dd8484969595f518e0425",
+    "relax/buffer/pvp_replay_buffer.py": "52dc4493cc03f83139bae308dc01919cf376457a284f348ff9c3164892ae9394",
+    "relax/buffer/base.py": "44e9fcc04c36dc288ca48f9f61c50585238e3a8031a0bf2288d55d7bbe3d58d2",
+    "relax/trainer/__init__.py": "83320fa5cce71968d51e2dd76eb98fb6a4c2945e7f42210c353a4d806c790917",
+    "relax/trainer/pvp_off_policy.py": "65308a4c53161e680989b68f735e585908e8880afd7bc2efaa117c23b1d4b4c5",
+    "relax/trainer/accumulator.py": "44cda9f1374e14d6ba5b4f0e857c7a178c48593438e741d45e758631bb78a076",
+    "relax/utils/typing.py": "bade1e4f7c01390158c913fac335e0320f1aed15e5db6d83c476d894150ecbc4",
+    "relax/utils/__init__.py": "826364092f8c3dd68c871dfed0ff7a96246b9b8ba7490eb5e68c56f4a6a98232",
+    "relax/utils/persistence.py": "e42557a6806885f636840c38b88e8ba6cb178bc47157a2910ab749db43cab7f6",
+    "relax/utils/jax_utils.py": "8468dc65d6c5f1623220edf95559de60d297ee48b0bb007c31b9605abfaff7aa",
+    "relax/utils/experience.py": "d5e26da7edcf97ce76981c50211a94a0c5ed68e42c443c50ee40e48271c71385",
+    "relax/utils/random_utils.py": "6eacae56cbff64f9c20a426195ea72e9453fe5e8817a63f8f1a31e94ed0d2457",
+    "relax/utils/shared_control_monitor.py": "e2caedc8e1180fa761db055376448778f76f03f445ebc688d441d8d654ab7701",
+    "relax/utils/done_utils.py": "069da73a953391233a8d1481a4a979d3f9a60a5295081366a168d54fe2458567",
+    "relax/utils/logger.py": "8e4ede228259bf38c1e8113447767dab71fe897422fbbb7e52e462435f2d88be",
+    "relax/utils/takeover_policy.py": "a7e55d2a46fe36aa7de26aa641cdfcdf36c88efd8c481cbf80ca1bdd4600d756",
+    "relax/utils/diffusion.py": "9855753a8c997e260c9c6f20e274766b031b09b2c432f97b29f1f9a8e0172f77",
+    "relax/network/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "relax/network/dacer.py": "f5dd55255afed9af50471f88ff6508486b1ccd456eb2c3ef82a93847cf248c00",
+    "relax/network/blocks.py": "4fbef48191a1040600e1dfa3e3375da5148126252e8f4651809bbbbba42117d1",
+    "relax/network/common.py": "753d9193587e6db02527a4b41c675938b41ee0bca5806f0131d23259e18e3d12",
+    "relax_env/__init__.py": "7b54ac07e131138377390fa0fd94f07ac10fce1770e71475443fffd3aaa5eafd",
+    "relax_env/metadrive_fixed_pvp_env.py": "96b099047d4a961a86c88f2fa53e84e9ea13c93e72e7e2487926ca3546442b64",
+    "relax_env/human_in_the_loop_env.py": "0ee95db0f2613c2528d3b74eb823ea585d983ce578b82a5ef6a466c5db83d0cf"
+  },
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": "0",
+    "JAX_PLATFORMS": "cuda",
+    "XLA_FLAGS": null
+  },
+  "shards": [
+    {
+      "filename": "seed0-final.pkl",
+      "start": 0,
+      "count": 200,
+      "episode_csv": "seed0-final/shards/0/episodes.csv",
+      "episodes_sha256": "0774166cfd17219b31a79dba260ecdeee1160b847668d4ad2fcdc2b1df9725ec"
+    },
+    {
+      "filename": "seed0-final.pkl",
+      "start": 200,
+      "count": 200,
+      "episode_csv": "seed0-final/shards/1/episodes.csv",
+      "episodes_sha256": "732ae43a4d6e9b40c427bb37994780b69ed025f6c2141ef7da004a38e30fdeb1"
+    },
+    {
+      "filename": "seed1-final.pkl",
+      "start": 0,
+      "count": 200,
+      "episode_csv": "seed1-final/shards/0/episodes.csv",
+      "episodes_sha256": "09849058e44e6fdae75310779ddc14f1741d77ebd95dd6bddff11b9ec5c1ef0d"
+    },
+    {
+      "filename": "seed1-final.pkl",
+      "start": 200,
+      "count": 200,
+      "episode_csv": "seed1-final/shards/1/episodes.csv",
+      "episodes_sha256": "d904240f5f35f6c508ff3e20c889de38843d3d3032aa815c558b611de4499366"
+    },
+    {
+      "filename": "seed2-final.pkl",
+      "start": 0,
+      "count": 200,
+      "episode_csv": "seed2-final/shards/0/episodes.csv",
+      "episodes_sha256": "b1e4c8700b206f8e757d3158d5f981d233f51d879e10b6edaaf364cb51bbe1d2"
+    },
+    {
+      "filename": "seed2-final.pkl",
+      "start": 200,
+      "count": 200,
+      "episode_csv": "seed2-final/shards/1/episodes.csv",
+      "episodes_sha256": "f75924159b213130ef478f5683df43c359d90aff96c0afb58ba35b5045902f09"
+    }
+  ]
+}

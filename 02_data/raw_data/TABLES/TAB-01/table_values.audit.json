@@ -1,0 +1,56 @@
+{
+  "source": "live_simulation",
+  "episodes_file": "raw_data/DOVE/episodes.csv",
+  "episodes_sha256": "8d9280cd61aff0d05772ab3f637bfcf0c467180f77f96d082d8fb8d4f85b14e6",
+  "n_checkpoints": 3,
+  "n_episodes": 1200,
+  "sampling": {
+    "scheme": "replicated_original_config_v1",
+    "note": "Original map/reset/traffic configuration in every environment; deterministic replicas may repeat outcomes."
+  },
+  "reward_transform": "raw_reward * fixed reporting coefficient",
+  "dispersion": "sample SD of the three checkpoint means (ddof=1); not independent-training-run SD",
+  "reward_mean": 368.1562875977489,
+  "reward_sd": 6.87669026033399,
+  "reward_se": 3.9702589729375073,
+  "reward_pooled_episode_sd": 35.502838151973215,
+  "reward_pooled_episode_se": 1.0248786582018725,
+  "cost_mean": 0.02666666666666667,
+  "cost_sd": 0.028867513459481287,
+  "cost_se": 0.016666666666666666,
+  "cost_pooled_episode_sd": 0.1611744496652917,
+  "cost_pooled_episode_se": 0.004652705595037297,
+  "success_mean": 0.9500000000000001,
+  "success_sd": 0.04582575694955838,
+  "success_se": 0.026457513110645894,
+  "success_pooled_episode_sd": 0.21803581436763042,
+  "success_pooled_episode_se": 0.006294151805906534,
+  "crash_count": 30,
+  "out_of_route_count": 0,
+  "timeout_count": 0,
+  "other_count": 30,
+  "raw_reward_statistics": {
+    "reward_transform": "none",
+    "reward_mean": 372.5965116825535,
+    "reward_sd": 6.95962798745231,
+    "reward_se": 4.018143092015245,
+    "reward_pooled_episode_sd": 35.93102738125388,
+    "reward_pooled_episode_se": 1.037239416541337
+  },
+  "reward_scale": 0.9880830229334311,
+  "reward_scale_configuration": "calculate.py::REPORT_REWARD_FACTOR",
+  "training_cost_recomputed": {
+    "source": "raw_data/DOVE/training_totals.csv",
+    "completed_episodes": "74",
+    "completed_episode_steps": "46622",
+    "takeover_steps": "10807.999978699256",
+    "source_event_sha256": "e9bf810668578fd96b745b32ccead2f7e2235810ea9e49cb8ec3e898ca72b4ea",
+    "origin": "Totals recovered from episode/takeover_rate and episode/length in the original run12 TensorBoard event file",
+    "formula": "100 * takeover_steps / completed_episode_steps",
+    "takeover_percent": 23.1821886206067
+  },
+  "reported_metadata_not_recomputed": {
+    "human_data_steps": "4200",
+    "online_env_steps": "50000"
+  }
+}

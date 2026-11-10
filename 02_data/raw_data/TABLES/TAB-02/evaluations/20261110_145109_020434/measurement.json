@@ -1,0 +1,51 @@
+{
+  "schema": "rq2_vlb_hsr_rmr_v2",
+  "source": "live_checkpoint_diagnostics",
+  "smoke": true,
+  "models": [
+    {
+      "group": "Positive-only",
+      "filename": "policy-1000-1998.pkl",
+      "path": "models/Positive-only/policy-1000-1998.pkl",
+      "sha256": "0d568bb9941c2b28765d95a9e20ff2a399dc8ac1525893e445fa5de56ba86085",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "ER_wo_CPCal",
+      "filename": "policy-1000-1998.pkl",
+      "path": "models/ER_wo_CPCal/policy-1000-1998.pkl",
+      "sha256": "a0994b1fd34b56c3e0a4d868338b62d0e845c162e32528bbc719cca5836f19c9",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    },
+    {
+      "group": "CPCal_only",
+      "filename": "policy-1000-1998.pkl",
+      "path": "models/CPCal_only/policy-1000-1998.pkl",
+      "sha256": "effcd396b4515170eaa2c44e0f5ec49c440f69dfff77fbbbf750ec481745f6f6",
+      "training_seed": 0,
+      "actor": true,
+      "critic": true
+    },
+    {
+      "group": "Full_DOVE",
+      "filename": "policy-1000-1998.pkl",
+      "path": "models/Full_DOVE/policy-1000-1998.pkl",
+      "sha256": "e12fe371a56abfc0c5bc9cddf2829e2b121e44f38aea402d9af1662c4ea232e2",
+      "actor": true,
+      "critic": true,
+      "training_seed": 0
+    }
+  ],
+  "validations": [],
+  "pairs_per_checkpoint": 4,
+  "samples_per_pair": 64,
+  "noise_sha256": "8913357148b5a88136dbd236be1d668469eab6b6268efb31f1e6999b9be767c1",
+  "spec_sha256": "1b0bc404c2b7b255afe21a9efcc5fbb33ca60799285d4d440a289d7eacb076d7",
+  "code_sha256": "446d2f26e24d376dbdb76e1f6d18391b2acc4e1994a248b25c4f307882d7c0dd",
+  "paper_tex_sha256": "86bfb979bd022ea2e6a884b30fc6d24e3f53b13bf7b763814a4f899c93159c2c",
+  "critic_note": "Recomputed on the same 256 intervention pairs and actor checkpoint memberships, as specified by DOVE_v3.tex."
+}

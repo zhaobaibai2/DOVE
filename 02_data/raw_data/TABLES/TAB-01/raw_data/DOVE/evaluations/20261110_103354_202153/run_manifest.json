@@ -1,0 +1,179 @@
+{
+  "source": "live_simulation",
+  "protocol": "three_checkpoints_same_training_run",
+  "num_episodes": 4,
+  "models": [
+    {
+      "filename": "policy-11000-21998.pkl",
+      "checkpoint_sha256": "08f39ed1d173929de8fe027d851176d40a68cbcbce0bde53ecd03875c5bccace",
+      "episode_csv": "policy-11000-21998/episodes.csv",
+      "episodes_sha256": "d0f92a339e0dfbb6f9d6bc137374afeec445866a5e9f46d47d9dedb6b394bbeb"
+    },
+    {
+      "filename": "policy-12000-23998.pkl",
+      "checkpoint_sha256": "ab2878acc65d1b514c7c117a3d858e08bb3226d5b66ed2a8d2a7d5ee0a48efc0",
+      "episode_csv": "policy-12000-23998/episodes.csv",
+      "episodes_sha256": "5bb74267d98f07d74f5fda8eca825ec2ab515f8d2526156e9e47ccf32920008c"
+    },
+    {
+      "filename": "policy-13000-25998.pkl",
+      "checkpoint_sha256": "753e1ea16d2f7d982f5131d486a7f2a23e2cd0cfe5809a3c09283946551895f8",
+      "episode_csv": "policy-13000-25998/episodes.csv",
+      "episodes_sha256": "9739e27a5531cff47ef27c860003d630640bc92e4317649e2218ce7127f5ce79"
+    }
+  ],
+  "workers": 6,
+  "envs_per_model": 2,
+  "sampling": {
+    "scheme": "independent_episode_traffic_v1",
+    "traffic_seed_base": 20261110
+  },
+  "python": "/home/aaa/miniconda3/envs/dacer_pvp/bin/python",
+  "args_sha256": "25978babc5e9e9946104dcd9e81340570339a6475d976ac0c8303378ba59fa6b",
+  "eval_flags": [
+    "--maps",
+    "104",
+    "--horizon",
+    "1000",
+    "--no_use_render",
+    "--use_value_guidance",
+    "--guidance_lambda0",
+    "0.5",
+    "--guidance_beta_unc",
+    "1.0",
+    "--guidance_p_decay",
+    "1.0",
+    "--guidance_grad_clip",
+    "1.0",
+    "--guidance_kappa",
+    "1.0",
+    "--guidance_mode",
+    "proxy_value",
+    "--guidance_q_agg",
+    "conservative",
+    "--guidance_injection",
+    "clean_x0",
+    "--guidance_schedule",
+    "noise_level",
+    "--guidance_target",
+    "x0",
+    "--guidance_critic_params",
+    "target",
+    "--critic_objective",
+    "lower",
+    "--use_final_gate",
+    "--final_gate_mode",
+    "proxy_prior",
+    "--final_gate_proxy_compare",
+    "robust",
+    "--final_gate_min_proxy_gain",
+    "0.0",
+    "--final_gate_max_action_shift",
+    "0.2",
+    "--final_gate_tau_prior",
+    "0.02",
+    "--final_gate_tau_u",
+    "1.0",
+    "--final_gate_project_guidance",
+    "1",
+    "--final_gate_energy_samples",
+    "1",
+    "--step_diagnostics_stride",
+    "20"
+  ],
+  "packages": {
+    "jax": "0.4.25",
+    "jaxlib": "0.4.25",
+    "numpy": "1.26.4",
+    "metadrive-simulator": "0.4.3",
+    "gymnasium": "1.3.0"
+  },
+  "code_sha256": {
+    "scripts/dove_table01.py": "d8e303c8eb828de56ab9cdc6874e3c31a647a9b563698e8c5ccd613b088c65c6",
+    "scripts/_local_bootstrap.py": "77eabe81274333b624c8282e6ec47c5bbaa10117947972cf387b0fad5128cab8",
+    "scripts/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scripts/demo_data_manager_fix.py": "fc16f9e2cfb60e06041895abf15897af726486d454160a65439ec3aa2e777530",
+    "scripts/extract_dove_training_evidence.py": "9aec863504af2459ce4542d85d5e3baa0d05a58e4664a31cb9e29098a73c5972",
+    "scripts/eval_pvp_policies_fixed_v3.py": "0a228bd8398ae10dd93725cdf5ddfcc1938364cbc23d29602f1525163f83d6a0",
+    "scripts/test_dove_table01.py": "fdd8d0d5cad59142c159c1d19bcd280a2c59508911714ca730c877f6ea1572ff",
+    "scripts/train_pvp_dacer_metadrive_off.py": "b3d1d8df1200e54262781815f376e3e3e72b18f3b8b562f1b7b17734900404d3",
+    "scripts/eval_dove_table01.py": "8273470542a08bedbd9fadbe046e1876df167bac52310b2b6040600f6a0f694d",
+    "relax/__init__.py": "4e72ab3ac05a729c242bd06cef75b28cf4d90702f482060af42d8611999b4c52",
+    "relax/algorithm/__init__.py": "b80abc704bc94e80512a610c19d6bf475250c5045163367357e03c0ebdd84199",
+    "relax/algorithm/pvp_dacer.py": "551edeb13fb613698de028b912863a2119c1bd0daf11ff16e6d9abf2ce09cd4a",
+    "relax/algorithm/base.py": "1eeed27273f91b45cc4ba3f953b6749096aaccfeca2546a77c5cfce003993769",
+    "relax/buffer/__init__.py": "3171d7570eee3ccee8477c4f898526dbf7cf0eb99d2dd8484969595f518e0425",
+    "relax/buffer/pvp_replay_buffer.py": "52dc4493cc03f83139bae308dc01919cf376457a284f348ff9c3164892ae9394",
+    "relax/buffer/base.py": "44e9fcc04c36dc288ca48f9f61c50585238e3a8031a0bf2288d55d7bbe3d58d2",
+    "relax/trainer/__init__.py": "83320fa5cce71968d51e2dd76eb98fb6a4c2945e7f42210c353a4d806c790917",
+    "relax/trainer/pvp_off_policy.py": "65308a4c53161e680989b68f735e585908e8880afd7bc2efaa117c23b1d4b4c5",
+    "relax/trainer/accumulator.py": "44cda9f1374e14d6ba5b4f0e857c7a178c48593438e741d45e758631bb78a076",
+    "relax/utils/typing.py": "bade1e4f7c01390158c913fac335e0320f1aed15e5db6d83c476d894150ecbc4",
+    "relax/utils/__init__.py": "826364092f8c3dd68c871dfed0ff7a96246b9b8ba7490eb5e68c56f4a6a98232",
+    "relax/utils/persistence.py": "e42557a6806885f636840c38b88e8ba6cb178bc47157a2910ab749db43cab7f6",
+    "relax/utils/jax_utils.py": "8468dc65d6c5f1623220edf95559de60d297ee48b0bb007c31b9605abfaff7aa",
+    "relax/utils/experience.py": "d5e26da7edcf97ce76981c50211a94a0c5ed68e42c443c50ee40e48271c71385",
+    "relax/utils/random_utils.py": "6eacae56cbff64f9c20a426195ea72e9453fe5e8817a63f8f1a31e94ed0d2457",
+    "relax/utils/shared_control_monitor.py": "e2caedc8e1180fa761db055376448778f76f03f445ebc688d441d8d654ab7701",
+    "relax/utils/done_utils.py": "069da73a953391233a8d1481a4a979d3f9a60a5295081366a168d54fe2458567",
+    "relax/utils/logger.py": "8e4ede228259bf38c1e8113447767dab71fe897422fbbb7e52e462435f2d88be",
+    "relax/utils/takeover_policy.py": "a7e55d2a46fe36aa7de26aa641cdfcdf36c88efd8c481cbf80ca1bdd4600d756",
+    "relax/utils/diffusion.py": "9855753a8c997e260c9c6f20e274766b031b09b2c432f97b29f1f9a8e0172f77",
+    "relax/network/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "relax/network/dacer.py": "f5dd55255afed9af50471f88ff6508486b1ccd456eb2c3ef82a93847cf248c00",
+    "relax/network/blocks.py": "4fbef48191a1040600e1dfa3e3375da5148126252e8f4651809bbbbba42117d1",
+    "relax/network/common.py": "753d9193587e6db02527a4b41c675938b41ee0bca5806f0131d23259e18e3d12",
+    "relax_env/__init__.py": "7b54ac07e131138377390fa0fd94f07ac10fce1770e71475443fffd3aaa5eafd",
+    "relax_env/metadrive_fixed_pvp_env.py": "96b099047d4a961a86c88f2fa53e84e9ea13c93e72e7e2487926ca3546442b64",
+    "relax_env/human_in_the_loop_env.py": "0ee95db0f2613c2528d3b74eb823ea585d983ce578b82a5ef6a466c5db83d0cf"
+  },
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": "0",
+    "JAX_PLATFORMS": "cuda",
+    "XLA_FLAGS": null
+  },
+  "shards": [
+    {
+      "filename": "policy-11000-21998.pkl",
+      "start": 0,
+      "count": 2,
+      "episode_csv": "policy-11000-21998/shards/0/episodes.csv",
+      "episodes_sha256": "58da831f7cfe53694c55e1bdcafdf8f00d9f9ed8b1dd04c413c61a1adbe6bdf8"
+    },
+    {
+      "filename": "policy-11000-21998.pkl",
+      "start": 2,
+      "count": 2,
+      "episode_csv": "policy-11000-21998/shards/1/episodes.csv",
+      "episodes_sha256": "b8f52453ee814a9fd26ce50bfe304e7ad95cf690a8ea78b4fffc8c0afbec7134"
+    },
+    {
+      "filename": "policy-12000-23998.pkl",
+      "start": 0,
+      "count": 2,
+      "episode_csv": "policy-12000-23998/shards/0/episodes.csv",
+      "episodes_sha256": "1dcaf42b9716b6bea9dc493e809a849a912bf19de91a42a5a717e22f1d1891c8"
+    },
+    {
+      "filename": "policy-12000-23998.pkl",
+      "start": 2,
+      "count": 2,
+      "episode_csv": "policy-12000-23998/shards/1/episodes.csv",
+      "episodes_sha256": "c13fee6ccf70120f29bd28d48daf9c4327726498d2af17fb7126ba975240983f"
+    },
+    {
+      "filename": "policy-13000-25998.pkl",
+      "start": 0,
+      "count": 2,
+      "episode_csv": "policy-13000-25998/shards/0/episodes.csv",
+      "episodes_sha256": "a3ec0a5d4c4d3ad53ced046a669ed2b17c44a0006075e883ddb7cd68e63f9fd5"
+    },
+    {
+      "filename": "policy-13000-25998.pkl",
+      "start": 2,
+      "count": 2,
+      "episode_csv": "policy-13000-25998/shards/1/episodes.csv",
+      "episodes_sha256": "5775c3ed7f0fc470e00d00c72cc20cc4c7a70d06c67d1a4417b5dbfaf642298d"
+    }
+  ]
+}
