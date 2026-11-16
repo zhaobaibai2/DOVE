@@ -42,15 +42,16 @@ table_number,tex_label,row_index,column_index,reported_tex,evidence_type
 1,tab:impl_hparams,20,2,"$0.02,\ 1.0$",manuscript_reported_not_raw_measurement
 2,tab:main,1,1,"[!t]
 \centering
-\caption{{\normalfont MetaDrive closed-loop comparison under different training protocols. }}
+\caption{{\normalfont MetaDrive closed-loop comparison under different training protocols.}}
 \label{tab:main}
 \scriptsize
 \setlength{\tabcolsep}{3pt}
-\begin{tabular*}{0.98\textwidth}{@{\extracolsep{\fill}}lcccccc@{}}
+\begin{tabular*}{0.98\textwidth}
+{@{\extracolsep{\fill}}lcccccc@{}}
 \toprule
 Method",manuscript_reported_not_raw_measurement
-2,tab:main,1,2,Human Data$\downarrow$,manuscript_reported_not_raw_measurement
-2,tab:main,1,3,Online Env.\ Steps,manuscript_reported_not_raw_measurement
+2,tab:main,1,2,Human-Controlled Steps $\downarrow$,manuscript_reported_not_raw_measurement
+2,tab:main,1,3,Online Env. Steps,manuscript_reported_not_raw_measurement
 2,tab:main,1,4,Train Safety Cost$\downarrow$,manuscript_reported_not_raw_measurement
 2,tab:main,1,5,Return$\uparrow$,manuscript_reported_not_raw_measurement
 2,tab:main,1,6,Test Cost$\downarrow$,manuscript_reported_not_raw_measurement
@@ -140,23 +141,19 @@ Method",manuscript_reported_not_raw_measurement
 2,tab:main,17,6,$0.31{\pm}0.03$,manuscript_reported_not_raw_measurement
 2,tab:main,17,7,$0.83{\pm}0.05$,manuscript_reported_not_raw_measurement
 2,tab:main,18,1,\DOVE{},manuscript_reported_not_raw_measurement
-2,tab:main,18,2,\textbf{4.2K} (\textbf{--71.6\% vs. H-DSAC}),manuscript_reported_not_raw_measurement
+2,tab:main,18,2,\textbf{4.2K},manuscript_reported_not_raw_measurement
 2,tab:main,18,3,0.05M,manuscript_reported_not_raw_measurement
 2,tab:main,18,4,\textbf{23.18},manuscript_reported_not_raw_measurement
-2,tab:main,18,5,$\bm{369.23}{\pm}15.33$,manuscript_reported_not_raw_measurement
-2,tab:main,18,6,$\bm{0.10}{\pm}0.03$,manuscript_reported_not_raw_measurement
-2,tab:main,18,7,$\bm{0.90}{\pm}0.03$,manuscript_reported_not_raw_measurement
+2,tab:main,18,5,$\bm{368.16}{\pm}6.88$,manuscript_reported_not_raw_measurement
+2,tab:main,18,6,$\bm{0.03}{\pm}0.03$,manuscript_reported_not_raw_measurement
+2,tab:main,18,7,$\bm{0.95}{\pm}0.03$,manuscript_reported_not_raw_measurement
 3,tab:rq2_audit,1,1,"[!t]
 \centering
-\caption{{\normalfont
-Actor- and critic-side diagnostics with EnergyRank and \CPCal{}
-enabled ($\checkmark$) or disabled ($\times$).
-The last row corresponds to Full \DOVE{}.}}
+\caption{{\normalfont Actor- and critic-side diagnostics with \ER{} and \CPCal{} enabled ($\checkmark$) or disabled ($\times$). The last row corresponds to Full \DOVE{}.}}
 \label{tab:rq2_audit}
 \scriptsize
 \setlength{\tabcolsep}{2.5pt}
 \renewcommand{\arraystretch}{1.08}
-
 \begin{tabularx}{\columnwidth}{
 @{}cc*{3}{>{\centering\arraybackslash}X}c@{}
 }
@@ -167,8 +164,7 @@ The last row corresponds to Full \DOVE{}.}}
 3,tab:rq2_audit,2,1,"\cmidrule(lr){1-2}
 \cmidrule(lr){3-5}
 \cmidrule(l){6-6}
-
-EnergyRank",manuscript_reported_not_raw_measurement
+\ER{}",manuscript_reported_not_raw_measurement
 3,tab:rq2_audit,2,2,\CPCal{},manuscript_reported_not_raw_measurement
 3,tab:rq2_audit,2,3,$\rho_{\mathrm{VLB}}\uparrow$,manuscript_reported_not_raw_measurement
 3,tab:rq2_audit,2,4,HSR$\uparrow$,manuscript_reported_not_raw_measurement
@@ -181,7 +177,7 @@ $\times$",manuscript_reported_not_raw_measurement
 3,tab:rq2_audit,3,3,0.619,manuscript_reported_not_raw_measurement
 3,tab:rq2_audit,3,4,0.615,manuscript_reported_not_raw_measurement
 3,tab:rq2_audit,3,5,0.295,manuscript_reported_not_raw_measurement
-3,tab:rq2_audit,3,6,0.789,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,3,6,0.983,manuscript_reported_not_raw_measurement
 3,tab:rq2_audit,4,1,$\checkmark$,manuscript_reported_not_raw_measurement
 3,tab:rq2_audit,4,2,$\times$,manuscript_reported_not_raw_measurement
 3,tab:rq2_audit,4,3,\textbf{0.989},manuscript_reported_not_raw_measurement
@@ -199,23 +195,24 @@ $\times$",manuscript_reported_not_raw_measurement
 3,tab:rq2_audit,6,3,0.821,manuscript_reported_not_raw_measurement
 3,tab:rq2_audit,6,4,0.772,manuscript_reported_not_raw_measurement
 3,tab:rq2_audit,6,5,0.151,manuscript_reported_not_raw_measurement
-3,tab:rq2_audit,6,6,0.891,manuscript_reported_not_raw_measurement
+3,tab:rq2_audit,6,6,0.980,manuscript_reported_not_raw_measurement
 4,tab:simulation_diagnostics,1,1,"[!t]
 \centering
-\caption{{\normalfont Inference-side execution-mode ablation with the
-Full-\DOVE{} training configuration held fixed.}}
+\caption{{\normalfont Inference-side execution-mode ablation with the Full-\DOVE{} training configuration held fixed.}}
 \label{tab:simulation_diagnostics}
 \footnotesize
 \setlength{\tabcolsep}{2pt}
 \renewcommand{\arraystretch}{1.00}
-\begin{tabularx}{\columnwidth}{@{}L{0.46\columnwidth}*{4}{>{\centering\arraybackslash}X}@{}}
+\begin{tabularx}{\columnwidth}
+{@{}L{0.46\columnwidth}*{4}{>{\centering\arraybackslash}X}@{}}
 \toprule
 Inference mode",manuscript_reported_not_raw_measurement
 4,tab:simulation_diagnostics,1,2,Succ.$\uparrow$,manuscript_reported_not_raw_measurement
 4,tab:simulation_diagnostics,1,3,Coll.$\downarrow$,manuscript_reported_not_raw_measurement
 4,tab:simulation_diagnostics,1,4,Route$\uparrow$,manuscript_reported_not_raw_measurement
-4,tab:simulation_diagnostics,1,5,Ep.\ Reward$\uparrow$,manuscript_reported_not_raw_measurement
+4,tab:simulation_diagnostics,1,5,Ep. Reward$\uparrow$,manuscript_reported_not_raw_measurement
 4,tab:simulation_diagnostics,2,1,"\midrule
+
 Actor only (no guidance)",manuscript_reported_not_raw_measurement
 4,tab:simulation_diagnostics,2,2,0.400,manuscript_reported_not_raw_measurement
 4,tab:simulation_diagnostics,2,3,0.400,manuscript_reported_not_raw_measurement
@@ -232,7 +229,8 @@ Actor only (no guidance)",manuscript_reported_not_raw_measurement
 4,tab:simulation_diagnostics,4,4,0.658,manuscript_reported_not_raw_measurement
 4,tab:simulation_diagnostics,4,5,244.14,manuscript_reported_not_raw_measurement
 4,tab:simulation_diagnostics,5,1,"\midrule
-Guidance, compatibility-only gate",manuscript_reported_not_raw_measurement
+
+Guidance, loss-only gate",manuscript_reported_not_raw_measurement
 4,tab:simulation_diagnostics,5,2,0.492,manuscript_reported_not_raw_measurement
 4,tab:simulation_diagnostics,5,3,0.470,manuscript_reported_not_raw_measurement
 4,tab:simulation_diagnostics,5,4,0.647,manuscript_reported_not_raw_measurement
@@ -259,13 +257,14 @@ Guidance, compatibility-only gate",manuscript_reported_not_raw_measurement
 \footnotesize
 \setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{1.00}
-\begin{tabularx}{0.96\columnwidth}{@{}L{0.32\columnwidth}*{4}{>{\centering\arraybackslash}X}@{}}
+\begin{tabularx}{0.96\columnwidth}
+{@{}L{0.32\columnwidth}*{4}{>{\centering\arraybackslash}X}@{}}
 \toprule
 Phase",manuscript_reported_not_raw_measurement
 5,tab:ugv_audit,1,2,Rows,manuscript_reported_not_raw_measurement
-5,tab:ugv_audit,1,3,Gate dec.,manuscript_reported_not_raw_measurement
-5,tab:ugv_audit,1,4,Accept.,manuscript_reported_not_raw_measurement
-5,tab:ugv_audit,1,5,Fallback,manuscript_reported_not_raw_measurement
+5,tab:ugv_audit,1,3,Logged dec.,manuscript_reported_not_raw_measurement
+5,tab:ugv_audit,1,4,Accept. rate,manuscript_reported_not_raw_measurement
+5,tab:ugv_audit,1,5,Fallback rate,manuscript_reported_not_raw_measurement
 5,tab:ugv_audit,2,1,"\midrule
 Collection",manuscript_reported_not_raw_measurement
 5,tab:ugv_audit,2,2,"7{,}514",manuscript_reported_not_raw_measurement
@@ -284,12 +283,13 @@ Collection",manuscript_reported_not_raw_measurement
 5,tab:ugv_audit,4,5,0.015,manuscript_reported_not_raw_measurement
 6,tab:ugv_timing,1,1,"[!t]
 \centering
-\caption{{\normalfont Mean onboard timing on the physical UGV, in milliseconds for latency and period and in hertz for rate. }}
+\caption{{\normalfont Mean onboard timing on the physical UGV. Latency and period are reported in milliseconds, and rate is reported in hertz.}}
 \label{tab:ugv_timing}
 \footnotesize
 \setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{1.00}
-\begin{tabularx}{0.96\columnwidth}{@{}L{0.32\columnwidth}*{3}{>{\centering\arraybackslash}X}@{}}
+\begin{tabularx}{0.96\columnwidth}
+{@{}L{0.32\columnwidth}*{3}{>{\centering\arraybackslash}X}@{}}
 \toprule
 Component",manuscript_reported_not_raw_measurement
 6,tab:ugv_timing,1,2,Latency,manuscript_reported_not_raw_measurement
@@ -310,16 +310,17 @@ Diffusion-only",manuscript_reported_not_raw_measurement
 6,tab:ugv_timing,4,4,9.48,manuscript_reported_not_raw_measurement
 7,tab:ugv_closedloop,1,1,"[!t]
 \centering
-\caption{{\normalfont Closed-loop scenario results on the physical UGV.  Speed, lateral MAE, and jerk are reported in $\mathrm{m\,s^{-1}}$, $\mathrm{m}$, and $\mathrm{m\,s^{-3}}$, respectively. The C/P/O/S entries report successful trials (n/10) in curve meeting, pedestrian yielding, obstacle avoidance, and straight lane keeping, respectively.}}
+\caption{{\normalfont Closed-loop scenario results on the physical UGV. Speed, lateral MAE, and jerk are reported as frame-level mean $\pm$ standard deviation in $\mathrm{m\,s^{-1}}$, $\mathrm{m}$, and $\mathrm{m\,s^{-3}}$, respectively. The C/P/O/S entries report successful trials (n/10) in curve meeting, pedestrian yielding, obstacle avoidance, and straight lane keeping, respectively.}}
 \label{tab:ugv_closedloop}
 \footnotesize
 \setlength{\tabcolsep}{1pt}
 \renewcommand{\arraystretch}{1.03}
-\begin{tabular*}{0.96\columnwidth}{@{\extracolsep{\fill}}lccccc@{}}
+\begin{tabular*}{0.96\columnwidth}
+{@{\extracolsep{\fill}}lccccc@{}}
 \toprule
 Method",manuscript_reported_not_raw_measurement
-7,tab:ugv_closedloop,1,2,Speed$\uparrow$,manuscript_reported_not_raw_measurement
-7,tab:ugv_closedloop,1,3,Lat.\ MAE$\downarrow$,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,1,2,Speed,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,1,3,Lat. MAE$\downarrow$,manuscript_reported_not_raw_measurement
 7,tab:ugv_closedloop,1,4,Jerk$\downarrow$,manuscript_reported_not_raw_measurement
 7,tab:ugv_closedloop,1,5,Succ.$\uparrow$,manuscript_reported_not_raw_measurement
 7,tab:ugv_closedloop,1,6,C/P/O/S$\uparrow$,manuscript_reported_not_raw_measurement
@@ -331,7 +332,7 @@ Positive-only",manuscript_reported_not_raw_measurement
 7,tab:ugv_closedloop,2,5,0.40,manuscript_reported_not_raw_measurement
 7,tab:ugv_closedloop,2,6,3/3/3/7,manuscript_reported_not_raw_measurement
 7,tab:ugv_closedloop,3,1,IWR~\cite{mandlekar2020iwr},manuscript_reported_not_raw_measurement
-7,tab:ugv_closedloop,3,2,$1.24{\pm}0.78$,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,3,2,$1.74{\pm}0.78$,manuscript_reported_not_raw_measurement
 7,tab:ugv_closedloop,3,3,$1.10{\pm}0.39$,manuscript_reported_not_raw_measurement
 7,tab:ugv_closedloop,3,4,$3.06{\pm}0.92$,manuscript_reported_not_raw_measurement
 7,tab:ugv_closedloop,3,5,0.30,manuscript_reported_not_raw_measurement
@@ -343,7 +344,7 @@ Positive-only",manuscript_reported_not_raw_measurement
 7,tab:ugv_closedloop,4,5,0.20,manuscript_reported_not_raw_measurement
 7,tab:ugv_closedloop,4,6,1/2/2/3,manuscript_reported_not_raw_measurement
 7,tab:ugv_closedloop,5,1,\DOVE{},manuscript_reported_not_raw_measurement
-7,tab:ugv_closedloop,5,2,$\bm{1.39}{\pm}0.75$,manuscript_reported_not_raw_measurement
+7,tab:ugv_closedloop,5,2,$1.39{\pm}0.75$,manuscript_reported_not_raw_measurement
 7,tab:ugv_closedloop,5,3,$0.51{\pm}0.36$,manuscript_reported_not_raw_measurement
 7,tab:ugv_closedloop,5,4,$\bm{1.16}{\pm}0.20$,manuscript_reported_not_raw_measurement
 7,tab:ugv_closedloop,5,5,\textbf{0.80},manuscript_reported_not_raw_measurement

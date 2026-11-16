@@ -1,0 +1,304 @@
+{
+  "source": "DOVE_v3.tex",
+  "tables": {
+    "tab:main": {
+      "title": "MetaDrive closed-loop comparison",
+      "columns": [
+        "Method",
+        "Human-controlled steps ↓",
+        "Online env. steps",
+        "Train safety cost ↓",
+        "Return ↑",
+        "Test cost ↓",
+        "Success ↑"
+      ],
+      "rows": [
+        [
+          "Human Demo.",
+          "50K",
+          "N/A",
+          "23",
+          "377.52",
+          "0.39",
+          "0.97"
+        ],
+        [
+          "SAC",
+          "N/A",
+          "1M",
+          "7.94K ± 3.24K",
+          "350.18 ± 16.21",
+          "1.00 ± 0.28",
+          "0.73 ± 0.13"
+        ],
+        [
+          "PPO",
+          "N/A",
+          "1M",
+          "45.12K ± 21.11K",
+          "278.65 ± 35.07",
+          "3.92 ± 1.91",
+          "0.44 ± 0.14"
+        ],
+        [
+          "DSAC",
+          "N/A",
+          "1M",
+          "7.44K ± 3.59K",
+          "349.35 ± 22.15",
+          "0.47 ± 0.08",
+          "0.77 ± 0.09"
+        ],
+        [
+          "CQL",
+          "50K",
+          "N/A",
+          "N/A",
+          "93.12 ± 16.31",
+          "1.45 ± 0.15",
+          "0.09 ± 0.05"
+        ],
+        [
+          "BC",
+          "50K",
+          "N/A",
+          "N/A",
+          "59.13 ± 8.92",
+          "0.12 ± 0.03",
+          "0.00 ± 0.00"
+        ],
+        [
+          "Diffusion-QL",
+          "N/A",
+          "1M",
+          "5,634",
+          "366.79 ± 16.78",
+          "0.11 ± 0.07",
+          "0.88 ± 0.03"
+        ],
+        [
+          "DACER",
+          "N/A",
+          "1M",
+          "1,092",
+          "369.78 ± 15.38",
+          "0.10 ± 0.04",
+          "0.89 ± 0.01"
+        ],
+        [
+          "HG-DAgger",
+          "34.9K",
+          "0.05M",
+          "56.13",
+          "142.35",
+          "2.10",
+          "0.30"
+        ],
+        [
+          "IWR",
+          "37.1K",
+          "0.05M",
+          "48.78",
+          "329.97",
+          "4.00",
+          "0.70"
+        ],
+        [
+          "PVP",
+          "15.7K",
+          "0.05M",
+          "33.67 ± 3.46",
+          "338.28 ± 10.21",
+          "0.65 ± 0.12",
+          "0.80 ± 0.03"
+        ],
+        [
+          "H-DSAC",
+          "14.8K",
+          "0.05M",
+          "32.12 ± 4.68",
+          "353.39 ± 12.34",
+          "0.31 ± 0.03",
+          "0.83 ± 0.05"
+        ],
+        [
+          "DOVE",
+          "4.2K",
+          "0.05M",
+          "23.18",
+          "368.16 ± 6.88",
+          "0.03 ± 0.03",
+          "0.95 ± 0.03"
+        ]
+      ]
+    },
+    "tab:rq2_audit": {
+      "title": "Actor- and critic-side diagnostics",
+      "columns": [
+        "EnergyRank",
+        "CPCal",
+        "ρ_VLB ↑",
+        "HSR ↑",
+        "RMR_0.5 ↓",
+        "Mean critic PairAcc ↑"
+      ],
+      "rows": [
+        [
+          "✗",
+          "✗",
+          "0.619",
+          "0.615",
+          "0.295",
+          "0.983"
+        ],
+        [
+          "✓",
+          "✗",
+          "0.989",
+          "0.981",
+          "0.007",
+          "0.345"
+        ],
+        [
+          "✗",
+          "✓",
+          "0.772",
+          "0.722",
+          "0.189",
+          "0.987"
+        ],
+        [
+          "✓",
+          "✓",
+          "0.821",
+          "0.772",
+          "0.151",
+          "0.980"
+        ]
+      ]
+    },
+    "tab:simulation_diagnostics": {
+      "title": "Inference-side execution-mode ablation",
+      "columns": [
+        "Inference mode",
+        "Success ↑",
+        "Collision ↓",
+        "Route ↑",
+        "Ep. reward ↑"
+      ],
+      "rows": [
+        [
+          "Actor only (no guidance)",
+          "0.400",
+          "0.400",
+          "0.768",
+          "288.53"
+        ],
+        [
+          "Top-8 rerank",
+          "0.388",
+          "0.500",
+          "0.703",
+          "261.45"
+        ],
+        [
+          "Guidance, always execute",
+          "0.472",
+          "0.490",
+          "0.658",
+          "244.14"
+        ],
+        [
+          "Guidance, loss-only gate",
+          "0.492",
+          "0.470",
+          "0.647",
+          "240.55"
+        ],
+        [
+          "Guidance, proxy-only gate",
+          "0.770",
+          "0.230",
+          "0.854",
+          "322.30"
+        ],
+        [
+          "Guidance, w/o disagreement",
+          "0.838",
+          "0.162",
+          "0.874",
+          "330.81"
+        ],
+        [
+          "Guidance, full gate",
+          "0.842",
+          "0.158",
+          "0.883",
+          "330.76"
+        ]
+      ]
+    },
+    "tab:ugv_audit": {
+      "title": "Route 1 physical-UGV phase-level data-path audit",
+      "columns": [
+        "Phase",
+        "Rows",
+        "Logged decisions",
+        "Acceptance rate",
+        "Fallback rate"
+      ],
+      "rows": [
+        [
+          "Collection",
+          "7,514",
+          "375",
+          "0.005",
+          "0.995"
+        ],
+        [
+          "Online repair",
+          "22,362",
+          "1,104",
+          "0.746",
+          "0.254"
+        ],
+        [
+          "Frozen execution",
+          "2,629",
+          "131",
+          "0.985",
+          "0.015"
+        ]
+      ]
+    },
+    "tab:ugv_timing": {
+      "title": "Mean onboard timing on the physical UGV",
+      "columns": [
+        "Component",
+        "Latency (ms)",
+        "Period (ms)",
+        "Rate (Hz)"
+      ],
+      "rows": [
+        [
+          "Diffusion-only",
+          "33.35",
+          "100.08",
+          "9.99"
+        ],
+        [
+          "DOVE",
+          "154.22",
+          "170.12",
+          "5.88"
+        ],
+        [
+          "Vehicle interface",
+          "0.82",
+          "105.48",
+          "9.48"
+        ]
+      ]
+    }
+  }
+}

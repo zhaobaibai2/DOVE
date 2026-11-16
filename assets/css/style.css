@@ -104,3 +104,6 @@ dialog button { position: absolute; top: 0; right: 8px; border: 0; background: n
 }
 
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+#physical-analysis > figure, #simulation > figure { margin-block: 32px 48px; }
+#physical-analysis > h3, #simulation > h3 { margin-top: 44px; }
